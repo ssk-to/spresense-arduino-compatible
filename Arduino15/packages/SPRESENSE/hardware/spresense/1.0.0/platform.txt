@@ -1,0 +1,122 @@
+
+# Spritzer platform
+# ------------------------------
+# For more info:
+# https://github.com/arduino/Arduino/wiki/Arduino-IDE-1.5---3rd-party-Hardware-specification
+
+name=Spritzer Modules
+version=0.1.0
+
+variant.path={runtime.platform.path}/variants/{build.variant}
+
+compiler.warning_flags=-w
+compiler.warning_flags.none=-w
+compiler.warning_flags.default=
+compiler.warning_flags.more=-Wall
+compiler.warning_flags.all=-Wall -Wextra
+
+compiler.path={runtime.tools.gcc-arm-none-eabi-win32.path}/bin/
+compiler.sdk.path={runtime.platform.path}/sdk/2.0
+compiler.cpreprocessor.flags= "-I{compiler.sdk.path}/include" "-I{compiler.sdk.path}/arch" "-I{compiler.sdk.path}/arch/chip" "-I{compiler.sdk.path}/include/apps" "-I{compiler.sdk.path}/include/sdk" "-I{variant.path}" {build.debug} -DCONFIG_WCHAR_BUILTIN -DCONFIG_HAVE_DOUBLE
+
+
+compiler.c.cmd=arm-none-eabi-gcc
+#compiler.c.flags=-c {compiler.warning_flags} -MMD -std=gnu99 -c -fno-builtin -mabi=aapcs -Wall -Wstrict-prototypes -Wshadow -Wundef -Os -fno-strict-aliasing -fno-strength-reduce -fomit-frame-pointer -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -pipe -ggdb -gdwarf-3
+compiler.c.flags=-c {compiler.warning_flags} -MMD -std=gnu99 -c -fno-builtin -mabi=aapcs -Wall -Os -fno-strict-aliasing -fno-strength-reduce -fomit-frame-pointer -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -pipe -ggdb -gdwarf-3
+
+compiler.S.cmd=arm-none-eabi-gcc
+compiler.S.flags=
+
+compiler.c.elf.flags=-ggdb -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Xlinker --entry=__start -nodefaultlibs -nostartfiles -T{build.libpath}/build/ramconfig.ld
+
+
+compiler.c.elf.cmd=arm-none-eabi-g++
+compiler.c.elf.libs= "{build.libpath}/libs/libapps.a" "{build.libpath}/libs/libnuttx.a" -L"{runtime.tools.gcc-arm-none-eabi-win32.path}/lib/gcc/arm-none-eabi/5.4.1/" -lgcc
+
+
+compiler.cpp.cmd=arm-none-eabi-g++
+#compiler.cpp.flags=-c {compiler.warning_flags} -MMD -std=gnu++98 -c -fno-builtin -mabi=aapcs -Wall -Wshadow -Wundef -Os -fno-strict-aliasing -fno-strength-reduce -fomit-frame-pointer -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -pipe -ffunction-sections -fno-exceptions -fno-rtti -ggdb -gdwarf-3
+compiler.cpp.flags=-c {compiler.warning_flags} -MMD -std=gnu++98 -c -fno-builtin -mabi=aapcs -Wall -Os -fno-strict-aliasing -fno-strength-reduce -fomit-frame-pointer -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -pipe -ffunction-sections -fno-exceptions -fno-rtti -ggdb -gdwarf-3
+
+
+compiler.as.cmd=arm-none-eabi-as
+compiler.ar.cmd=arm-none-eabi-ar
+compiler.ar.flags=rcs
+
+compiler.elf2hex.cmd=
+compiler.elf2hex.flags=
+
+compiler.size.cmd=arm-none-eabi-size
+
+
+# This can be overriden in boards.txt
+build.extra_flags=
+
+# These can be overridden in platform.local.txt
+compiler.c.extra_flags=
+compiler.c.elf.extra_flags=
+compiler.S.extra_flags=
+compiler.cpp.extra_flags=
+compiler.ar.extra_flags=
+compiler.objcopy.eep.extra_flags=
+compiler.elf2hex.extra_flags=
+
+## generate file with git version number
+## needs bash, git, and echo
+
+## windows-compatible version may be added later
+
+
+## Compile c files
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.cpreprocessor.flags} {compiler.c.flags} -DF_CPU={build.f_cpu}  -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DARDUINO_BOARD="{build.board}" {compiler.c.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
+
+## Compile c++ files
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpreprocessor.flags} {compiler.cpp.flags} -DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DARDUINO_BOARD="{build.board}" {compiler.cpp.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
+
+## Compile S files
+#recipe.S.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.cpreprocessor.flags} {compiler.S.flags} -DF_CPU={build.f_cpu}  -DARDUINO={runtime.ide.version} -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch} -DARDUINO_BOARD="{build.board}" {compiler.c.extra_flags} {build.extra_flags} {includes} "{source_file}" -o "{object_file}"
+
+## Create archives
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{build.path}/arduino.ar" "{object_file}"
+
+## Combine gc-sections, archives, and objects
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} -Xlinker -Map=output.map -o  "{build.path}/{build.project_name}.axf" -Wl,--start-group {object_files} "{build.path}/core/main.cpp.o" "{build.path}/arduino.ar" {compiler.c.elf.libs} -Wl,--end-group "-L{build.path}"
+
+## Create hex
+recipe.objcopy.hex.pattern="{runtime.tools.stools.path}/mkspk/windows/mkspk.exe" -c 2 "{build.path}/{build.project_name}.axf" nuttx "{build.path}/{build.project_name}.spk"
+#recipe.objcopy.hex.pattern="{runtime.tools.stools.path}/mkspk/linux/mkspk" -c 2 "{build.path}/{build.project_name}.axf" nuttx "{build.path}/{build.project_name}.spk"
+
+#recipe.objcopy.hex.pattern="{runtime.tools.esptool.path}/{compiler.esptool.cmd}" -eo "{runtime.platform.path}/bootloaders/eboot/eboot.elf" -bo "{build.path}/{build.project_name}.bin" -bm {build.flash_mode} -bf {build.flash_freq} -bz {build.flash_size} -bs .text -bp 4096 -ec -eo "{build.path}/{build.project_name}.elf" -bs .irom0.text -bs .text -bs .data -bs .rodata -bc -ec
+
+## Compute size
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
+recipe.size.regex=^(\.text|\.data|\.init_section|\.ARM.exidx)\s+([0-9]+).*
+recipe.size.regex.data=^(\.data|\.bss)\s+([0-9]+).*
+
+
+# ------------------------------
+tools.stools.path={runtime.tools.stools.path}
+tools.stools.cmd.path={path}/dist/flash_writer_es.exe
+#tools.stools.cmd.path={path}/scripts/flash_writer_es.py
+## Please select the baudrate depending on your PC environment.
+## If cmd.opt.baudrate is none, baudrate is 115200 (default).
+tools.stools.cmd.opt.baudrate=
+#tools.stools.cmd.opt.baudrate=-b 230400
+#tools.stools.cmd.opt.baudrate=-b 460800
+#tools.stools.cmd.opt.baudrate=-b 500000
+#tools.stools.cmd.opt.baudrate=-b 576000
+#tools.stools.cmd.opt.baudrate=-b 921600
+#tools.stools.cmd.opt.baudrate=-b 1000000
+#tools.stools.cmd.opt.baudrate=-b 1152000
+tools.stools.pycmd=python3.4m.exe
+tools.stools.upload.protocol=spritzer
+tools.stools.upload.params.verbose=
+tools.stools.upload.params.quiet=
+tools.stools.upload.pattern="{cmd.path}" -s -c "{serial.port}" {cmd.opt.baudrate} -d -n "{build.path}/{build.project_name}.spk"
+tools.stools.erase.params.verbose=
+tools.stools.erase.params.quiet=
+tools.stools.erase.pattern=
+tools.stools.bootloader.params.verbose=
+tools.stools.bootloader.params.quiet=
+tools.stools.firmware.path={runtime.platform.path}/sdk/2.0/firmware
+tools.stools.bootloader.pattern="{cmd.path}" -s -c "{serial.port}" {cmd.opt.baudrate} -d -n -S "{firmware.path}/loader.espk" -S "{firmware.path}/gnssfw.espk"
