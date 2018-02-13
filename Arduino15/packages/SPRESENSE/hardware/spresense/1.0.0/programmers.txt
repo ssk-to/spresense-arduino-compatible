@@ -1,1 +1,1 @@
-sfutools.name=Spritzer Firmware Updater
+sfutools.name=Spresense Firmware Updater

@@ -1,9 +1,9 @@
 menu.Debug=Debug
 
 ##############################################################
-generic.name=Spritzer
+generic.name=Spresense Reference Board
 
-generic.upload.tool=stools
+generic.upload.tool=spresense-tools
 generic.upload.speed=115200
 generic.upload.resetmethod=ck
 generic.upload.maximum_size=434160
@@ -12,12 +12,12 @@ generic.upload.wait_for_upload_port=true
 generic.serial.disableDTR=true
 generic.serial.disableRTS=true
 
-generic.bootloader.tool=stools
+generic.bootloader.tool=spresense-tools
 
-generic.build.mcu=spritzer
+generic.build.mcu=spresense
 generic.build.f_cpu=156000000L
-generic.build.board=spritzer_ast
-generic.build.core=spritzer
+generic.build.board=spresense_ast
+generic.build.core=spresense
 generic.build.variant=generic
 generic.build.debug=
 generic.build.libpath=
