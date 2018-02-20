@@ -24,9 +24,9 @@ generic.build.libpath=
 
 generic.menu.Debug.Disabled=Disabled
 generic.menu.Debug.Disabled.build.debug=
-generic.menu.Debug.Disabled.build.libpath={runtime.platform.path}/sdk/2.0/release
+generic.menu.Debug.Disabled.build.libpath={runtime.tools.spresense-sdk.path}/release
 
 generic.menu.Debug.Enabled=Enabled
 generic.menu.Debug.Enabled.build.debug=
-generic.menu.Debug.Enabled.build.libpath={runtime.platform.path}/sdk/2.0/debug
+generic.menu.Debug.Enabled.build.libpath={runtime.tools.spresense-sdk.path}/debug
 
