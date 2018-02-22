@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ $# != 1 ]; then
-	echo "Usage: $0 <SDK2.0_Package_file>"
+	echo "Usage: $0 <SDK_Package_file>"
 	exit 1
 fi
 
@@ -12,13 +12,11 @@ fi
 
 T=`readlink -f $0`
 SCRIPT_DIR=`dirname $T`
-SDK_DIR="${SCRIPT_DIR}/../packages/spritzer/hardware/spritzer/0.1.0"
+SDK_DIR="${SCRIPT_DIR}/../packages/spritzer/hardware/spritzer/0.1.0/sdk"
 SDK_DIR=`readlink -f $SDK_DIR`
 
-echo $SCRIPT_DIR
-echo $SDK_DIR
+echo "Local SDK import to $SDK_DIR"
 
-if [ -d $SDK_DIR ]; then
-rm -rf $SDK_DIR/sdk
-unzip $1 -d $SDK_DIR
-fi
+rm -rf $SDK_DIR/${SDK_VERSION}/*
+mkdir -p $SDK_DIR
+unzip $1 -d $SDK_DIR > /dev/null

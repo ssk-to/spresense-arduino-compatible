@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u
+
 if [ $# != 1 ]; then
 	echo "Usage: $0 <SDK_TOPDIR>"
 	echo ""
@@ -9,7 +11,8 @@ if [ $# != 1 ]; then
 	exit 1
 fi
 
-SDK_VERSION=2.0
+echo "Export SDK from build."
+echo "SDK_VERSION=${SDK_VERSION}"
 NUTTX_EXPORT="sdk-export"
 PACKAGE_NAME="${NUTTX_EXPORT}.zip"
 
@@ -67,7 +70,8 @@ cp ${FW_GNSSFW} ${FW_DIR}
 
 cd $TMP_DIR
 find . -name .gitignore | xargs rm
-zip -r sdk-export.zip sdk >/dev/null
+cd sdk
+zip -r sdk-export.zip ${SDK_VERSION} >/dev/null
 mv sdk-export.zip $SDK_DIR
 rm -rf $TMP_DIR
 
