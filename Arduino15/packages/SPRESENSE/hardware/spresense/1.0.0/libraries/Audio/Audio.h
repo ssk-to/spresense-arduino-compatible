@@ -131,6 +131,19 @@ class AudioClass
 public:
 
   /**
+   * Player ID
+   *
+   * Audio Libraryでは2つのplayerを同時に使用することが出来ます。
+   * 使用するplayerを指定する際にはPlayer IDを使用して下さい。
+   */
+
+  typedef enum
+  {
+    Player0,
+    Player1
+  } PlayerId;
+
+  /**
    * Initialize the audio library and HW modules.
    *
    * この関数は、Audioライブラリを使用する際に、1回だけ呼び出します。
@@ -215,8 +228,9 @@ public:
    *
    */
   err_t initPlayer(
+      PlayerId id,    /**< Player IDの指定 */
       uint8_t codec,  /**< 圧縮Codecの指定。Select from enumulation "AsInitPlayerCodecType”。
-      AS_INITPLAYER_MP3 = 0 or AS_INITPLAYER_WAV or AS_INITPLAYER_AAC or AS_INITPLAYER_OPUS or AS_INITPLAYER_MEDIA,*/
+                           AS_INITPLAYER_MP3 = 0 or AS_INITPLAYER_WAV or AS_INITPLAYER_AAC or AS_INITPLAYER_OPUS or AS_INITPLAYER_MEDIA */
       uint32_t fs,    /**< サンプリングレートの指定。AsInitPlayerSamplingRateIndexを使用してもよいですし、周波数の値を直接入れてもよいです。*/
       uint8_t channel /**< チャンネル数の指定。AsInitPlayerChannelNumberIndexを使用してもよいですし、チャンネル数を直接入れてもよいです。*/
   );
@@ -235,7 +249,7 @@ public:
    */
   err_t initRecorder(
       uint8_t codec,  /**< 圧縮Codecの指定。Select from enumulation "AsInitRecorderCodecType"。
-      AS_INITREC_MP3 or AS_INITREC_WAV or AS_INITREC_OPUS */
+                           AS_INITREC_MP3 or AS_INITREC_WAV or AS_INITREC_OPUS */
       uint32_t fs,    /**< サンプリングレートの指定。AsInitRecorderSamplingRateIndexを使用してもよいですし、周波数の値を直接入れてもよいです。*/
       uint8_t channel /**< チャンネル数の指定。AsInitRecorderChannelNumberIndexを使用してもよいですし、チャンネル数を直接入れてもよいです。*/
   );
@@ -252,7 +266,9 @@ public:
    * writeFramesの呼び出しを行わずに実行すると、ES_UNDER_FLOW_ERRが発生します。
    *
    */
-  err_t startPlayer(void);
+  err_t startPlayer(
+      PlayerId id    /**< Player IDの指定*/
+  );
 
   /**
    * Start Recorder
@@ -276,7 +292,9 @@ public:
    * ※今後仕様変更されます。
    *
    */
-  err_t stopPlayer(void);
+  err_t stopPlayer(
+      PlayerId id /**< Player IDの指定 */
+  );
 
   /**
    * Stop Recorder
@@ -309,7 +327,13 @@ public:
    * PlayerModeで実行できます。
    */
   err_t setVolume(
-      int volume /**< 音量の指定。Range of volume is 0 - 100。*/
+      int volume /**< マスタ音量の指定。Range of volume is 0 - 100。*/
+  );
+
+  err_t setVolume(
+      int master,  /**< マスタ音量の指定。Range of volume is 0 - 100。*/
+      int player0, /**< Player0音量の指定。Range of volume is 0 - 100。*/
+      int player1  /**< Player1音量の指定。Range of volume is 0 - 100。*/
   );
 
   /** APIs for Player Mode */
@@ -326,7 +350,8 @@ public:
    * この関数の戻り値が、1のとき、発音すべき音声データがないことを示しますので、StopPlayerを呼び出し、再生を停止してください。
    */
   err_t writeFrames(
-      File& /**< 音声ファイルを制御しているFileクラスのインスタンスを指定します。*/
+      PlayerId id, /**< Player ID の指定 */
+      File& myfile /**< 音声ファイルを制御しているFileクラスのインスタンスを指定します。*/
   );
 
 
@@ -384,13 +409,17 @@ private:
   AudioClass& operator=(const AudioClass&);
   ~AudioClass() {}
 
-  char m_es_buf[FIFO_FRAME_SIZE];
+  char m_es_player0_buf[FIFO_FRAME_SIZE];
+  char m_es_player1_buf[FIFO_FRAME_SIZE];
 
-  CMN_SimpleFifoHandle m_simple_fifo_handle;
-  uint32_t m_simple_fifo_buf[SIMPLE_FIFO_BUF_SIZE/sizeof(uint32_t)];
+  CMN_SimpleFifoHandle m_player0_simple_fifo_handle;
+  CMN_SimpleFifoHandle m_player1_simple_fifo_handle;
+  uint32_t m_player0_simple_fifo_buf[SIMPLE_FIFO_BUF_SIZE/sizeof(uint32_t)];
+  uint32_t m_player1_simple_fifo_buf[SIMPLE_FIFO_BUF_SIZE/sizeof(uint32_t)];
 
   /* TODO: AsPlayerInputDeviceHdlrForRAM?  RAMを削除、これに付随した、EMMC削除、union削除 */
-  AsPlayerInputDeviceHdlrForRAM m_input_device_handler;
+  AsPlayerInputDeviceHdlrForRAM m_player0_input_device_handler;
+  AsPlayerInputDeviceHdlrForRAM m_player1_input_device_handler;
 
   AsRecorderOutputDeviceHdlr    m_output_device_handler;
   int                           m_es_size;
@@ -418,8 +447,8 @@ private:
   /* Functions for initialization on player mode. */
   err_t set_output(int);
 
-  err_t write_fifo(int);
-  err_t write_fifo(File&);
+  err_t write_fifo(int, char*, CMN_SimpleFifoHandle*);
+  err_t write_fifo(File&, char*, CMN_SimpleFifoHandle*);
 
   /* Functions for initialization on recorder mode. */
   err_t init_mic_gain(int, int);
