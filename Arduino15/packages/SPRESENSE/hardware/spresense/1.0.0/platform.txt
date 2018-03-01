@@ -15,7 +15,7 @@ compiler.warning_flags.default=
 compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
 
-compiler.path={runtime.tools.gcc-arm-none-eabi.path}/bin/
+compiler.path={runtime.tools.gcc-arm-none-eabi.path}/{runtime.os}/bin/
 compiler.sdk.path={runtime.tools.spresense-sdk.path}
 compiler.cpreprocessor.flags= "-I{compiler.sdk.path}/include" "-I{compiler.sdk.path}/arch" "-I{compiler.sdk.path}/arch/chip" "-I{compiler.sdk.path}/include/apps" "-I{compiler.sdk.path}/include/sdk" "-I{variant.path}" {build.debug} -DCONFIG_WCHAR_BUILTIN -DCONFIG_HAVE_DOUBLE
 
@@ -31,7 +31,7 @@ compiler.c.elf.flags=-ggdb -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-s
 
 
 compiler.c.elf.cmd=arm-none-eabi-g++
-compiler.c.elf.libs= "{build.libpath}/libs/libapps.a" "{build.libpath}/libs/libnuttx.a" -L"{runtime.tools.gcc-arm-none-eabi.path}/lib/gcc/arm-none-eabi/5.4.1/" -lgcc
+compiler.c.elf.libs= "{build.libpath}/libs/libapps.a" "{build.libpath}/libs/libnuttx.a" -L"{runtime.tools.gcc-arm-none-eabi.path}/{runtime.os}/lib/gcc/arm-none-eabi/5.4.1/" -lgcc
 
 
 compiler.cpp.cmd=arm-none-eabi-g++
