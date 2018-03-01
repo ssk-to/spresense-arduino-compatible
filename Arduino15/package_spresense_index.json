@@ -1,0 +1,108 @@
+{
+  "packages": [
+    {
+      "maintainer": "Spresense Community",
+      "help": {
+        "online": "http://localhost:8080"
+      },
+      "websiteURL": "http://localhost:8080",
+      "email": "noreply@sony.com",
+      "name": "spresense",
+      "platforms": [
+        {
+          "category": "Spresense",
+          "name": "Spresense Reference Board",
+          "url": "http://localhost:8080/spresense.zip",
+          "help": {
+            "online": "http://localhost:8080/"
+          },
+          "version": "1.0.0",
+          "architecture": "spresense-ext",
+          "archiveFileName": "spresense.zip",
+          "boards": [
+            {
+              "name": "Generic Spresense Module"
+            }
+          ],
+          "toolsDependencies": [
+            {
+              "packager": "spresense",
+              "version": "2.2",
+              "name": "spresense-sdk"
+            },
+            {
+              "packager": "spresense",
+              "version": "1.0.0",
+              "name": "spresense-loader"
+            },
+            {
+              "packager": "spresense",
+              "version": "5.4.1",
+              "name": "gcc-arm-none-eabi"
+            }
+          ],
+          "size": "33653981"
+        }
+      ],
+      "tools": [
+        {
+          "version": "2.2",
+          "name": "spresense-sdk",
+          "systems": [
+            {
+              "url": "http://localhost:8080/spresense-sdk.zip",
+              "host": "i686-mingw32",
+              "archiveFileName": "spresense-sdk.zip",
+              "size": "7093913"
+            },
+            {
+              "_comment": "Allow x64-Linux build",
+              "url": "http://localhost:8080/spresense-sdk.zip",
+              "host": "x86_64-pc-linux-gnu",
+              "archiveFileName": "spresense-sdk.zip",
+              "size": "7093913"
+            }
+          ]
+        },
+        {
+          "version": "1.0.0",
+          "name": "spresense-loader",
+          "systems": [
+            {
+              "url": "http://localhost:8080/spresense-loader.zip",
+              "host": "i686-mingw32",
+              "archiveFileName": "spresense-loader.zip",
+              "size": "7093913"
+            },
+            {
+              "_comment": "Allow x64-Linux build",
+              "url": "http://localhost:8080/spresense-loader.zip",
+              "host": "x86_64-pc-linux-gnu",
+              "archiveFileName": "spresense-loader.zip",
+              "size": "7093913"
+            }
+          ]
+        },
+        {
+          "version": "5.4.1",
+          "name": "gcc-arm-none-eabi",
+          "systems": [
+            {
+              "url": "http://localhost:8080/gcc-arm-none-eabi_5.4.1_win32.zip",
+              "host": "i686-mingw32",
+              "archiveFileName": "gcc-arm-none-eabi-5_4-2016q2-20160622-win32.zip",
+              "size": "127077478"
+            },
+            {
+              "_comment": "Allow x64-Linux build",
+              "url": "http://localhost:8080/gcc-arm-none-eabi_5.4.1_win32.zip",
+              "host": "x86_64-pc-linux-gnu",
+              "archiveFileName": "gcc-arm-none-eabi-5_4-2016q2-20160622-win32.zip",
+              "size": "92600244"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
