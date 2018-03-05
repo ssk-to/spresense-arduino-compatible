@@ -463,6 +463,7 @@ void analogReference(uint8_t mode)
   unuse(mode);
 }
 
+static int ad_pin_fd[6]= {-1,-1,-1,-1,-1,-1};
 int analogRead(uint8_t pin)
 {
   char *buftop = NULL;
@@ -487,33 +488,38 @@ int analogRead(uint8_t pin)
     goto out;
   }
 
-  fd = open(s_adcs[pin].dev_path, O_RDONLY);
-  if (fd < 0) {
-      printf("ERROR: Failed to open adc device\n");
-      goto out;
+  if (ad_pin_fd[pin] < 0) {
+      fd = open(s_adcs[pin].dev_path, O_RDONLY);
+      if (fd < 0) {
+          printf("ERROR: Failed to open adc device\n");
+          goto out;
+      }
+
+      /* Change adc running */
+
+      s_adcs[pin].running = true;
+
+      /* SCU FIFO overwrite */
+
+      if (ioctl(fd, SCUIOC_SETFIFOMODE, 1) < 0) {
+        printf("ERROR: Failed to set SCU FIFO mode\n");
+        goto out;
+      }
+
+      /* start ADC */
+
+      if (ioctl(fd, ANIOC_CXD56_START, 0) < 0) {
+        printf("ERROR: Failed to start ADC\n");
+        goto out;
+      }
+      ad_pin_fd[pin] = fd;
+  } else {
+      fd = ad_pin_fd[pin];
   }
 
-  /* Change adc running */
-
-  s_adcs[pin].running = true;
-
-  /* SCU FIFO overwrite */
-
-  if (ioctl(fd, SCUIOC_SETFIFOMODE, 1) < 0) {
-    printf("ERROR: Failed to set SCU FIFO mode\n");
-    goto out;
-  }
 
   cxd56_adc_getinterval(pin + SCU_BUS_LPADC0, &interval, &adjust);
   interval = interval * (1000000/32768 + 1);
-
-  /* start ADC */
-
-  if (ioctl(fd, ANIOC_CXD56_START, 0) < 0) {
-    printf("ERROR: Failed to start ADC\n");
-    goto out;
-  }
-
   bufptr = buftop;
 
   /* read data */
@@ -567,10 +573,15 @@ int analogRead(uint8_t pin)
   }
 
 out:
+#if 0
+  /* To realize the faster read operation from the ADC,
+   * Do not stop and close once opened.
+   */
   if (fd >= 0) {
     (void) ioctl(fd, ANIOC_CXD56_STOP, 0);
     (void) close(fd);
   }
+#endif
 
   s_adcs[pin].running = false;
 
