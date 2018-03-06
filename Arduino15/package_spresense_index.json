@@ -33,7 +33,7 @@
             {
               "packager": "spresense",
               "version": "1.0.0",
-              "name": "spresense-loader"
+              "name": "spresense-tools"
             },
             {
               "packager": "spresense",
@@ -66,19 +66,19 @@
         },
         {
           "version": "1.0.0",
-          "name": "spresense-loader",
+          "name": "spresense-tools",
           "systems": [
             {
-              "url": "http://localhost:8080/spresense-loader.zip",
+              "url": "http://localhost:8080/spresense-tools.zip",
               "host": "i686-mingw32",
-              "archiveFileName": "spresense-loader.zip",
+              "archiveFileName": "spresense-tools.zip",
               "size": "7093913"
             },
             {
               "_comment": "Allow x64-Linux build",
-              "url": "http://localhost:8080/spresense-loader.zip",
+              "url": "http://localhost:8080/spresense-tools.zip",
               "host": "x86_64-pc-linux-gnu",
-              "archiveFileName": "spresense-loader.zip",
+              "archiveFileName": "spresense-tools.zip",
               "size": "7093913"
             }
           ]
