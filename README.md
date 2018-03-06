@@ -27,24 +27,26 @@ $ git submodule foreach git checkout master
 # Directory structure
 
 ```
-Arduino15
-|-- packages/spresense           - SPRESENSE packages
-|   |-- hardware
-|   |   `--spresense-ext         - SPRESENSE reference board codes
-|   |      `-- 1.0.0
-|   |          |-- cores
-|   |          |-- libraries
-|   |          `-- variants
-|   |-- tools                    - Necessary tool chain and prebuilt binaries
-|   |   |-- spresense-tools      - SPRESENSE tools
-|   |   |   `-- 1.0.0
-|   |   |-- spresense-sdk        - SPRESENSE SDK prebuild binaries
-|   |   |   `-- 2.2
-|   |   `-- gcc-arm-none-eabi    - GCC compiler
-|   |       `-- 5.4.1
-|   `-- sketches                 - Sample Arduino sketches
-|       `-- spresense-ext
-`package_spresense_index.json    - Arduino IDE configuration json file
+spresense-arduinolibs
+|-- Arduino15
+|   |-- packages/spresense           - SPRESENSE packages
+|   |   |-- hardware
+|   |   |   `--spresense-ext         - SPRESENSE reference board codes
+|   |   |      `-- 1.0.0
+|   |   |          |-- cores
+|   |   |          |-- libraries
+|   |   |          `-- variants
+|   |   `-- tools                    - Necessary tool chain and prebuilt binaries
+|   |       |-- spresense-tools      - SPRESENSE tools
+|   |       |   `-- 1.0.0
+|   |       |-- spresense-sdk        - SPRESENSE SDK prebuild binaries
+|   |       |   `-- 2.2
+|   |       `-- gcc-arm-none-eabi    - GCC compiler
+|   |           `-- 5.4.1
+|   `-- package_spresense_index.json - Arduino IDE configuration json file
+|-- sketches                         - Sample Arduino sketches
+|   `-- spresense-ext
+`-- tools                            - Import/Export tools
 ```
 
 # How to use
