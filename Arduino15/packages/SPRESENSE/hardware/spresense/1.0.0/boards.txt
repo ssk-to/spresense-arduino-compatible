@@ -9,7 +9,7 @@ generic.upload.resetmethod=ck
 generic.upload.maximum_size=434160
 generic.upload.maximum_data_size=163840
 generic.upload.wait_for_upload_port=true
-generic.serial.disableDTR=true
+generic.serial.disableDTR=false
 generic.serial.disableRTS=true
 
 generic.bootloader.tool=spresense-tools
