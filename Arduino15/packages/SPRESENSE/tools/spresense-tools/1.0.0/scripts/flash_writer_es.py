@@ -247,6 +247,9 @@ class SerialDev:
 				self.serial = serial.Serial(port, baudrate=115200,
 					parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
 					bytesize=serial.EIGHTBITS, timeout=0.1)
+				# Target Reset by DTR
+				self.serial.setDTR(True)
+				self.serial.setDTR(False)
 			except Exception as e:
 				print("Cannot open port : " + port)
 				sys.exit(e.args[0])
