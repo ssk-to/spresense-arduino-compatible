@@ -92,8 +92,8 @@ recipe.size.regex.data=^(\.data|\.bss)\s+([0-9]+).*
 
 # ------------------------------
 tools.spresense-tools.path={runtime.tools.spresense-tools.path}
-tools.spresense-tools.cmd.path={path}/scripts/flash_writer_es.py
-tools.spresense-tools.cmd.path.windows={path}/dist/flash_writer_es.exe
+tools.spresense-tools.cmd.path={path}/dist/{runtime.os}/flash_writer_es
+tools.spresense-tools.cmd.path.windows={path}/dist/{runtime.os}/flash_writer_es.exe
 ## Please select the baudrate depending on your PC environment.
 ## If cmd.opt.baudrate is none, baudrate is 115200 (default).
 tools.spresense-tools.cmd.opt.baudrate=
