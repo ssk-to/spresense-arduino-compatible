@@ -89,12 +89,12 @@ extern "C" void  outputDeviceCallback(uint32_t);
  * Audio Library Error Code Definitions.
  */
 
-#define AUDIOLIB_ECODE_OK                  0 
+#define AUDIOLIB_ECODE_OK                  0
 #define AUDIOLIB_ECODE_SHARED_MEMORY_ERROR 1
 #define AUDIOLIB_ECODE_SIMPLEFIFO_ERROR    2
 #define AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR  3
 #define AUDIOLIB_ECODE_FILEACCESS_ERROR    4
-#define AUDIOLIB_ECODE_FILEEND             5 
+#define AUDIOLIB_ECODE_FILEEND             5
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -334,6 +334,18 @@ public:
       int master,  /**< マスタ音量の指定。Range of volume is 0 - 100。*/
       int player0, /**< Player0音量の指定。Range of volume is 0 - 100。*/
       int player1  /**< Player1音量の指定。Range of volume is 0 - 100。*/
+  );
+
+  /**
+   * Set Player L/R Gain
+   *
+   * この関数は、Player再生時のL/R gainを設定できます。
+   * PlayerModeで実行できます。
+   */
+  err_t setLRgain(
+      PlayerId id,          /**< Player ID の指定 */
+      unsigned char l_gain, /**< L gain */
+      unsigned char r_gain  /**< R gain */
   );
 
   /** APIs for Player Mode */

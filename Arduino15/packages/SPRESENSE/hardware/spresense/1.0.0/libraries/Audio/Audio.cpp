@@ -553,6 +553,34 @@ err_t AudioClass::setVolume(int master, int player0, int player1)
   return AUDIOLIB_ECODE_OK;
 }
 
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::setLRgain(PlayerId id, unsigned char l_gain, unsigned char r_gain)
+{
+  AudioCommand command;
+
+  command.header.packet_length = LENGTH_SET_GAIN;
+  command.header.command_code  = (id == Player0) ? AUDCMD_SETGAIN : AUDCMD_SETGAINSUB;
+  command.header.sub_code      = 0;
+
+  command.set_gain_param.l_gain = l_gain;
+  command.set_gain_param.r_gain = r_gain;
+
+  AS_SendAudioCommand(&command);
+
+  AudioResult result;
+  AS_ReceiveAudioResult(&result);
+
+  if ((result.header.result_code != AUDRLT_SETGAIN_CMPLT) &&
+      (result.header.result_code != AUDRLT_SETGAINSUB_CMPLT))
+    {
+      printf("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)¥n",
+              command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  return AUDIOLIB_ECODE_OK;
+}
+
 #define WRITE_FRAME_NUM 5 
 /*--------------------------------------------------------------------------*/
 /*err_t AudioClass::writeFrames(PlayerId id, int fd)
