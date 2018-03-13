@@ -61,6 +61,12 @@
               "host": "x86_64-pc-linux-gnu",
               "archiveFileName": "spresense-sdk.zip",
               "size": "7093913"
+            },
+            {
+              "url": "http://localhost:8080/spresense-sdk.zip",
+              "host": "i386-apple-darwin11",
+              "archiveFileName": "spresense-sdk.zip",
+              "size": "7093913"
             }
           ]
         },
@@ -78,6 +84,11 @@
               "_comment": "Allow x64-Linux build",
               "url": "http://localhost:8080/spresense-tools.zip",
               "host": "x86_64-pc-linux-gnu",
+              "archiveFileName": "spresense-tools.zip",
+              "size": "7093913"
+            },            {
+              "url": "http://localhost:8080/spresense-tools.zip",
+              "host": "i386-apple-darwin11",
               "archiveFileName": "spresense-tools.zip",
               "size": "7093913"
             }
@@ -99,6 +110,11 @@
               "host": "x86_64-pc-linux-gnu",
               "archiveFileName": "gcc-arm-none-eabi-5_4-2016q2-20160622-win32.zip",
               "size": "92600244"
+            },            {
+              "url": "http://localhost:8080/gcc-arm-none-eabi_5.4.1_macosx.zip",
+              "host": "i386-apple-darwin11",
+              "archiveFileName": "gcc-arm-none-eabi-5_4-2016q2-20160622-macosx.zip",
+              "size": "127077478"
             }
           ]
         }
