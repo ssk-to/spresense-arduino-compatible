@@ -33,7 +33,7 @@
 #define PIN_NOT_ASSIGNED    (0xFF)
 
 // Variant definition
-#define TARGET_USES_PROTO3_BOARD
+#define TARGET_USES_DVT_BOARD
 
 // Digital pins
 #define PIN_D00     (uint8_t)(0)

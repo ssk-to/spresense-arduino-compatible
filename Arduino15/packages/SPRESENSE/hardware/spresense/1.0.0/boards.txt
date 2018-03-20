@@ -1,7 +1,7 @@
 menu.Debug=Debug
 
-##############################################################
-generic.name=Spresense Reference Board
+############## SPRESENSE Proto 3 BOARD ##############
+generic.name=SPRESENSE Proto 3 SC
 
 generic.upload.tool=spresense-tools
 generic.upload.speed=115200
@@ -29,4 +29,34 @@ generic.menu.Debug.Disabled.build.libpath={runtime.tools.spresense-sdk.path}/rel
 generic.menu.Debug.Enabled=Enabled
 generic.menu.Debug.Enabled.build.debug=
 generic.menu.Debug.Enabled.build.libpath={runtime.tools.spresense-sdk.path}/debug
+
+############## SPRESENSE DVT BOARD ##############
+spresense_dvt.name=SPRESENSE DVT
+
+spresense_dvt.upload.tool=spresense-tools
+spresense_dvt.upload.speed=115200
+spresense_dvt.upload.resetmethod=ck
+spresense_dvt.upload.maximum_size=434160
+spresense_dvt.upload.maximum_data_size=163840
+spresense_dvt.upload.wait_for_upload_port=true
+spresense_dvt.serial.disableDTR=false
+spresense_dvt.serial.disableRTS=true
+
+spresense_dvt.bootloader.tool=spresense-tools
+
+spresense_dvt.build.mcu=spresense
+spresense_dvt.build.f_cpu=156000000L
+spresense_dvt.build.board=spresense_ast
+spresense_dvt.build.core=spresense
+spresense_dvt.build.variant=spresense_dvt
+spresense_dvt.build.debug=
+spresense_dvt.build.libpath=
+
+spresense_dvt.menu.Debug.Disabled=Disabled
+spresense_dvt.menu.Debug.Disabled.build.debug=
+spresense_dvt.menu.Debug.Disabled.build.libpath={runtime.tools.spresense-sdk.path}/release
+
+spresense_dvt.menu.Debug.Enabled=Enabled
+spresense_dvt.menu.Debug.Enabled.build.debug=
+spresense_dvt.menu.Debug.Enabled.build.libpath={runtime.tools.spresense-sdk.path}/debug
 
