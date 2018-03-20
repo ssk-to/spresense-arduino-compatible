@@ -32,7 +32,13 @@
 #ifndef Audio_h
 #define Audio_h
 
+/* Switch SD library by spresense board */
+
+#ifdef TARGET_USES_DVT_BOARD
+#include <SDHCI.h>
+#else
 #include <SD.h>
+#endif
 
 #ifdef __cplusplus
 
