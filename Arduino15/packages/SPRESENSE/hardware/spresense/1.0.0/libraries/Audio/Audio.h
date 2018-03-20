@@ -95,6 +95,9 @@ extern "C" void  outputDeviceCallback(uint32_t);
 #define AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR  3
 #define AUDIOLIB_ECODE_FILEACCESS_ERROR    4
 #define AUDIOLIB_ECODE_FILEEND             5
+#define AUDIOLIB_ECODE_BUFFER_AREA_ERROR   6
+#define AUDIOLIB_ECODE_BUFFER_SIZE_ERROR   7
+#define AUDIOLIB_ECODE_INSUFFICIENT_BUFFER_AREA   8
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -409,6 +412,20 @@ public:
       static AudioClass instance;
       return &instance;
     }
+
+  /**
+   * Read Stream Data from FIFO to a file by some frames.(now 5 frames)
+   *
+   * この関数は、Audioライブラリ内に持つFIFOから、生成されたStreamデータを指定したバッファー領域に書き込みます。
+   * RecorderModeで実行できます。
+   *
+   * 音声記録中は、定期的にこの関数を呼び出してください。
+   */
+  err_t readFrames(
+      char*     p_buffer,    /**< バッファー領域のアドレス */
+      uint32_t  buffer_size, /**< バッファーのサイズ */
+      uint32_t* read_size    /**< 読込みサイズ */
+  );
 
 private:
 

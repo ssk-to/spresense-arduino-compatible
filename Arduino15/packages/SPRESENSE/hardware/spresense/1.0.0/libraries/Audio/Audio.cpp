@@ -1000,6 +1000,44 @@ err_t AudioClass::readFrames(File& myFile)
   return AUDIOLIB_ECODE_OK;
 }
 
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::readFrames(char* p_buffer, uint32_t buffer_size, uint32_t* read_size)
+{
+  if (p_buffer == NULL)
+    {
+      print_err("ERROR: Buffer area not specified.\n");
+      return AUDIOLIB_ECODE_BUFFER_AREA_ERROR;
+    }
+  if (buffer_size == 0)
+    {
+      print_err("ERROR: Buffer area size error.\n");
+      return AUDIOLIB_ECODE_BUFFER_SIZE_ERROR;
+    }
+
+  size_t data_size = CMN_SimpleFifoGetOccupiedSize(&m_recorder_simple_fifo_handle);
+  print_dbg("dsize = %d\n", data_size);
+
+  *read_size = 0;
+  if (data_size > 0)
+    {
+      if (buffer_size >= data_size)
+        {
+          print_err("ERROR: Insufficient buffer area.\n");
+          return AUDIOLIB_ECODE_INSUFFICIENT_BUFFER_AREA;
+        }
+
+      if (CMN_SimpleFifoPoll(&m_recorder_simple_fifo_handle, (void*)p_buffer, data_size) == 0)
+        {
+          print_err("ERROR: Fail to get data from simple FIFO.\n");
+          return AUDIOLIB_ECODE_SIMPLEFIFO_ERROR;
+        }
+      *read_size = data_size;
+
+      m_es_size += data_size;
+    }
+
+  return AUDIOLIB_ECODE_OK;
+}
 
 /****************************************************************************
  * Private API on Audio Player
