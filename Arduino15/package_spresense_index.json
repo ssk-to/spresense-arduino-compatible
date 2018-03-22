@@ -1,42 +1,42 @@
 {
   "packages": [
     {
-      "maintainer": "Spresense Community",
+      "maintainer": "SPRESENSE Community",
       "help": {
         "online": "http://localhost:8080"
       },
       "websiteURL": "http://localhost:8080",
       "email": "noreply@sony.com",
-      "name": "spresense",
+      "name": "SPRESENSE",
       "platforms": [
         {
-          "category": "Spresense",
-          "name": "Spresense Reference Board",
+          "category": "SPRESENSE",
+          "name": "SPRESENSE Reference Board",
           "url": "http://localhost:8080/spresense.zip",
           "help": {
             "online": "http://localhost:8080/"
           },
           "version": "1.0.0",
-          "architecture": "spresense-ext",
+          "architecture": "spresense",
           "archiveFileName": "spresense.zip",
           "boards": [
             {
-              "name": "Generic Spresense Module"
+              "name": "Generic SPRESENSE Module"
             }
           ],
           "toolsDependencies": [
             {
-              "packager": "spresense",
+              "packager": "SPRESENSE",
               "version": "2.2",
               "name": "spresense-sdk"
             },
             {
-              "packager": "spresense",
+              "packager": "SPRESENSE",
               "version": "1.0.0",
               "name": "spresense-tools"
             },
             {
-              "packager": "spresense",
+              "packager": "SPRESENSE",
               "version": "5.4.1",
               "name": "gcc-arm-none-eabi"
             }
