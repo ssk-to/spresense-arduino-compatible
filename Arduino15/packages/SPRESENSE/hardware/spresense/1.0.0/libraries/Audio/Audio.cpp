@@ -573,7 +573,7 @@ err_t AudioClass::setLRgain(PlayerId id, unsigned char l_gain, unsigned char r_g
   if ((result.header.result_code != AUDRLT_SETGAIN_CMPLT) &&
       (result.header.result_code != AUDRLT_SETGAINSUB_CMPLT))
     {
-      printf("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)¥n",
+      printf("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)\n",
               command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
@@ -775,6 +775,27 @@ err_t AudioClass::init_recorder_opus(AudioCommand* command, uint32_t sampling_ra
 }
 
 /*--------------------------------------------------------------------------*/
+err_t AudioClass::init_recorder_pcm(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number)
+{
+  command->init_recorder_param.sampling_rate  = sampling_rate;
+  command->init_recorder_param.channel_number = channel_number;
+  command->init_recorder_param.bit_length     = AS_BITLENGTH_16;
+  command->init_recorder_param.codec_type     = AS_CODECTYPE_WAV;
+  AS_SendAudioCommand(command);
+
+  AudioResult result;
+  AS_ReceiveAudioResult(&result);
+  if (result.header.result_code != AUDRLT_INITRECCMPLT)
+    {
+      print_err("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)\n",
+                command->header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  return AUDIOLIB_ECODE_OK;
+}
+
+/*--------------------------------------------------------------------------*/
 err_t AudioClass::initRecorder(uint8_t codec_type, uint32_t sampling_rate, uint8_t channel)
 {
   AudioCommand command;
@@ -798,6 +819,10 @@ err_t AudioClass::initRecorder(uint8_t codec_type, uint32_t sampling_rate, uint8
 
       case AS_CODECTYPE_OPUS:
         ret = init_recorder_opus(&command, sampling_rate, channel);
+        break;
+
+      case AS_CODECTYPE_PCM:
+        ret = init_recorder_pcm(&command, sampling_rate, channel);
         break;
 
       default:
@@ -1003,6 +1028,7 @@ err_t AudioClass::readFrames(File& myFile)
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::readFrames(char* p_buffer, uint32_t buffer_size, uint32_t* read_size)
 {
+  err_t rst = AUDIOLIB_ECODE_OK;
   if (p_buffer == NULL)
     {
       print_err("ERROR: Buffer area not specified.\n");
@@ -1018,25 +1044,31 @@ err_t AudioClass::readFrames(char* p_buffer, uint32_t buffer_size, uint32_t* rea
   print_dbg("dsize = %d\n", data_size);
 
   *read_size = 0;
+  size_t poll_size = 0;
   if (data_size > 0)
     {
-      if (buffer_size >= data_size)
+      if (data_size > buffer_size)
         {
-          print_err("ERROR: Insufficient buffer area.\n");
-          return AUDIOLIB_ECODE_INSUFFICIENT_BUFFER_AREA;
+          print_err("WARNING: Insufficient buffer area.\n");
+          poll_size = (size_t)buffer_size;
+          rst = AUDIOLIB_ECODE_INSUFFICIENT_BUFFER_AREA;
+        }
+      else
+        {
+          poll_size = data_size;
         }
 
-      if (CMN_SimpleFifoPoll(&m_recorder_simple_fifo_handle, (void*)p_buffer, data_size) == 0)
+      if (CMN_SimpleFifoPoll(&m_recorder_simple_fifo_handle, (void*)p_buffer, poll_size) == 0)
         {
           print_err("ERROR: Fail to get data from simple FIFO.\n");
           return AUDIOLIB_ECODE_SIMPLEFIFO_ERROR;
         }
-      *read_size = data_size;
+      *read_size = (uint32_t)poll_size;
 
       m_es_size += data_size;
     }
 
-  return AUDIOLIB_ECODE_OK;
+  return rst;
 }
 
 /****************************************************************************

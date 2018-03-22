@@ -32,13 +32,7 @@
 #ifndef Audio_h
 #define Audio_h
 
-/* Switch SD library by spresense board */
-
-#ifdef TARGET_USES_DVT_BOARD
-#include <SDHCI.h>
-#else
 #include <SD.h>
-#endif
 
 #ifdef __cplusplus
 
@@ -89,6 +83,8 @@ extern "C" void  outputDeviceCallback(uint32_t);
 #define SUBCHUNKID_DATA     ("data")
 #define AUDIO_FORMAT_PCM    (0x0001)
 #define FMT_SIZE            (0x10)
+
+#define AS_CODECTYPE_PCM  5
 
 /*--------------------------------------------------------------------------*/
 /**
@@ -325,7 +321,7 @@ public:
    */
   err_t setBeep(
       char  enable, /**< Beep音のon/off指定。enable(On) = 1, disable(Off) = 0。*/
-      short volume, /**< Beep音の音量指定。0〜100までの値で指定できる。*/
+      short volume, /**< Beep音の音量指定。0?100までの値で指定できる。*/
       short frequency /**< Beep音の周波数（音程）を指定できる。周波数の値をそのまま指定する。(example, 1000)*/
   );
 
@@ -478,6 +474,7 @@ private:
   err_t init_recorder_wav(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
   err_t init_recorder_mp3(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
   err_t init_recorder_opus(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
+  err_t init_recorder_pcm(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
 
   /* Functions for initialization on player mode. */
   err_t set_output(int);
