@@ -13,6 +13,7 @@ fi
 
 echo "Export SDK from build."
 echo "SDK_VERSION=${SDK_VERSION}"
+echo "VARIANT_NAME=${VARIANT_NAME}"
 NUTTX_EXPORT="sdk-export"
 PACKAGE_NAME="${NUTTX_EXPORT}.zip"
 
@@ -39,9 +40,9 @@ unzip $PACKAGE_NAME -d $TMP_DIR >/dev/null
 rm $PACKAGE_NAME
 
 # create sdk directory
-mkdir -p $TMP_DIR/sdk/${SDK_VERSION}
+mkdir -p $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}
 
-cd $TMP_DIR/sdk/${SDK_VERSION}
+cd $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}
 
 # create arch, include, startup
 mv $TMP_DIR/${NUTTX_EXPORT}/nuttx/* .
@@ -71,7 +72,7 @@ cp ${FW_GNSSFW} ${FW_DIR}
 cd $TMP_DIR
 find . -name .gitignore | xargs rm
 cd sdk
-zip -r sdk-export.zip ${SDK_VERSION} >/dev/null
+zip -r sdk-export.zip ${SDK_VERSION}/${VARIANT_NAME} >/dev/null
 mv sdk-export.zip $SDK_DIR
 rm -rf $TMP_DIR
 

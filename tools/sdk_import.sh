@@ -17,6 +17,6 @@ SDK_DIR=`readlink -f $SDK_DIR`
 
 echo "Local SDK import to $SDK_DIR"
 
-rm -rf $SDK_DIR/${SDK_VERSION}/*
+rm -rf $SDK_DIR/${SDK_VERSION}/${VARIANT_NAME}/*
 mkdir -p $SDK_DIR
 unzip $1 -d $SDK_DIR > /dev/null

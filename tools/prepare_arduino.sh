@@ -139,6 +139,7 @@ function install_sdk_from_build()
 	JSN_NAME=${ARDUINO_DIR}/$3
 	TARGET_HOST=$4
 	SDK_NAME=$5
+	VARIANT_NAME=$6
 
 	echo "Install SDK from Spresense build..."
 	debug_print "Using ${SPRESENSE_SDK_PATH}"
@@ -149,6 +150,7 @@ function install_sdk_from_build()
 
 	# Get SDK version from json
 	export SDK_VERSION=`${JSN_LOADER} -j ${JSN_NAME} -p ${PKG_NAME} -b ${BRD_NAME} -t ${SDK_NAME} -H ${AURDUINO_IDE_HOST} -k version`
+	export VARIANT_NAME=${VARIANT_NAME}
 
 	# Error handling
 	if [ "${SDK_VERSION}" == "" ]; then
@@ -172,14 +174,16 @@ function install_sdk_from_build()
 SPRESENSE_SDK_PATH=""
 GCC_ARCHIVE_PATH=""
 SDK_ARCHIVE_PATH=""
+SDK_VARIANT_NAME="generic"
 AURDUINO_IDE_HOST=""
 PRIVATE_ACCESS=""
-while getopts S:g:s:H:ph OPT
+while getopts S:g:s:v:H:ph OPT
 do
 	case $OPT in
 		'S' ) SPRESENSE_SDK_PATH=$OPTARG;;
 		'g' ) GCC_ARCHIVE_PATH=$OPTARG;;
 		's' ) SDK_ARCHIVE_PATH=$OPTARG;;
+		'v' ) SDK_VARIANT_NAME=$OPTARG;;
 		'H' ) AURDUINO_IDE_HOST=$OPTARG;;
 		'p' ) PRIVATE_ACCESS=true;;
 		'h' ) show_help;;
@@ -214,7 +218,7 @@ if [ "${SDK_ARCHIVE_PATH}" != "" ]; then
 	install_tool_from_archive ${PACKAGE_NAME} ${SDK_NAME} ${SDK_ARCHIVE_PATH}
 elif [ "${SPRESENSE_SDK_PATH}" != "" ]; then
 	# Using SDK build
-	install_sdk_from_build ${PACKAGE_NAME} ${BOARD_NAME} ${JSON_FILE} ${AURDUINO_IDE_HOST} ${SDK_NAME}
+	install_sdk_from_build ${PACKAGE_NAME} ${BOARD_NAME} ${JSON_FILE} ${AURDUINO_IDE_HOST} ${SDK_NAME} ${SDK_VARIANT_NAME}
 else
 	# Using HTTP install
 	install_tool_from_http ${PACKAGE_NAME} ${BOARD_NAME} ${JSON_FILE} ${AURDUINO_IDE_HOST} ${SDK_NAME}
