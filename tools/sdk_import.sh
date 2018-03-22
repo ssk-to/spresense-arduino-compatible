@@ -12,7 +12,7 @@ fi
 
 T=`readlink -f $0`
 SCRIPT_DIR=`dirname $T`
-SDK_DIR="${SCRIPT_DIR}/../Arduino15/packages/spresense/tools/spresense-sdk"
+SDK_DIR="${SCRIPT_DIR}/../Arduino15/packages/SPRESENSE/tools/spresense-sdk"
 SDK_DIR=`readlink -f $SDK_DIR`
 
 echo "Local SDK import to $SDK_DIR"

@@ -14,8 +14,8 @@ DEBUG=No
 # Common description
 #
 JSON_FILE=package_spresense_index.json
-PACKAGE_NAME=spresense
-BOARD_NAME=spresense-ext
+PACKAGE_NAME=SPRESENSE
+BOARD_NAME=spresense
 
 #
 # Tools description
