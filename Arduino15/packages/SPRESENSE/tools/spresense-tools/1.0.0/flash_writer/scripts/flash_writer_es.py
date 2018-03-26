@@ -1,4 +1,8 @@
 #! /usr/bin/env python3
+
+__copyright__ = ['Copyright (C) 2018 Sony Semiconductor Solutions Corp.']
+__license__ = 'GPL v2'
+
 import time
 import sys
 import os
