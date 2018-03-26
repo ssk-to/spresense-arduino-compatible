@@ -4,6 +4,7 @@
  *
  *      Description: audio memory map layout header
  *
+ *      Notes: (C) Copyright 2018 Sony Semiconductor Solutions Corp.
  *      Notes: (C) Copyright 2016 Sony Corporation
  *
  *      Author: Takuya OHASHI

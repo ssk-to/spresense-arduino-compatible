@@ -1,5 +1,6 @@
 /*
   main.cpp - Main loop for Arduino sketches
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Copyright (c) 2005-2013 Arduino Team.  All right reserved.
 
   This library is free software; you can redistribute it and/or

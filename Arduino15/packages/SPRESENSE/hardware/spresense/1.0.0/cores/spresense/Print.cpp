@@ -1,5 +1,6 @@
 /*
  Print.cpp - Base class that provides print() and println()
+ Copyright (C) 2018 Sony Semiconductor Solutions Corp.
  Copyright (c) 2008 David A. Mellis.  All right reserved.
  
  This library is free software; you can redistribute it and/or

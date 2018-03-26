@@ -1,5 +1,6 @@
 /*
  *  Udp.cpp: Library to send/receive UDP packets.
+ * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
  *
  * NOTE: UDP is fast, but has some important limitations (thanks to Warren Gray for mentioning these)
  * 1) UDP does not guarantee the order in which assembled UDP packets are received. This

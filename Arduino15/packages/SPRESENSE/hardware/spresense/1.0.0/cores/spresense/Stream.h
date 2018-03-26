@@ -1,5 +1,6 @@
 /*
   Stream.h - base class for character-based streams.
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Copyright (c) 2010 David A. Mellis.  All right reserved.
 
   This library is free software; you can redistribute it and/or

@@ -1,4 +1,5 @@
 /***************************************************
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   This is a library for the Adafruit 1.8" SPI display.
   This library works with the Adafruit 1.8" TFT Breakout w/SD card
   ----> http://www.adafruit.com/products/358

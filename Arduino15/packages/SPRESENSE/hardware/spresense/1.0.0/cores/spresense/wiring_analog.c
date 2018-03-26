@@ -1,5 +1,6 @@
 /*
   wiring_analog.c - analog I/O for the Sparduino SDK
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Copyright (c) 2017 Sony Corporation  All right reserved.
 
   This library is free software; you can redistribute it and/or

@@ -1,5 +1,6 @@
 /*
   GNSS.h - GNSS include file for the SPRESSO SDK
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Copyright (C) 2017 Sony Corporation  All right reserved.
 
   This library is free software; you can redistribute it and/or

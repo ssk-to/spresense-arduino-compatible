@@ -1,5 +1,6 @@
 /*
  * msgq_pool.h -- Message queue pool layout definition.
+ * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
  *
  * This file was created by msgq_layout.conf
  * !!! CAUTION! don't edit this file manually !!!

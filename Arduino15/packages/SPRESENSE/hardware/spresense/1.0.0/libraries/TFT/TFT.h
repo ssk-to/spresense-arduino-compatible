@@ -1,4 +1,5 @@
-/* Copyright (c) 2013, Enrico Gueli <enrico.gueli@gmail.com> All
+/* Copyright (C) 2018 Sony Semiconductor Solutions Corp.
+Copyright (c) 2013, Enrico Gueli <enrico.gueli@gmail.com> All
 rights reserved.
 
 Redistribution and use in source and binary forms, with or without

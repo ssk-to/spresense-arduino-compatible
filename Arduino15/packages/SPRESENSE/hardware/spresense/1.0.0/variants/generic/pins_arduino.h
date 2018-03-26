@@ -1,5 +1,6 @@
 /*
   pins_arduino.h - Pin definition functions for Arduino
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Part of Arduino - http://www.arduino.cc/
 
   Copyright (c) 2007 David A. Mellis

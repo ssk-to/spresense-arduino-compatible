@@ -1,5 +1,6 @@
 /*
   wiring_shift.c - shiftOut() function
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Part of Arduino - http://www.arduino.cc/
 
   Copyright (c) 2005-2006 David A. Mellis

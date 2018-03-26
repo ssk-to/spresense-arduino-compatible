@@ -7,6 +7,7 @@ paired with a hardware-specific library for each display device we carry
 Adafruit invests time and resources providing this open source code, please
 support Adafruit & open-source hardware by purchasing products from Adafruit!
 
+Copyright (C) 2018 Sony Semiconductor Solutions Corp.
 Copyright (c) 2013 Adafruit Industries.  All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

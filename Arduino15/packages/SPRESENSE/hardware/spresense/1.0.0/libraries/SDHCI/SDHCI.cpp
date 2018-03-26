@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
  */
 
 #include <sys/stat.h>

@@ -1,5 +1,6 @@
 /*
   WString.cpp - String library for Wiring & Arduino
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   ...mostly rewritten by Paul Stoffregen...
   Copyright (c) 2009-10 Hernando Barragan.  All rights reserved.
   Copyright 2011, Paul Stoffregen, paul@pjrc.com

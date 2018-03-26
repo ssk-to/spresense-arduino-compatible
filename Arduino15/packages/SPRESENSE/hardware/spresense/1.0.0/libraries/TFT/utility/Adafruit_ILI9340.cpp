@@ -1,4 +1,5 @@
 /***************************************************
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   This is an Arduino Library for the Adafruit 2.2" SPI display.
   This library works with the Adafruit 2.2" TFT Breakout w/SD card
   ----> http://www.adafruit.com/products/1480

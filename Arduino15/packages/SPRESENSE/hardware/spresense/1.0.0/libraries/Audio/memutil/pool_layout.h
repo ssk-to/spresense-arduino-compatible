@@ -1,5 +1,6 @@
 /*
  * pool_layout.h -- MemMgrLite layout definition.
+ * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
  *
  * This file was created by mem_layout.conf
  * !!! CAUTION! don't edit this file manually !!!

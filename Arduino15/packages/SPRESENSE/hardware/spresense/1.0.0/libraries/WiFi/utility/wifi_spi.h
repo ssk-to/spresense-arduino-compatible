@@ -1,5 +1,6 @@
 /*
   wifi_spi.h - Library for Arduino Wifi shield.
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Copyright (c) 2011-2014 Arduino.  All right reserved.
 
   This library is free software; you can redistribute it and/or

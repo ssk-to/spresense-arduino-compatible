@@ -1,5 +1,6 @@
 /*
  * msgq_id.h -- Message queue pool ID and macro definition.
+ * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
  *
  * This file was created by msgq_layout.conf
  * !!! CAUTION! don't edit this file manually !!!

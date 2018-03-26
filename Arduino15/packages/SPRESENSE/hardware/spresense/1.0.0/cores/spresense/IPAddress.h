@@ -1,5 +1,6 @@
 /*
   IPAddress.h - Base class that provides IPAddress
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   Copyright (c) 2011 Adrian McEwen.  All right reserved.
 
   This library is free software; you can redistribute it and/or
