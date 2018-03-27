@@ -29,9 +29,9 @@ $ git submodule foreach git checkout master
 ```
 spresense-arduinolibs
 |-- Arduino15
-|   |-- packages/spresense           - SPRESENSE packages
+|   |-- packages/SPRESENSE           - SPRESENSE packages
 |   |   |-- hardware
-|   |   |   `--spresense-ext         - SPRESENSE reference board codes
+|   |   |   `--spresense             - SPRESENSE reference board codes
 |   |   |      `-- 1.0.0
 |   |   |          |-- cores
 |   |   |          |-- libraries
@@ -45,7 +45,7 @@ spresense-arduinolibs
 |   |           `-- 5.4.1
 |   `-- package_spresense_index.json - Arduino IDE configuration json file
 |-- sketches                         - Sample Arduino sketches
-|   `-- spresense-ext
+|   `-- spresense
 `-- tools                            - Import/Export tools
 ```
 
