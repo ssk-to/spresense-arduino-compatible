@@ -1,9 +1,9 @@
-# Welcome to SPRESENSE Arduino libs project
+# Welcome to SPRESENSE Arduino compatible project
 
 Clone this repository and update submodules.
 
 ```
-$ git clone --recursive git@code.sonymobile.net:spritzer-sdk/spresense-arduinolibs.git
+$ git clone --recursive git@code.sonymobile.net:spritzer-sdk/spresense-arduino-compatible.git
 ```
 
 After repositories cloned, each submodules are in 'Detached HEAD'.
@@ -17,11 +17,11 @@ $ git submodule foreach git checkout master
 # Submodules
 
 ```
-- spresense-core     - SPRESENSE Arduino core library sources
-- spresense-sdk      - SPRESENSE SDK header and libraries
-- spresense-tools    - SPRESENSE Arduino flash tools
-- spresense-sketches - SPRESENSE Arduino sample sketches
-- gcc-arm-none-eabi  - Gcc compile tool
+- spresense-core-lib     - SPRESENSE Arduino core library sources
+- spresense-prebuilt-sdk - SPRESENSE SDK header and libraries
+- spresense-tools        - SPRESENSE Arduino flash tools
+- spresense-sketches     - SPRESENSE Arduino sample sketches
+- gcc-arm-none-eabi      - Gcc compile tool
 ```
 
 # Directory structure
