@@ -1,15 +1,5 @@
 /*
-
- SD - a slightly more friendly wrapper for sdfatlib
-
- This library aims to expose a subset of SD card functionality
- in the form of a higher level "wrapper" object.
-
- License: GNU General Public License V3
-          (Because sdfatlib is licensed with this.)
-
- (C) Copyright 2010 SparkFun Electronics
-
+ * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
  */
 
 #ifndef __SD_H__
@@ -62,22 +52,15 @@ public:
 class SDClass {
 
 public:
-  // Open the specified file/directory with the supplied mode (e.g. read or
-  // write, etc). Returns a File object for interacting with the file.
-  // Note that currently only one file can be open at a time.
   File open(const char *filename, uint8_t mode = FILE_READ);
   File open(const String &filename, uint8_t mode = FILE_READ) { return open( filename.c_str(), mode ); }
 
-  // Methods to determine if the requested file path exists.
   boolean exists(const char *filepath);
   boolean exists(const String &filepath) { return exists(filepath.c_str()); }
 
-  // Create the requested directory heirarchy--if intermediate directories
-  // do not exist they will be created.
   boolean mkdir(const char *filepath);
   boolean mkdir(const String &filepath) { return mkdir(filepath.c_str()); }
 
-  // Delete the file.
   boolean remove(const char *filepath);
   boolean remove(const String &filepath) { return remove(filepath.c_str()); }
 
