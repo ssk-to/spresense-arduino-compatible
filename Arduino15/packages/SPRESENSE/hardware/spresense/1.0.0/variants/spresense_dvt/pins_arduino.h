@@ -36,42 +36,52 @@
 // Variant definition
 #define TARGET_USES_DVT_BOARD
 
-// Digital pins
-#define PIN_D00     (uint8_t)(0)
-#define PIN_D01     (uint8_t)(1)
-#define PIN_D02     (uint8_t)(2)
-#define PIN_D03     (uint8_t)(3)
-#define PIN_D04     (uint8_t)(4)
-#define PIN_D05     (uint8_t)(5)
-#define PIN_D06     (uint8_t)(6)
-#define PIN_D07     (uint8_t)(7)
-#define PIN_D08     (uint8_t)(8)
-#define PIN_D09     (uint8_t)(9)
-#define PIN_D10     (uint8_t)(10)
-#define PIN_D11     (uint8_t)(11)
-#define PIN_D12     (uint8_t)(12)
-#define PIN_D13     (uint8_t)(13)
-#define PIN_D14     (uint8_t)(14)
-#define PIN_D15     (uint8_t)(15)
-#define PIN_D16     (uint8_t)(16)
-#define PIN_D17     (uint8_t)(17)
-#define PIN_D18     (uint8_t)(18)
-#define PIN_D19     (uint8_t)(19)
-#define PIN_D20     (uint8_t)(20)
-#define PIN_D21     (uint8_t)(21)
-#define PIN_D22     (uint8_t)(22)
-#define PIN_D23     (uint8_t)(23)
-#define PIN_D24     (uint8_t)(24)
-#define PIN_D25     (uint8_t)(25)
-#define PIN_D26     (uint8_t)(26)
-#define PIN_D27     (uint8_t)(27)
-#define PIN_D28     (uint8_t)(28)
+// Pin type
+#define PINTYPE_MASK    0xc0
+#define PINTYPE_DIGITAL 0x00
+#define PINTYPE_LED     0x40
+#define PINTYPE_ANALOG  0x80
+#define _DIGITAL_PIN(N) (uint8_t)(PINTYPE_DIGITAL|(N))
+#define _LED_PIN(N)     (uint8_t)(PINTYPE_LED    |(N))
+#define _ANALOG_PIN(N)  (uint8_t)(PINTYPE_ANALOG |(N))
+#define _PIN_OFFSET(P)  ((P)&~PINTYPE_MASK)
 
-// LED
-#define PIN_LED0    (uint8_t)(100)
-#define PIN_LED1    (uint8_t)(101)
-#define PIN_LED2    (uint8_t)(102)
-#define PIN_LED3    (uint8_t)(103)
+// Digital pins - 0x0N
+#define PIN_D00     _DIGITAL_PIN(0)
+#define PIN_D01     _DIGITAL_PIN(1)
+#define PIN_D02     _DIGITAL_PIN(2)
+#define PIN_D03     _DIGITAL_PIN(3)
+#define PIN_D04     _DIGITAL_PIN(4)
+#define PIN_D05     _DIGITAL_PIN(5)
+#define PIN_D06     _DIGITAL_PIN(6)
+#define PIN_D07     _DIGITAL_PIN(7)
+#define PIN_D08     _DIGITAL_PIN(8)
+#define PIN_D09     _DIGITAL_PIN(9)
+#define PIN_D10     _DIGITAL_PIN(10)
+#define PIN_D11     _DIGITAL_PIN(11)
+#define PIN_D12     _DIGITAL_PIN(12)
+#define PIN_D13     _DIGITAL_PIN(13)
+#define PIN_D14     _DIGITAL_PIN(14)
+#define PIN_D15     _DIGITAL_PIN(15)
+#define PIN_D16     _DIGITAL_PIN(16)
+#define PIN_D17     _DIGITAL_PIN(17)
+#define PIN_D18     _DIGITAL_PIN(18)
+#define PIN_D19     _DIGITAL_PIN(19)
+#define PIN_D20     _DIGITAL_PIN(20)
+#define PIN_D21     _DIGITAL_PIN(21)
+#define PIN_D22     _DIGITAL_PIN(22)
+#define PIN_D23     _DIGITAL_PIN(23)
+#define PIN_D24     _DIGITAL_PIN(24)
+#define PIN_D25     _DIGITAL_PIN(25)
+#define PIN_D26     _DIGITAL_PIN(26)
+#define PIN_D27     _DIGITAL_PIN(27)
+#define PIN_D28     _DIGITAL_PIN(28)
+
+// LED - 0x4N
+#define PIN_LED0    _LED_PIN(0)
+#define PIN_LED1    _LED_PIN(1)
+#define PIN_LED2    _LED_PIN(2)
+#define PIN_LED3    _LED_PIN(3)
 
 static const uint8_t LED0 = PIN_LED0;
 static const uint8_t LED1 = PIN_LED1;
@@ -97,13 +107,13 @@ static const uint8_t DA3 = PIN_DA3;
 static const uint8_t DA4 = PIN_DA4;
 static const uint8_t DA5 = PIN_DA5;
 
-// Analog pins
-#define PIN_A0      (0u)
-#define PIN_A1      (1u)
-#define PIN_A2      (2u)
-#define PIN_A3      (3u)
-#define PIN_A4      (4u)
-#define PIN_A5      (5u)
+// Analog pins - 0x8N
+#define PIN_A0      _ANALOG_PIN(0)
+#define PIN_A1      _ANALOG_PIN(1)
+#define PIN_A2      _ANALOG_PIN(2)
+#define PIN_A3      _ANALOG_PIN(3)
+#define PIN_A4      _ANALOG_PIN(4)
+#define PIN_A5      _ANALOG_PIN(5)
 
 static const uint8_t A0 = PIN_A0;
 static const uint8_t A1 = PIN_A1;
