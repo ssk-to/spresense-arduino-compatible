@@ -92,6 +92,9 @@ uint8_t pin_convert(uint8_t pin)
     }
 
     printf("ERROR: Invalid pin number [%u]\n", pin);
+    if ((pin & PINTYPE_MASK) == PINTYPE_ANALOG) {
+        printf("\tspresense dose not support using analog pin as digital.\n");
+    }
     return PIN_NOT_ASSIGNED;
 }
 

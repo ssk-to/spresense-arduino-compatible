@@ -299,6 +299,7 @@ static void sim_write(uint8_t pin, uint32_t pulse_width, uint32_t freq)
   int value;
 
   if (slot < 0) {
+    printf("ERROR: Invalid pin number [%u]\n", pin);
     return;
   }
 
@@ -477,7 +478,9 @@ int analogRead(uint8_t pin)
   uint32_t interval = 0;
   uint16_t adjust = 0;
 
-  if (pin > PIN_A5 || s_adcs[pin].running) {
+  uint8_t aidx = _PIN_OFFSET(pin);
+  if (pin < PIN_A0 || pin > PIN_A5 || s_adcs[aidx].running) {
+    printf("ERROR: Invalid pin number [%u]\n", pin);
     return 0;
   }
 
@@ -488,16 +491,16 @@ int analogRead(uint8_t pin)
     goto out;
   }
 
-  if (ad_pin_fd[pin] < 0) {
-      fd = open(s_adcs[pin].dev_path, O_RDONLY);
+  if (ad_pin_fd[aidx] < 0) {
+      fd = open(s_adcs[aidx].dev_path, O_RDONLY);
       if (fd < 0) {
-          printf("ERROR: Failed to open adc device\n");
+          printf("ERROR: Failed to open adc device,%d\n", errno);
           goto out;
       }
 
       /* Change adc running */
 
-      s_adcs[pin].running = true;
+      s_adcs[aidx].running = true;
 
       /* SCU FIFO overwrite */
 
@@ -512,13 +515,12 @@ int analogRead(uint8_t pin)
         printf("ERROR: Failed to start ADC\n");
         goto out;
       }
-      ad_pin_fd[pin] = fd;
+      ad_pin_fd[aidx] = fd;
   } else {
-      fd = ad_pin_fd[pin];
+      fd = ad_pin_fd[aidx];
   }
 
-
-  cxd56_adc_getinterval(pin + SCU_BUS_LPADC0, &interval, &adjust);
+  cxd56_adc_getinterval(aidx + SCU_BUS_LPADC0, &interval, &adjust);
   interval = interval * (1000000/32768 + 1);
   bufptr = buftop;
 
@@ -583,7 +585,7 @@ out:
   }
 #endif
 
-  s_adcs[pin].running = false;
+  s_adcs[aidx].running = false;
 
   if (buftop) {
     free(buftop);
