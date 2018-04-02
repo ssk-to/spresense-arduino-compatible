@@ -1,6 +1,7 @@
 /*
   Camera.h - Camera include file for the SPRESENSE SDK
-  Copyright (c) 2018 Sony Corporation  All right reserved.
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
+
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public

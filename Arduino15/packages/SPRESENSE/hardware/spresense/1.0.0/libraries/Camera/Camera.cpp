@@ -1,6 +1,6 @@
 /*
-  Camera.cpp - SPI implement file for the SPRESENSE SDK
-  Copyright (c) 2017 Sony Corporation  All right reserved.
+  Camera.cpp - Camera implement file for the SPRESENSE SDK
+  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
