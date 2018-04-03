@@ -27,7 +27,7 @@ if SDK_RELEASE :
 	REBOOT_AT_END = True
 else :
 	PRINT_RAW_COMMAND = True
-	REBOOT_AT_END = False
+	REBOOT_AT_END = True
 
 try:
 	import serial
