@@ -62,8 +62,8 @@ cp -a build libs debug
 rm -rf build libs
 
 # copy firmwares
-FW_LOADER="${SDK_DIR}/proprietary/sparduino/bin/loader.espk"
-FW_GNSSFW="${SDK_DIR}/proprietary/sparduino/bin/gnssfw.espk"
+FW_LOADER="${SDK_DIR}/proprietary/spresense/bin/loader.espk"
+FW_GNSSFW="${SDK_DIR}/proprietary/spresense/bin/gnssfw.espk"
 FW_DIR="firmware"
 mkdir -p ${FW_DIR}
 cp ${FW_LOADER} ${FW_DIR}
