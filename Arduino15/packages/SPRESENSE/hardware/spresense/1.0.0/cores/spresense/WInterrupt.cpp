@@ -24,6 +24,7 @@
 #include <nuttx/arch.h>
 #include <common/up_arch.h>
 #include <arch/cxd56xx/irq.h>
+#include <chip/cxd5602_topreg.h>
 #include <cxd56_gpio.h>
 extern "C" {
 #include <cxd56_gpioint.h>
