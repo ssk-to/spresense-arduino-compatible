@@ -94,16 +94,7 @@ recipe.size.regex.data=^(\.data|\.bss)\s+([0-9]+).*
 tools.spresense-tools.path={runtime.tools.spresense-tools.path}
 tools.spresense-tools.cmd.path={path}/flash_writer/{runtime.os}/flash_writer
 tools.spresense-tools.cmd.path.windows={path}/flash_writer/{runtime.os}/flash_writer.exe
-## Please select the baudrate depending on your PC environment.
-## If cmd.opt.baudrate is none, baudrate is 115200 (default).
-tools.spresense-tools.cmd.opt.baudrate=
-#tools.spresense-tools.cmd.opt.baudrate=-b 230400
-#tools.spresense-tools.cmd.opt.baudrate=-b 460800
-#tools.spresense-tools.cmd.opt.baudrate=-b 500000
-#tools.spresense-tools.cmd.opt.baudrate=-b 576000
-#tools.spresense-tools.cmd.opt.baudrate=-b 921600
-#tools.spresense-tools.cmd.opt.baudrate=-b 1000000
-#tools.spresense-tools.cmd.opt.baudrate=-b 1152000
+tools.spresense-tools.cmd.opt.baudrate={upload.speed}
 tools.spresense-tools.pycmd=python3.4m.exe
 tools.spresense-tools.upload.protocol=spresense
 tools.spresense-tools.upload.params.verbose=
