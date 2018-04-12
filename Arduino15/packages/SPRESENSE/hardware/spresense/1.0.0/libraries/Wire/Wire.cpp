@@ -32,7 +32,7 @@ extern "C" {
 
 TwoWire::TwoWire()
 : _dev(0),
-  _freq(TWI_FREQ_400KHZ),
+  _freq(TWI_FREQ_100KHZ),
   _transmitting(false),
   _tx_address(0),
   _tx_addr_len(TWI_ADDR_LEN_7_BIT),
