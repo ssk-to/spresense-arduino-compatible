@@ -31,6 +31,7 @@
 #include <arch/board/board.h>
 
 #include "Audio.h"
+#include "MemoryUtil.h"
 
 //***************************************************************************
 // Definitions
@@ -38,24 +39,11 @@
 // Configuration ************************************************************
 // C++ initialization requires CXX initializer support
 
-#define _POSIX
-#define USE_MEMMGR_FENCE
-
 #include <asmp/mpshm.h>
-
-//#include <fcntl.h>
-
-#include <memutils/memory_manager/MemHandle.h>
-#include <memutils/message/Message.h>
 
 #include "memutil/msgq_id.h"
 #include "memutil/mem_layout.h"
 #include "memutil/memory_layout.h"
-#include "memutil/fixed_fence.h"
-#include "memutil/msgq_pool.h"
-#include "memutil/pool_layout.h"
-
-using namespace MemMgrLite;
 
 extern "C" void  input_device_callback(uint32_t);
 extern "C" void  output_device_callback(uint32_t);
@@ -95,37 +83,7 @@ err_t AudioClass::end(void)
 /****************************************************************************
  * Private Common API for begin/end
  ****************************************************************************/
-err_t AudioClass::initMemoryPools(void)
-{
-  mpshm_t s_shm;
-  int ret = mpshm_init(&s_shm, 1,  RAM_TILE_SIZE * 2); /* Used 2 Tile */
-  if (ret < 0)
-    {
-      print_err("mpshm_init() failure. %d\n", ret);
-      return AUDIOLIB_ECODE_SHARED_MEMORY_ERROR;
-    }
 
-  uint32_t addr = AUD_SRAM_ADDR;
-  ret = mpshm_remap(&s_shm, (void *)addr);
-  if (ret < 0)
-    {
-      print_err("mpshm_remap() failure. %d\n", ret);
-      return AUDIOLIB_ECODE_SHARED_MEMORY_ERROR;
-    }
-
-  /* Initalize MessageLib */
-  MsgLib::initFirst(NUM_MSGQ_POOLS,MSGQ_TOP_DRM);
-  MsgLib::initPerCpu();
-
-  void* mml_data_area = translatePoolAddrToVa(MEMMGR_DATA_AREA_ADDR);
-  Manager::initFirst(mml_data_area, MEMMGR_DATA_AREA_SIZE);
-
-  Manager::initPerCpu(mml_data_area, NUM_MEM_POOLS);
-
-  return AUDIOLIB_ECODE_OK;
-}
-
-/*--------------------------------------------------------------------------*/
 err_t AudioClass::activateAudio(void)
 {
   AudioSubSystemIDs ids;
@@ -268,49 +226,47 @@ err_t AudioClass::setReadyMode(void)
  ****************************************************************************/
 err_t AudioClass::setPlayerMode(uint8_t device)
 {
-  void* work_va = translatePoolAddrToVa(MEMMGR_WORK_AREA_ADDR);
   const NumLayout layout_no = MEM_LAYOUT_PLAYER;
 
   assert(layout_no < NUM_MEM_LAYOUTS);
-  Manager::createStaticPools(layout_no, work_va, MEMMGR_MAX_WORK_SIZE, MemoryPoolLayouts[layout_no]);
+  createStaticPools(layout_no);
 
-  AsActPlayerParam_t player_act_param;
-  player_act_param.msgq_id.player = MSGQ_AUD_PLY;
-  player_act_param.msgq_id.mng    = MSGQ_AUD_MGR;
-  player_act_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
-  player_act_param.msgq_id.dsp    = MSGQ_AUD_DSP;
-  player_act_param.pool_id.es     = DEC_ES_MAIN_BUF_POOL;
-  player_act_param.pool_id.pcm    = REND_PCM_BUF_POOL;
-  player_act_param.pool_id.dsp    = DEC_APU_CMD_POOL;
+  AsCreatePlayerParam_t player_create_param;
+  player_create_param.msgq_id.player = MSGQ_AUD_PLY;
+  player_create_param.msgq_id.mng    = MSGQ_AUD_MGR;
+  player_create_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
+  player_create_param.msgq_id.dsp    = MSGQ_AUD_DSP;
+  player_create_param.pool_id.es     = DEC_ES_MAIN_BUF_POOL;
+  player_create_param.pool_id.pcm    = REND_PCM_BUF_POOL;
+  player_create_param.pool_id.dsp    = DEC_APU_CMD_POOL;
 
-  int act_rst = AS_ActivatePlayer(&player_act_param);
+  int act_rst = AS_CreatePlayer(AS_PLAYER_ID_0, &player_create_param);
   if (!act_rst)
     {
       print_err("AS_ActivatePlayer failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
-  player_act_param.msgq_id.player = MSGQ_AUD_SUB_PLY;
-  player_act_param.msgq_id.mng    = MSGQ_AUD_MGR;
-  player_act_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
-  player_act_param.msgq_id.dsp    = MSGQ_AUD_DSP;
-  player_act_param.pool_id.es     = DEC_ES_SUB_BUF_POOL;
-  player_act_param.pool_id.pcm    = REND_PCM_SUB_BUF_POOL;
-  player_act_param.pool_id.dsp    = DEC_APU_CMD_POOL;
+  player_create_param.msgq_id.player = MSGQ_AUD_SUB_PLY;
+  player_create_param.msgq_id.mng    = MSGQ_AUD_MGR;
+  player_create_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
+  player_create_param.msgq_id.dsp    = MSGQ_AUD_DSP;
+  player_create_param.pool_id.es     = DEC_ES_SUB_BUF_POOL;
+  player_create_param.pool_id.pcm    = REND_PCM_SUB_BUF_POOL;
+  player_create_param.pool_id.dsp    = DEC_APU_CMD_POOL;
 
-  act_rst = AS_ActivateSubPlayer(&player_act_param);
+  act_rst = AS_CreatePlayer(AS_PLAYER_ID_1, &player_create_param);
   if (!act_rst)
     {
-      printf("AS_ActivateSubPlayer failed. system memory insufficient!\n");
+      print_err("AS_ActivateSubPlayer failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
-  AsActOutputMixParam_t output_mix_act_param;
+  AsCreateOutputMixParam_t output_mix_create_param;
 
-  output_mix_act_param.msgq_id.mixer = MSGQ_AUD_OUTPUT_MIX;
-  output_mix_act_param.msgq_id.mng   = MSGQ_AUD_MGR;
+  output_mix_create_param.msgq_id.mixer = MSGQ_AUD_OUTPUT_MIX;
 
-  act_rst = AS_ActivateOutputMix(&output_mix_act_param);
+  act_rst = AS_CreateOutputMixer(&output_mix_create_param);
   if (!act_rst)
     {
       print_err("AS_ActivateOutputMix failed. system memory insufficient!\n");
@@ -362,15 +318,13 @@ err_t AudioClass::setPlayerMode(uint8_t device)
   command.header.command_code  = AUDCMD_SETPLAYERSTATUS;
   command.header.sub_code      = 0x00;
 
-  command.set_player_sts_param.active_player          = AS_ACTPLAYER_BOTH;
-  command.set_player_sts_param.input_device           = AS_SETPLAYER_INPUTDEVICE_RAM;
-  command.set_player_sts_param.ram_handler            = &m_player0_input_device_handler;
-  command.set_player_sts_param.output_device          = device;
-  command.set_player_sts_param.output_device_handler  = 0x00;
-  command.set_player_sts_param.input_device_sub       = AS_SETPLAYER_INPUTDEVICE_RAM;
-  command.set_player_sts_param.ram_handler_sub        = &m_player1_input_device_handler;
-  command.set_player_sts_param.output_device_sub      = device;
-  command.set_player_sts_param.output_device_handler_sub  = 0x00;
+  command.set_player_sts_param.active_player         = AS_ACTPLAYER_BOTH;
+  command.set_player_sts_param.player0.input_device  = AS_SETPLAYER_INPUTDEVICE_RAM;
+  command.set_player_sts_param.player0.ram_handler   = &m_player0_input_device_handler;
+  command.set_player_sts_param.player0.output_device = device;
+  command.set_player_sts_param.player1.input_device  = AS_SETPLAYER_INPUTDEVICE_RAM;
+  command.set_player_sts_param.player1.ram_handler   = &m_player1_input_device_handler;
+  command.set_player_sts_param.player1.output_device = device;
 
   AS_SendAudioCommand(&command);
 
@@ -393,20 +347,20 @@ err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, uint32_t sampling_
   AudioCommand command;
 
   command.header.packet_length = LENGTH_INIT_PLAYER;
-  command.header.command_code  = (id == Player0) ? AUDCMD_INITPLAYER : AUDCMD_INITSUBPLAYER;
+  command.header.command_code  = AUDCMD_INITPLAYER;
   command.header.sub_code      = 0x00;
 
-  command.init_player_param.codec_type    = codec_type;
-  command.init_player_param.bit_length    = AS_BITLENGTH_16;
-  command.init_player_param.channel_number= channel_number;
-  command.init_player_param.sampling_rate = sampling_rate;
+  command.player.player_id = (id == Player0) ? AS_PLAYER_ID_0 : AS_PLAYER_ID_1;
+  command.player.init_param.codec_type    = codec_type;
+  command.player.init_param.bit_length    = AS_BITLENGTH_16;
+  command.player.init_param.channel_number= channel_number;
+  command.player.init_param.sampling_rate = sampling_rate;
   AS_SendAudioCommand(&command);
 
   AudioResult result;
   AS_ReceiveAudioResult(&result);
 
-  if ((result.header.result_code != AUDRLT_INITPLAYERCMPLT) &&
-      (result.header.result_code != AUDRLT_SUBINITPLAYERCMPLT))
+  if (result.header.result_code != AUDRLT_INITPLAYERCMPLT)
     {
       print_err("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)\n",
               command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
@@ -428,15 +382,16 @@ err_t AudioClass::startPlayer(PlayerId id)
   AudioCommand command;
 
   command.header.packet_length = LENGTH_PLAY_PLAYER;
-  command.header.command_code  = (id == Player0) ? AUDCMD_PLAYPLAYER : AUDCMD_PLAYSUBPLAYER;
+  command.header.command_code  = AUDCMD_PLAYPLAYER;
   command.header.sub_code      = 0x00;
+
+  command.player.player_id = (id == Player0) ? AS_PLAYER_ID_0 : AS_PLAYER_ID_1;
   AS_SendAudioCommand(&command);
 
   AudioResult result;
   AS_ReceiveAudioResult(&result);
 
-  if ((result.header.result_code != AUDRLT_PLAYCMPLT) &&
-      (result.header.result_code != AUDRLT_SUBPLAYCMPLT))
+  if (result.header.result_code != AUDRLT_PLAYCMPLT)
     {
       print_err("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x) Error subcode(0x%x)\n",
               command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code, result.error_response_param.error_sub_code);
@@ -480,16 +435,17 @@ err_t AudioClass::stopPlayer(PlayerId id)
   AudioCommand command;
 
   command.header.packet_length = LENGTH_STOP_PLAYER;
-  command.header.command_code  = (id == Player0) ? AUDCMD_STOPPLAYER : AUDCMD_STOPSUBPLAYER;
+  command.header.command_code  = AUDCMD_STOPPLAYER;
   command.header.sub_code      = 0x00;
 
+  command.player.player_id = (id == Player0) ? AS_PLAYER_ID_0 : AS_PLAYER_ID_1;
+  command.player.stop_param.stop_mode = AS_STOPPLAYER_NORMAL;
   AS_SendAudioCommand(&command);
 
   AudioResult result;
   AS_ReceiveAudioResult(&result);
 
-  if ((result.header.result_code != AUDRLT_STOPCMPLT) &&
-      (result.header.result_code != AUDRLT_SUBSTOPCMPLT))
+  if (result.header.result_code != AUDRLT_STOPCMPLT)
     {
       print_err("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)\n",
               command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
@@ -564,19 +520,19 @@ err_t AudioClass::setLRgain(PlayerId id, unsigned char l_gain, unsigned char r_g
   AudioCommand command;
 
   command.header.packet_length = LENGTH_SET_GAIN;
-  command.header.command_code  = (id == Player0) ? AUDCMD_SETGAIN : AUDCMD_SETGAINSUB;
+  command.header.command_code  = AUDCMD_SETGAIN;
   command.header.sub_code      = 0;
 
-  command.set_gain_param.l_gain = l_gain;
-  command.set_gain_param.r_gain = r_gain;
+  command.player.player_id = (id == Player0) ? AS_PLAYER_ID_0 : AS_PLAYER_ID_1;
+  command.player.set_gain_param.l_gain = l_gain;
+  command.player.set_gain_param.r_gain = r_gain;
 
   AS_SendAudioCommand(&command);
 
   AudioResult result;
   AS_ReceiveAudioResult(&result);
 
-  if ((result.header.result_code != AUDRLT_SETGAIN_CMPLT) &&
-      (result.header.result_code != AUDRLT_SETGAINSUB_CMPLT))
+  if (result.header.result_code != AUDRLT_SETGAIN_CMPLT)
     {
       printf("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)\n",
               command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
@@ -630,8 +586,9 @@ err_t AudioClass::writeFrames(PlayerId id, File& myFile)
 err_t AudioClass::setRecorderMode(uint8_t input_device)
 {
   const NumLayout layout_no = MEM_LAYOUT_RECORDER;
-  void* work_va = translatePoolAddrToVa(MEMMGR_WORK_AREA_ADDR);
-  Manager::createStaticPools(layout_no, work_va, MEMMGR_MAX_WORK_SIZE, MemoryPoolLayouts[layout_no]);
+
+  assert(layout_no < NUM_MEM_LAYOUTS);
+  createStaticPools(layout_no);
 
   AsActRecorderParam_t recorder_act_param;
   recorder_act_param.msgq_id.recorder      = MSGQ_AUD_RECORDER;

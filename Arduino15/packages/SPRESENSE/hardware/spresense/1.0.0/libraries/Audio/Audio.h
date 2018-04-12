@@ -59,9 +59,6 @@
                                (WRITE_BUF_SIZE) : (READ_BUF_SIZE)\
                              )
 
-/* TODO:どこか共通に定義すべき。*/
-#define RAM_TILE_SIZE   (1024*128)
-
 extern "C" void  outputDeviceCallback(uint32_t);
 
 /*--------------------------------------------------------------------------*/
@@ -409,6 +406,26 @@ public:
   err_t closeOutputFile(File&);
 
   /**
+   * Audio Object Interfaces
+   */
+
+  err_t objIf_createStaticPools(uint8_t layout_no);
+  err_t objIf_createMediaPlayer(PlayerId id);
+  err_t objIf_createOutputMixer(void);
+  err_t objIf_activateMediaPlayer(PlayerId id, uint8_t output_device, MediaPlayerCallback mpcb);
+  err_t objIf_activateOutputMixer(AsOutputMixerHandle handle, OutputMixerCallback omcb);
+  err_t objIf_initMediaPlayer(PlayerId id, uint8_t codec_type, uint32_t sampling_rate, uint8_t channel_number);
+  err_t objIf_startMediaPlayer(PlayerId id, DecodeDoneCallback dccb);
+  err_t objIf_stopMediaPlayer(PlayerId id);
+  err_t objIf_sendDataOutputMixer(AsOutputMixerHandle handle, MemMgrLite::MemHandle mh, uint32_t sample, uint32_t size, bool is_end, bool is_valid);
+  err_t objIf_reqNextMediaPlayerProcess(PlayerId id, AsRequestNextType type);
+  err_t objIf_deactMediaPlayer(PlayerId id);
+  err_t objIf_deactOutputMixer(void);
+
+  err_t objIf_activateBaseband(void);
+  err_t objIf_deactivateBaseband(void);
+
+  /**
    * To get instance of AudioClass
    */
   static AudioClass* getInstance()
@@ -464,7 +481,6 @@ private:
   /* Private Functions */
 
   /* Functions for initialization on begin/end */
-  err_t initMemoryPools(void);
   err_t activateAudio(void);
 
   err_t initAttention(void);
