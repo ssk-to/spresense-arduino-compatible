@@ -92,11 +92,13 @@ boolean SDClass::remove(const char *filepath) {
 }
 
 File::File(const char *name, uint8_t mode)
-: _name(0), _fd(-1), _dir(0), _size(0) {
+: _name(0), _fd(NULL), _dir(0), _size(0) {
   int stat_ret;
   struct stat stat;
   char fpbuf[MAX_PATH_LENGTH];
   char *fpname = fullpathname(fpbuf, MAX_PATH_LENGTH, name);
+  String fmode = "";
+  String fplus = "";
 
   if (!fpname)
     return;
@@ -107,16 +109,58 @@ File::File(const char *name, uint8_t mode)
     _dir = opendir(fpname);
   }
   else {
-    _fd = ::open(fpname, mode);
+     /* mode to string (r/w/a|X|b|+)*/
+
+    /* Check Plus case */
+    if ((mode & O_RDWR) == O_RDWR) {
+      /* Plus */
+      fplus += "+";
+      if ((mode & O_CREAT) == 0) {
+        /* Read */
+        fmode += "r";
+      } else if (mode & O_APPEND) {
+        /* Append */
+        fmode += "a";
+      } else {
+        /* Write */
+        fmode += "w";
+      }
+    } else {
+      /* Not Plus */
+      if (mode & O_RDOK) {
+        /* Read */
+        fmode += "r";
+      } else if (mode & O_APPEND) {
+        /* Append */
+        fmode += "a";
+      } else {
+        /* Write */
+        fmode += "w";
+      }
+    }
+
+    /* Check executable */
+    if (mode & O_EXCL) {
+      fmode += "X";
+    }
+
+    /* Check binary */
+    if (mode & O_BINARY) {
+      fmode += "b";
+    }
+
+    fmode += fplus;
+
+    _fd = ::fopen(fpname, fmode.c_str());
   }
 
   _name = strdup(name);
   _size = stat.st_size;
-  _curpos = ::lseek(_fd, 0, SEEK_CUR);
+  _curpos = ::fseek(_fd, 0, SEEK_CUR);
 }
 
 File::File(void):
-_name(0), _fd(-1), _dir(0) {
+_name(0), _fd(NULL), _dir(0) {
 }
 
 File::~File() {
@@ -130,7 +174,7 @@ size_t File::write(const uint8_t *buf, size_t size) {
     return 0;
   }
 
-  wrote = (size_t)::write(_fd, buf, size);
+  wrote = (size_t)::fwrite(buf, sizeof(char), size, _fd);
   if (wrote == size) {
     _curpos += size;
     if (_size < _curpos) {
@@ -180,14 +224,14 @@ int File::available() {
 
 void File::flush() {
   if (_fd >= 0)
-    fsync(_fd);
+    fflush(_fd);
 }
 
 int File::read(void *buf, uint16_t nbyte) {
   int ret;
 
   if (_fd >= 0) {
-    ret = ::read(_fd, buf, nbyte);
+    ret = ::fread(buf, sizeof(char), nbyte, _fd);
     if (ret >= 0) {
       _curpos += nbyte;
       return ret;
@@ -202,7 +246,7 @@ boolean File::seek(uint32_t pos) {
 
   if (!_fd) return false;
 
-  ofs = ::lseek(_fd, pos, SEEK_SET);
+  ofs = ::fseek(_fd, pos, SEEK_SET);
   if (ofs >= 0) {
     _curpos = ofs;
     return true;
@@ -214,7 +258,7 @@ boolean File::seek(uint32_t pos) {
 uint32_t File::position() {
   if (!_fd) return 0;
 
-  _curpos = ::lseek(_fd, 0, SEEK_CUR);
+  _curpos = ::fseek(_fd, 0, SEEK_CUR);
 
   return _curpos;
 }
@@ -226,8 +270,8 @@ uint32_t File::size() {
 
 void File::close() {
   if (_fd >= 0) {
-    ::close(_fd);
-    _fd = -1;
+    ::fclose(_fd);
+    _fd = NULL;
   }
 
   if (_dir != 0) {
@@ -242,7 +286,7 @@ void File::close() {
 }
 
 File::operator bool() {
-  return (_fd >= 0) || (_dir != 0);
+  return (_fd > 0) || (_dir != 0);
 }
 
 char * File::name() {

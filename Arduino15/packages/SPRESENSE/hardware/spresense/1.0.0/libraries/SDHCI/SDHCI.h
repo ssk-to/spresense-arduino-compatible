@@ -19,7 +19,7 @@ namespace SDHCILib {
 class File : public Stream {
 private:
   char* _name;
-  int _fd;
+  FILE* _fd;
   unsigned long _size;
   unsigned long _curpos;
   void* _dir;
