@@ -26,16 +26,14 @@
 #include <Arduino.h>
 #include <signal.h>
 
-static SpPrintLevel DebugPrintLevel;   /* Print level */
-
 #define SP_GNSS_DEV_NAME        "/dev/gps"
 
 #define SP_GNSS_DEBUG
 
 #ifdef SP_GNSS_DEBUG /* switch debug message on/off */
-# define PRINT_E(c) if(PrintError   <= DebugPrintLevel){ Serial.print(c); }
-# define PRINT_W(c) if(PrintWarning <= DebugPrintLevel){ Serial.print(c); }
-# define PRINT_I(c) if(PrintInfo    <= DebugPrintLevel){ Serial.print(c); }
+# define PRINT_E(s) SpGnss::printMessage(PrintError, s);
+# define PRINT_W(s) SpGnss::printMessage(PrintWarning, s);
+# define PRINT_I(s) SpGnss::printMessage(PrintInfo, s);
 #else
 # define PRINT_E(c)
 # define PRINT_W(c)
@@ -47,14 +45,19 @@ static SpPrintLevel DebugPrintLevel;   /* Print level */
 #define MAGIC_NUMBER                0xDEADBEEF
 #define BIN_BUF_SIZE                sizeof(GnssPositionData)
 
+SpPrintLevel SpGnss::DebugPrintLevel = PrintNone;   /* Print level */
+Stream& SpGnss::DebugOut = Serial;
+
 static struct cxd56_gnss_signal_setting_s setting;
 static sigset_t mask;
 static int no_handler = 0;
 static struct cxd56_gnss_positiondata_s *pPosdat = NULL;
 static uint32_t crc_table[256];
 
-/* Init CRC. */
-void make_crc_table(void) {
+/*
+ * Init CRC
+ */
+static void make_crc_table(void) {
     for (uint32_t i = 0; i < 256; i++) {
         uint32_t c = i;
         for (int j = 0; j < 8; j++) {
@@ -65,9 +68,9 @@ void make_crc_table(void) {
 }
 
 /*
- * TBD
+ * Calculate CRC
  */
-uint32_t crc32(uint8_t *buf, size_t len) {
+static uint32_t crc32(uint8_t *buf, size_t len) {
     uint32_t c = 0xFFFFFFFF;
     for (size_t i = 0; i < len; i++) {
         c = crc_table[(c ^ buf[i]) & 0xFF] ^ (c >> 8);

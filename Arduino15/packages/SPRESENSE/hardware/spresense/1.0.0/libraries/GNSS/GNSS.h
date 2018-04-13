@@ -21,6 +21,8 @@
 #ifndef Gnss_h
 #define Gnss_h
 
+#include <Stream.h>
+
 /**
  * @file GNSS.h
  * @author Sony Corporation
@@ -196,6 +198,8 @@ public:
 class SpGnss
 {
 public:
+    friend SpNavData;
+
     /**
      * @brief Create SpGnss object
      */
@@ -210,9 +214,11 @@ public:
      * @brief Activate GNSS device
      * @details Power on GNSS hardware block, and change to the state where parameter
      *          setting and positioning start can be performed.
+     * @param [in] debugOut debug out stream instead of Serial
      * @return 0 if success, -1 if failure
      */
     int begin(void);
+    int begin(Stream& debugOut) { DebugOut = debugOut; return begin(); }
 
     /**
      * @brief Inactivate GNSS device
@@ -367,6 +373,16 @@ private:
     int fd_;                /* file descriptor */
     long SatelliteSystem;    /* satellite type */
     SpNavData NavData;    /* copy pos data */
+
+    /* Debug Print */
+    static Stream& DebugOut;
+    static SpPrintLevel DebugPrintLevel;
+
+    inline static void printMessage(SpPrintLevel level, const char* str)
+    {
+        if (level <= DebugPrintLevel)
+            DebugOut.print(str);
+    }
 };
 
 #endif // Gnss_h
