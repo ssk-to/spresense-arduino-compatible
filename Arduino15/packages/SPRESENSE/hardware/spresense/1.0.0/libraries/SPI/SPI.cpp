@@ -26,7 +26,7 @@
 #include <nuttx/arch.h>
 #include <arch/cxd56xx/irq.h>
 #include <cxd56_spi.h>
-#include <chip/cxd56_clock.h>
+#include <cxd56_clock.h>
 #include "wiring_private.h"
 
 #define IS_INCLUDED_BY_SPI_CPP
