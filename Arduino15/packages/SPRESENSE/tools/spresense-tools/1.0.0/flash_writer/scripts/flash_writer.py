@@ -235,6 +235,10 @@ class TelnetDev:
 	def putc(self, buffer, timeout=1):
 		self.telnet.write(buffer)
 
+	def reboot(self):
+		# no-op
+		pass
+
 class SerialDev:
 	def __init__(self):
 		if import_serial_module is False:
@@ -251,9 +255,6 @@ class SerialDev:
 				self.serial = serial.Serial(port, baudrate=115200,
 					parity=serial.PARITY_NONE, stopbits=serial.STOPBITS_ONE,
 					bytesize=serial.EIGHTBITS, timeout=0.1)
-				# Target Reset by DTR
-				self.serial.setDTR(True)
-				self.serial.setDTR(False)
 			except Exception as e:
 				print("Cannot open port : " + port)
 				sys.exit(e.args[0])
@@ -295,6 +296,11 @@ class SerialDev:
 #		self.serial.setBaudrate(baudrate)
 		self.serial.baudrate = baudrate
 
+	def reboot(self):
+		# Target Reset by DTR
+		self.serial.setDTR(True)
+		self.serial.setDTR(False)
+
 class FlashWriter:
 	def __init__(self, protocol_sel=PROTOCOL_SERIAL):
 		if protocol_sel == PROTOCOL_TELNET:
@@ -304,6 +310,7 @@ class FlashWriter:
 
 	def cancel_autoboot(self) :
 		boot_msg = ''
+		self.serial.reboot()  # Target reboot before send 'r'
 		while boot_msg == '' :
 			rx = self.serial.readline().strip()
 			self.serial.write(b"r")  # Send "r" key to avoid auto boot
