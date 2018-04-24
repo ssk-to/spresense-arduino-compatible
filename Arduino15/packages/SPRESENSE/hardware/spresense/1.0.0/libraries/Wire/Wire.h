@@ -89,6 +89,7 @@ public:
     void setClock(uint32_t clock);
     void onReceive(TWIReceiveHandler handler);
     void onRequest(TWIRequestHandler handler);
+    using Print::write;
 
 private:
     void beginTransmission(uint16_t address, uint8_t length);
