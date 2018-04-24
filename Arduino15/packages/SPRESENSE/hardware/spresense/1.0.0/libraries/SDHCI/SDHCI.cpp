@@ -8,6 +8,7 @@
 #include <dirent.h>
 #include "SDHCI.h"
 
+#define STDIO_BUFFER_SIZE     4096
 #define MAX_PATH_LENGTH        128
 static char SD_MOUNT_POINT[] = "/mnt/sd0/";
 
@@ -152,6 +153,7 @@ File::File(const char *name, uint8_t mode)
     fmode += fplus;
 
     _fd = ::fopen(fpname, fmode.c_str());
+    setvbuf(_fd, NULL, _IOLBF, STDIO_BUFFER_SIZE);
   }
 
   _name = strdup(name);
