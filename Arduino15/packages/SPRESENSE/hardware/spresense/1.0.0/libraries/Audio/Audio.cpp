@@ -419,6 +419,12 @@ err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, uint32_t sampling_
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::startPlayer(PlayerId id)
 {
+  /* Mute is done before Play,
+   * because the task is blocked in the board initialization process.
+   */
+
+  board_external_amp_mute_control(false);
+
   AudioCommand command;
 
   command.header.packet_length = LENGTH_PLAY_PLAYER;
@@ -436,8 +442,6 @@ err_t AudioClass::startPlayer(PlayerId id)
               command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code, result.error_response_param.error_sub_code);
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
-
-  board_external_amp_mute_control(false);
 
   return AUDIOLIB_ECODE_OK;
 }
@@ -1163,19 +1167,13 @@ err_t AudioClass::write_fifo(File& myFile, char *p_es_buf, CMN_SimpleFifoHandle 
 
   int ret = -1;
 
-  for (int i = 0; i < FIFO_FRAME_SIZE; i++)
+  if (myFile.available())
     {
-      if (myFile.available())
-        {
-          *(p_es_buf + i) = myFile.read();
-        }
-      else
-        {
-          ret = 0;
-          break;
-        }
-
-      ret = i+1;
+      ret = myFile.read(p_es_buf, FIFO_FRAME_SIZE);
+    }
+  else
+    {
+      ret = 0;
     }
 
   if (ret < 0)
