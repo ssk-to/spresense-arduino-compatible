@@ -182,9 +182,9 @@ int HardwareSerial::availableForWrite(void)
     if (_fd < 0)
         return 0;
 
-    ret = ioctl(_fd, FIONWRITE, (long unsigned int)&count);
+    ret = ioctl(_fd, FIONSPACE, (long unsigned int)&count);
     if (ret)
-        printf("Serial FIONWRITE not supported\n");
+        printf("Serial FIONSPACE not supported\n");
 
     return count;
 }
