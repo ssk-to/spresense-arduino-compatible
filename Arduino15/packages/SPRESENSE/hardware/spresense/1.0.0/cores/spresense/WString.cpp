@@ -56,11 +56,9 @@ static char* utoa(int value, char * buf, int base)
 
 static char * dtostrf(float value, unsigned int width, unsigned int decimalPlaces, char* buf)
 {
-    char fmt[] = "%x.yf";
-    
-    fmt[1] = '0' + width; 
-    fmt[3] = '0' + decimalPlaces;
-    
+    char fmt[20];
+
+    snprintf(fmt, 20, "%%%d.%df", width, decimalPlaces);
     sprintf(buf, fmt, value);
     return buf;
 }
