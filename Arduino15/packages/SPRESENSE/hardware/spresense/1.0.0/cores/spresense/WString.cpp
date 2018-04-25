@@ -59,7 +59,7 @@ static char * dtostrf(float value, unsigned int width, unsigned int decimalPlace
     char fmt[] = "%x.yf";
     
     fmt[1] = '0' + width; 
-    fmt[1] = '3' + decimalPlaces;
+    fmt[3] = '0' + decimalPlaces;
     
     sprintf(buf, fmt, value);
     return buf;
