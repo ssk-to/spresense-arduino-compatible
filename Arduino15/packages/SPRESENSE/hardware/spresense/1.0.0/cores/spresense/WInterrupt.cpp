@@ -88,83 +88,6 @@ static bool irq_enabled(int irq)
     return enabled;
 }
 
-/*
- following is copied from cxd56_gpioint.c
- slot used below indicates index in g_isr[MAX_SLOT] in cxd56_gpioint.c
- not index in s_irq_maps in this file
- */
-/* ==================CXD56_GPIOINT.C START================== */
-#define MAX_SLOT                (12)
-#define MAX_SYS_SLOT            (6)
-
-#define GET_SLOT2IRQ(slot)      (CXD56_IRQ_EXDEVICE_0 + (slot))
-#define GET_IRQ2SLOT(irq)       ((irq) - CXD56_IRQ_EXDEVICE_0)
-
-/* convert from slot to pin */
-static int get_slot2pin(int slot)
-{
-    uint32_t base = (slot < MAX_SYS_SLOT) ? CXD56_TOPREG_IOCSYS_INTSEL0
-                                          : CXD56_TOPREG_IOCAPP_INTSEL0;
-    int offset = 1;
-
-    if (MAX_SYS_SLOT <= slot)
-    {
-        slot -= MAX_SYS_SLOT;
-        offset = 56;
-    }
-
-    return (int)getreg8(base + slot) + offset;
-}
-
-/* convert from pin to slot number (SYS: 0~5, APP: 6~11) */
-static int get_pin2slot(int pin)
-{
-    int slot;
-    uint32_t base = (pin < PIN_IS_CLK) ? CXD56_TOPREG_IOCSYS_INTSEL0
-                                       : CXD56_TOPREG_IOCAPP_INTSEL0;
-    int offset = (pin < PIN_IS_CLK) ? 1 : 56;
-
-    for (slot = 0; slot < MAX_SYS_SLOT; slot++)
-    {
-        if ((pin - offset) == getreg8(base + slot)) /* byte access */
-        {
-            break;
-        }
-    }
-
-    if (slot == MAX_SYS_SLOT)
-    {
-        return -1;
-    }
-
-    if (PIN_IS_CLK <= pin)
-    {
-        slot += MAX_SYS_SLOT;
-    }
-
-    return slot;
-}
-
-/* convert from pin to irq number */
-static int get_pin2irq(int pin)
-{
-    int slot = get_pin2slot(pin);
-
-    if ((0 <= slot) && (slot < MAX_SLOT))
-        return GET_SLOT2IRQ(slot);
-
-    printf("WARNING: There's no irq number assigned to this pin currently\n");
-    return -1;
-}
-
-/* convert from irq number to pin */
-static int get_irq2pin(int irq)
-{
-    int slot = GET_IRQ2SLOT(irq);
-    return get_slot2pin(slot);
-}
-/* ==================CXD56_GPIOINT.C END================== */
-
 static int get_slot_by_pin(uint8_t pin)
 {
     arrayForEach(s_irq_maps, i) {
@@ -198,6 +121,8 @@ static int interrupt_handler(int irq, FAR void* context, FAR void *arg)
     /* Known Issue: edge trigger not right */
     //printf("handle GPIO interrupt [%d]\n", irq);
     unuse(context);
+    unuse(arg);
+
     int slot = get_slot_by_irq(irq);
     if (slot >= 0 && s_irq_maps[slot].isr)
         s_irq_maps[slot].isr();
@@ -257,19 +182,6 @@ void noInterrupts(void)
     s_irq_flags = enter_critical_section();
 }
 
-int digitalPinToInterrupt(uint8_t pin)
-{
-    pin = pin_convert(pin);
-    if (pin == PIN_NOT_ASSIGNED)
-        return -1;
-    int irq = get_pin2irq(pin);
-    if (irq < 0) {
-        printf("WARNING: Please call digitalPinToInterrupt() after attachInterrupt()\n");
-    }
-
-    return irq;
-}
-
 uint16_t irq_save(uint16_t mask)
 {
     uint16_t flags = 0;
@@ -294,33 +206,16 @@ void irq_restore(uint16_t flags)
 }
 } // extern "C"
 
-void attachInterrupt(uint8_t pin, void (*isr)(void), int mode)
+void attachInterrupt(uint8_t interrupt, void (*isr)(void), int mode)
 {
-    pin = pin_convert(pin);
+    uint8_t pin = pin_convert(interrupt);
     int slot = get_slot_by_pin(pin);
     attach_interrupt(slot, isr, mode);
 }
 
-void attachInterrupt(int irq, void (*isr)(void), int mode)
+void detachInterrupt(uint8_t interrupt)
 {
-    unuse(irq);
-    unuse(isr);
-    unuse(mode);
-    printf("WARNING: Spritzer DOES NOT support attaching to interrupt by irq number\n"
-           "         Because irq number is assigned dynamically for pin\n"
-           "         Please use \"void attachInterrupt(uint8_t pin, void (*isr)(void), int mode)\" instead\n");
-}
-
-void detachInterrupt(uint8_t pin)
-{
-    pin = pin_convert(pin);
-    int slot = get_slot_by_pin(pin);
-    detach_interrupt(slot);
-}
-
-void detachInterrupt(int irq)
-{
-    int pin = get_irq2pin(irq);
+    uint8_t pin = pin_convert(interrupt);
     int slot = get_slot_by_pin(pin);
     detach_interrupt(slot);
 }

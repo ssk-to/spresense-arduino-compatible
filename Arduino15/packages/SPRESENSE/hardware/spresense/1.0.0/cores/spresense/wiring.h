@@ -27,8 +27,6 @@
 extern "C"{
 #endif // __cplusplus
 
-// convert physical pin number to irq number
-int digitalPinToInterrupt(uint8_t pin);
 
 #ifdef __cplusplus
 } // extern "C"
