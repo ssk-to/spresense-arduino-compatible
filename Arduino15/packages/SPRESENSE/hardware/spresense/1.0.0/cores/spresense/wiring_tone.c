@@ -62,6 +62,8 @@ static bool timer_handler(FAR uint32_t *next_interval_us, FAR void *arg)
     static bool ret;
     static uint32_t val;
 
+    unuse(arg);
+
     if (!s_ctx.infinite) {
         assert(s_ctx.duration >= s_ctx.interval);
         s_ctx.duration -= s_ctx.interval;

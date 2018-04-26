@@ -218,13 +218,15 @@ static uint64_t sim_get_next_expire(void)
   return next_expire == UINT64_MAX ? 0 : next_expire;
 }
 
-static bool sim_timer_handler(FAR uint32_t *next_interval_us)
+static bool sim_timer_handler(FAR uint32_t *next_interval_us, FAR void *arg)
 {
   static bool ret;
   static uint64_t now;
   static uint64_t next_expire;
   static uint32_t reg_val;
   static const uint32_t mask = 1 << GPIO_OUTPUT_SHIFT;
+
+  unuse(arg);
 
   next_expire = UINT64_MAX;
   now = micros();
@@ -274,7 +276,7 @@ static void sim_start(void)
 
   while (now > expire) {
     //printf("timer interrupt missed, handle it first\n");
-    sim_timer_handler(&timeout);
+    sim_timer_handler(&timeout, NULL);
     expire = sim_get_next_expire();
     now = micros();
   }

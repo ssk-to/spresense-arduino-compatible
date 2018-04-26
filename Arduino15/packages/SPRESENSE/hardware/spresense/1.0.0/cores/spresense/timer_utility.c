@@ -81,7 +81,7 @@ uint32_t util_get_time_collapsed(int fd)
     return (status.timeout - status.timeleft);
 }
 
-int util_start_timer(int fd, unsigned long timeout /*us*/, tccb_t cb)
+int util_start_timer(int fd, unsigned long timeout /*us*/, tccb_t handler)
 {
     struct timer_sethandler_s sethandler;
 
@@ -91,10 +91,10 @@ int util_start_timer(int fd, unsigned long timeout /*us*/, tccb_t cb)
         return ERROR;
     }
 
-    sethandler.handler = cb;
+    sethandler.handler = handler;
     sethandler.arg     = NULL;
 
-    ret = ioctl(fd, TCIOC_SETHANDLER, &sethandler);
+    ret = ioctl(fd, TCIOC_SETHANDLER, (unsigned long)&sethandler);
     if (ret < 0) {
         printf("ERROR: Failed to set timer handler (errno = %d)\n", errno);
         return ERROR;
