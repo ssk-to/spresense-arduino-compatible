@@ -48,20 +48,24 @@ static int getChanel(int led)
 }
 void Led_On(int ledch)
 {
-    // SPD-003SC
+#ifdef TARGET_USES_PROTO3_BOARD
+    // This will be deleted in the near future
     int ch = getChanel(ledch);
     board_power_control(ch, false);
-    // SPD-003SB
+#else
     pinMode(ledch, OUTPUT);
     digitalWrite(ledch, HIGH);
+#endif
 }
 
 void Led_Off(int ledch)
 {
-    // SPD-003SC
+#ifdef TARGET_USES_PROTO3_BOARD
+    // This will be deleted in the near future
     int ch = getChanel(ledch);
     board_power_control(ch, true);
-    // SPD-003SB
+#else
     pinMode(ledch, OUTPUT);
     digitalWrite(ledch, LOW);
+#endif
 }
