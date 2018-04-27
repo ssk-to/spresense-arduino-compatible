@@ -70,6 +70,19 @@ static interrupt_map_t s_irq_maps[] = {
     { PIN_SPI0_MISO,     -1, 0 },
     { PIN_I2C0_BDT,      -1, 0 },
     { PIN_I2C0_BCK,      -1, 0 },
+    { PIN_EMMC_DATA0,    -1, 0 },
+    { PIN_EMMC_DATA1,    -1, 0 },
+    { PIN_I2S0_DATA_OUT, -1, 0 },
+    { PIN_I2S0_DATA_IN,  -1, 0 },
+    { PIN_EMMC_DATA2,    -1, 0 },
+    { PIN_EMMC_DATA3,    -1, 0 },
+    { PIN_SEN_IRQ_IN,    -1, 0 },
+    { PIN_EMMC_CLK,      -1, 0 },
+    { PIN_EMMC_CMD,      -1, 0 },
+    { PIN_I2S0_LRCK,     -1, 0 },
+    { PIN_I2S0_BCK,      -1, 0 },
+    { PIN_UART2_CTS,     -1, 0 },
+    { PIN_UART2_RTS,     -1, 0 },
 };
 
 #define INTC_EN(n) (CXD56_INTC_BASE + 0x10 + (((n) >> 5) << 2))
