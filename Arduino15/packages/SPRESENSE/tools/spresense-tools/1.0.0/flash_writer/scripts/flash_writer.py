@@ -298,6 +298,7 @@ class SerialDev:
 
 	def reboot(self):
 		# Target Reset by DTR
+		self.serial.setDTR(False)
 		self.serial.setDTR(True)
 		self.serial.setDTR(False)
 
