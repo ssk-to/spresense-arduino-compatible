@@ -163,6 +163,8 @@ static void attach_interrupt(int slot, void (*isr)(void), int mode)
     //printf("cxd56_gpioint_config returns [%d]\n", irq);
 
     if (irq >= 0) {
+        /* wait RTC few cycles before the interrupt is enabled for noise filter. */
+        delay(1);
         s_irq_maps[slot].irq = irq;
         s_irq_maps[slot].isr = isr;
         cxd56_gpioint_enable(s_irq_maps[slot].pin);
