@@ -22,6 +22,8 @@
 #include <arch/board/board.h>
 #include "leds.h"
 
+#ifdef TARGET_USES_PROTO3_BOARD
+// This will be deleted in the near future
 static int getChanel(int led)
 {
     int chanel = -1;
@@ -46,6 +48,8 @@ static int getChanel(int led)
     assert((chanel != (-1)));
     return chanel;
 }
+#endif
+
 void Led_On(int ledch)
 {
 #ifdef TARGET_USES_PROTO3_BOARD
