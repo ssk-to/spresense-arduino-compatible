@@ -219,6 +219,8 @@ err_t AudioClass::setReadyMode(void)
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
+  board_external_amp_mute_control(true);
+
   return AUDIOLIB_ECODE_OK;
 }
 /****************************************************************************
@@ -337,6 +339,8 @@ err_t AudioClass::setPlayerMode(uint8_t device)
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
+  board_external_amp_mute_control(false);
+
   return AUDIOLIB_ECODE_OK;
 }
 
@@ -373,11 +377,6 @@ err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, uint32_t sampling_
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::startPlayer(PlayerId id)
 {
-  /* Mute is done before Play,
-   * because the task is blocked in the board initialization process.
-   */
-
-  board_external_amp_mute_control(false);
 
   AudioCommand command;
 
