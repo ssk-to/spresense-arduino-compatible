@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 #define FILE_READ O_RDONLY
-#define FILE_WRITE (O_RDONLY | O_WRONLY | O_CREAT)
+#define FILE_WRITE (O_RDONLY | O_WRONLY | O_CREAT | O_APPEND)
 
 namespace SDHCILib {
 
