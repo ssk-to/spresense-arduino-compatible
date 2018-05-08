@@ -180,7 +180,7 @@ static void detach_interrupt(int slot)
     }
 
     noInterrupts();
-    cxd56_gpioint_disable(s_irq_maps[slot].pin);
+    cxd56_gpioint_config(s_irq_maps[slot].pin, 0, NULL);
     s_irq_maps[slot].irq = -1;
     s_irq_maps[slot].isr = 0;
     interrupts();
