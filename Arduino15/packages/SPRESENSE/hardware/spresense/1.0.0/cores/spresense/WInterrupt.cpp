@@ -131,7 +131,6 @@ static inline bool is_valid_mode(int mode)
 
 static int interrupt_handler(int irq, FAR void* context, FAR void *arg)
 {
-    /* Known Issue: edge trigger not right */
     //printf("handle GPIO interrupt [%d]\n", irq);
     unuse(context);
     unuse(arg);
@@ -162,13 +161,17 @@ static void attach_interrupt(int slot, void (*isr)(void), int mode)
                                    interrupt_handler);
     //printf("cxd56_gpioint_config returns [%d]\n", irq);
 
-    if (irq >= 0) {
-        /* wait RTC few cycles before the interrupt is enabled for noise filter. */
-        delay(1);
-        s_irq_maps[slot].irq = irq;
-        s_irq_maps[slot].isr = isr;
-        cxd56_gpioint_enable(s_irq_maps[slot].pin);
+    if (irq < 0) {
+        interrupts();
+        printf("ERROR: Out of interrupt resources\n");
+        return;
     }
+
+    /* wait RTC few cycles before the interrupt is enabled for noise filter. */
+    delay(1);
+    s_irq_maps[slot].irq = irq;
+    s_irq_maps[slot].isr = isr;
+    cxd56_gpioint_enable(s_irq_maps[slot].pin);
     interrupts();
 }
 
