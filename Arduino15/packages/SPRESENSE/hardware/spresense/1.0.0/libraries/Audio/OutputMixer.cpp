@@ -50,7 +50,7 @@ err_t OutputMixer::create(void)
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
 
-  /* Activate renderer feature. */
+  /* Create renderer feature. */
 
   AsActRendererParam_t renderer_act_param;
 
@@ -59,10 +59,10 @@ err_t OutputMixer::create(void)
   renderer_act_param.msgq_id.dev1_req  = 0xFF;
   renderer_act_param.msgq_id.dev1_sync = 0xFF;
 
-  result = AS_ActivateRenderer(&renderer_act_param);
+  result = AS_CreateRenderer(&renderer_act_param);
   if (!result)
     {
-      print_err("Error: AS_ActivateRenderer() failure. system memory insufficient!\n");
+      print_err("Error: AS_CreateRenderer() failure. system memory insufficient!\n");
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
 
@@ -120,47 +120,33 @@ err_t OutputMixer::deactivate(AsOutputMixerHandle handle)
 /*--------------------------------------------------------------------------*/
 err_t OutputMixer::activateBaseband(void)
 {
-  /* Power on and set up baseband
-   * Sample rate = 48kHzm, Bypass mode = Disable
-   */
+  /* Power on and set up baseband */
 
-  uint32_t rate[AS_I2S_ID_NUM] =
-  {
-    48000,
-    48000
-  };
+  CXD56_AUDIO_ECODE error_code;
 
-  asBypassModeId bypass_mode_en[AS_I2S_ID_NUM] =
-  {
-    AS_I2S_BP_MODE_DISABLE,
-    AS_I2S_BP_MODE_DISABLE
-  };
+  error_code = cxd56_audio_poweron();
 
-  E_AS error_code;
-
-  error_code = AS_PowerOnBaseBand(rate, bypass_mode_en);
-
-  if (error_code != E_AS_OK)
+  if (error_code != CXD56_AUDIO_ECODE_OK)
     {
-      print_err("AS_PowerOnBaseBand() error!\n");
+      print_err("cxd56_audio_poweron() error!\n");
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
 
-  error_code = AS_BaseBandEnable_output(AS_OUT_DEV_SP);
+  error_code = cxd56_audio_en_output(true);
 
-  if (error_code != E_AS_OK)
+  if (error_code != CXD56_AUDIO_ECODE_OK)
     {
-      print_err("AS_BaseBandEnable_output() error!\n");
+      print_err("cxd56_audio_en_output() error!\n");
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
 
-  error_code = AS_SetOutputSelect(AS_OUT_DEV_SP);
+  //error_code = AS_SetOutputSelect(AS_OUT_DEV_SP);
 
-   if (error_code != E_AS_OK)
-    {
-      print_err("AS_SetOutputSelect() error!\n");
-      return OUTPUTMIXER_ECODE_COMMAND_ERROR;
-    }
+  // if (error_code != E_AS_OK)
+  //  {
+  //    print_err("AS_SetOutputSelect() error!\n");
+  //    return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+  //  }
 
   return OUTPUTMIXER_ECODE_OK;
 }
@@ -170,23 +156,23 @@ err_t OutputMixer::deactivateBaseband(void)
 {
   /* Disable output */
 
-  E_AS error_code = E_AS_OK;
+  CXD56_AUDIO_ECODE error_code = CXD56_AUDIO_ECODE_OK;
 
-  error_code = AS_BaseBandDisable_output();
+  error_code = cxd56_audio_dis_output();
 
-  if (error_code != E_AS_OK)
+  if (error_code != CXD56_AUDIO_ECODE_OK)
     {
-      print_err("AS_BaseBandDisable_output() error!\n");
+      print_err("cxd56_audio_dis_output() error!\n");
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
 
   /* Power Off Baseband */
 
-  error_code = AS_PowerOffBaseBand();
+  error_code = cxd56_audio_poweroff();
 
-  if (error_code != E_AS_OK)
+  if (error_code != CXD56_AUDIO_ECODE_OK)
     {
-      print_err("AS_PowerOffBaseBand() error!\n");
+      print_err("cxd56_audio_poweroff() error!\n");
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
 
@@ -196,15 +182,23 @@ err_t OutputMixer::deactivateBaseband(void)
 /*--------------------------------------------------------------------------*/
 err_t OutputMixer::setVolume(int master, int player0, int player1)
 {
-  asCodecVol vol;
+  CXD56_AUDIO_ECODE ret = cxd56_audio_set_vol(CXD56_AUDIO_VOLID_MIXER_OUT, master);
 
-  vol.input1_db = player0;
-  vol.input2_db = player1;
-  vol.master_db = master;
+  if (ret != CXD56_AUDIO_ECODE_OK)
+    {
+      return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+    }
 
-  E_AS ret = AS_SetVolume(&vol);
+  ret = cxd56_audio_set_vol(CXD56_AUDIO_VOLID_MIXER_IN1, player0);
 
-  if (ret != E_AS_OK)
+  if (ret != CXD56_AUDIO_ECODE_OK)
+    {
+      return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+    }
+
+  ret = cxd56_audio_set_vol(CXD56_AUDIO_VOLID_MIXER_IN2, player1);
+
+  if (ret != CXD56_AUDIO_ECODE_OK)
     {
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }

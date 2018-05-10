@@ -245,7 +245,7 @@ err_t AudioClass::setPlayerMode(uint8_t device)
   int act_rst = AS_CreatePlayer(AS_PLAYER_ID_0, &player_create_param);
   if (!act_rst)
     {
-      print_err("AS_ActivatePlayer failed. system memory insufficient!\n");
+      print_err("AS_CreatePlayer failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
@@ -260,7 +260,7 @@ err_t AudioClass::setPlayerMode(uint8_t device)
   act_rst = AS_CreatePlayer(AS_PLAYER_ID_1, &player_create_param);
   if (!act_rst)
     {
-      print_err("AS_ActivateSubPlayer failed. system memory insufficient!\n");
+      print_err("AS_CreatePlayer failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
@@ -271,7 +271,7 @@ err_t AudioClass::setPlayerMode(uint8_t device)
   act_rst = AS_CreateOutputMixer(&output_mix_create_param);
   if (!act_rst)
     {
-      print_err("AS_ActivateOutputMix failed. system memory insufficient!\n");
+      print_err("AS_CreateOutputMix failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
@@ -285,10 +285,10 @@ err_t AudioClass::setPlayerMode(uint8_t device)
   renderer_act_param.msgq_id.dev1_req   = MSGQ_AUD_RND_SUB;
   renderer_act_param.msgq_id.dev1_sync  = MSGQ_AUD_RND_SUB_SYNC;
 
-  act_rst = AS_ActivateRenderer(&renderer_act_param);
+  act_rst = AS_CreateRenderer(&renderer_act_param);
   if (!act_rst)
     {
-      print_err("AS_ActivateRenderer failed. system memory insufficient!\n");
+      print_err("AS_CreateRenderer failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
@@ -597,9 +597,9 @@ err_t AudioClass::setRecorderMode(uint8_t input_device)
   recorder_act_param.pool_id.output        = OUTPUT_BUF_POOL;
   recorder_act_param.pool_id.dsp           = ENC_APU_CMD_POOL;
 
-  if (!AS_ActivateVoiceRecorder(&recorder_act_param))
+  if (!AS_CreateVoiceRecorder(&recorder_act_param))
     {
-      print_err("AS_ActivateVoiceRecorder failed. system memory insufficient!\n");
+      print_err("AS_CreateVoiceRecorder failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
@@ -609,9 +609,9 @@ err_t AudioClass::setRecorderMode(uint8_t input_device)
   capture_act_param.msgq_id.dev1_req  = 0xFF;
   capture_act_param.msgq_id.dev1_sync = 0xFF;
 
-  if (!AS_ActivateCapture(&capture_act_param))
+  if (!AS_CreateCapture(&capture_act_param))
     {
-      print_err("AS_ActivateCapture failed. system memory insufficient!\n");
+      print_err("AS_CreateCapture failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
@@ -741,7 +741,7 @@ err_t AudioClass::init_recorder_pcm(AudioCommand* command, uint32_t sampling_rat
   command->init_recorder_param.sampling_rate  = sampling_rate;
   command->init_recorder_param.channel_number = channel_number;
   command->init_recorder_param.bit_length     = AS_BITLENGTH_16;
-  command->init_recorder_param.codec_type     = AS_CODECTYPE_WAV;
+  command->init_recorder_param.codec_type     = m_codec_type;
   AS_SendAudioCommand(command);
 
   AudioResult result;
