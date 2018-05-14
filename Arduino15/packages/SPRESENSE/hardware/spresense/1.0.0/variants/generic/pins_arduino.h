@@ -1,10 +1,10 @@
 /*
   pins_arduino.h - Pin definition functions for Arduino
   Copyright (C) 2018 Sony Semiconductor Solutions Corp.
+  Modified for CXD56XX platform, 2018.
   Part of Arduino - http://www.arduino.cc/
 
   Copyright (c) 2007 David A. Mellis
-  Modified for ESP8266 platform by Ivan Grokhotkov, 2014-2015.
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,7 @@
 
 #include <cxd56_pinconfig.h>
 
-#define NUM_DIGITAL_PINS    (22)
+#define NUM_DIGITAL_PINS    (29)
 #define NUM_ANALOG_INPUTS   (6)
 #define PIN_NOT_ASSIGNED    (0xFF)
 
@@ -83,29 +83,22 @@
 #define PIN_LED2    _LED_PIN(2)
 #define PIN_LED3    _LED_PIN(3)
 
+// BUILDIN LED
+#define LED_BUILTIN0 (PIN_LED0)
+#define LED_BUILTIN1 (PIN_LED1)
+#define LED_BUILTIN2 (PIN_LED2)
+#define LED_BUILTIN3 (PIN_LED3)
+#define LED_BUILTIN  (LED_BUILTIN0)
+
 static const uint8_t LED0 = PIN_LED0;
 static const uint8_t LED1 = PIN_LED1;
 static const uint8_t LED2 = PIN_LED2;
 static const uint8_t LED3 = PIN_LED3;
 
-#define PIN_DA0     PIN_D14
-#define PIN_DA1     PIN_D15
-#define PIN_DA2     PIN_D16
-#define PIN_DA3     PIN_D17
-#define PIN_DA4     PIN_D18
-#define PIN_DA5     PIN_D19
-
 #define PIN_PWM_0   PIN_D06
 #define PIN_PWM_1   PIN_D05
 #define PIN_PWM_2   PIN_D09
 #define PIN_PWM_3   PIN_D03
-
-static const uint8_t DA0 = PIN_DA0;
-static const uint8_t DA1 = PIN_DA1;
-static const uint8_t DA2 = PIN_DA2;
-static const uint8_t DA3 = PIN_DA3;
-static const uint8_t DA4 = PIN_DA4;
-static const uint8_t DA5 = PIN_DA5;
 
 // Analog pins - 0x8N
 #define PIN_A0      _ANALOG_PIN(0)
@@ -133,10 +126,10 @@ static const uint8_t MISO = PIN_SPI_MISO;
 static const uint8_t SCK  = PIN_SPI_SCK;
 
 // TWI pins
-#define PIN_WIRE_SCL  PIN_D21
-#define PIN_WIRE_SDA  PIN_D20
-static const uint8_t SCL = PIN_WIRE_SCL;
+#define PIN_WIRE_SDA  PIN_D14
+#define PIN_WIRE_SCL  PIN_D15
 static const uint8_t SDA = PIN_WIRE_SDA;
+static const uint8_t SCL = PIN_WIRE_SCL;
 
 // These serial port names are intended to allow libraries and architecture-neutral
 // sketches to automatically default to the correct port name for a particular type
@@ -154,7 +147,7 @@ static const uint8_t SDA = PIN_WIRE_SDA;
 // SERIAL_PORT_HARDWARE_OPEN  Hardware serial ports which are open for use.  Their RX & TX
 //                            pins are NOT connected to anything by default.
 #define SERIAL_PORT_MONITOR   Serial
-#define SERIAL_PORT_HARDWARE  Serial
+#define SERIAL_PORT_HARDWARE  Serial2
 
 // WiFi Pins
 #define WIFI_READY      7  // handshake pin
