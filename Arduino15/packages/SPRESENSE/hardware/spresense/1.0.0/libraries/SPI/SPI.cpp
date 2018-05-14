@@ -233,6 +233,7 @@ uint8_t SPIClass::transfer(uint8_t data)
 
     uint8_t received = 0;
     if (spi_bit_order == LSBFIRST) data = lsb2msb(data);
+    SPI_SETBITS(spi_dev, 8);
     SPI_EXCHANGE(spi_dev, (void*)(&data), (void*)(&received), 1);
     if (spi_bit_order == LSBFIRST) received = msb2lsb(received);
 
@@ -257,7 +258,8 @@ uint16_t SPIClass::transfer16(uint16_t data)
         in.lo = lsb2msb(in.lo);
     }
 
-    SPI_EXCHANGE(spi_dev, (void*)(&in.hi), (void*)(&out.hi), 2);
+    SPI_SETBITS(spi_dev, 16);
+    SPI_EXCHANGE(spi_dev, (void*)(&in.hi), (void*)(&out.hi), 1);
 
     if (spi_bit_order == LSBFIRST) {
         out.hi = msb2lsb(out.hi);
@@ -291,6 +293,7 @@ void SPIClass::transfer(void *buf, size_t count)
         }
     }
 
+    SPI_SETBITS(spi_dev, 8);
     SPI_EXCHANGE(spi_dev, buf, recv, count);
 
     if (spi_bit_order == LSBFIRST) {
