@@ -31,7 +31,6 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <semaphore.h>
 #include <asmp/mpshm.h>
 
 #include "Camera.h"
@@ -40,60 +39,95 @@
 // Definitions
 //***************************************************************************
 
-#define KEY_SHM (0)
+#define KEY_SHM        (0)
+#define IMAGE_JPG_SIZE (896*1024)
 
-static uint32_t capture_size;
-static sem_t sem;
-// Configuration ************************************************************
-// C++ initialization requires CXX initializer support
-extern "C" {
-static void complete_capture(uint8_t code, uint8_t last_frame,
-                             uint32_t size, uint32_t addr)
-{
-  /* Save capture image information */
-  printf("complete_capture.code %d\n", code);
-  printf("capture size %d\n", size);
+struct v_buffer *buffers;
+static int       v_fd;
 
-  capture_size = size;
-
-  sem_post(&sem);
-}
-}
 /****************************************************************************
  * Common API on Camera Class
  ****************************************************************************/
 err_t CameraClass::begin(void)
 {
-	
   err_t ret=0;
 
-  fd = open("/dev/imager0", 0);
-  if (fd < 0)
+  ret = board_isx012_initialize("/dev/video", IMAGER_I2C);
+  if (ret != 0)
     {
-      printf("failed to open imager driver : %d:%d\n", fd, errno);
+      printf("ERROR: Failed to init video. %d\n", errno);
+      return -EPERM;
+    }
+
+  v_fd = open("/dev/video0", O_CREAT);
+  if (v_fd < 0)
+    {
+      printf("failed to open imager driver : %d:%d\n", v_fd, errno);
       return 1;
     }
-  ret = ioctl(fd, IMGIOC_SETSTATE, STATE_ISX012_ACTIVE);
-  if (ret < 0)
+
+  return ret;
+}
+
+/*--------------------------------------------------------------------------*/
+err_t CameraClass::end(void)
+{
+  err_t ret=0;
+
+  ret = board_isx012_uninitialize();
+  if (ret != 0)
     {
-      printf("IMGIOC_SETSTATE failed. %d\n", ret);
+      printf("ERROR: Failed to init video. %d\n", errno);
+      return -EPERM;
     }
 
-  cis_param.format                = FORMAT_CISIF_JPEG;
-  cis_param.yuv_param.hsize       = 0;
-  cis_param.yuv_param.vsize       = 0;
-  cis_param.yuv_param.notify_size = 0;
-  cis_param.yuv_param.notify_func = NULL;
-  cis_param.yuv_param.comp_func   = NULL;
-  cis_param.jpg_param.notify_size = 0;
-  cis_param.jpg_param.notify_func = NULL;
-  cis_param.jpg_param.comp_func   = complete_capture;
+  close(v_fd);
+  free(buffers->start);
 
-  sem_init(&sem, 0, 0);
+  return ret;
+}
+
+/*--------------------------------------------------------------------------*/
+err_t CameraClass::initialize()
+{
+  err_t ret=0;
+
+  uint32_t mode = V4L2_PIX_FMT_JPEG;
+  enum   v4l2_buf_type       type;
+  struct v4l2_format         fmt;
+  struct v4l2_requestbuffers req;
+  struct v4l2_buffer         buf;
+
+  /*-init_device------------------------------------------------*/
+  memset(&fmt, 0, sizeof(v4l2_format_t));
+  fmt.type                = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  fmt.fmt.pix.width       = VIDEO_HSIZE_FULLHD;
+  fmt.fmt.pix.height      = VIDEO_VSIZE_FULLHD;
+  fmt.fmt.pix.pixelformat = mode;
+  fmt.fmt.pix.field       = V4L2_FIELD_ANY;
+  ret = ioctl(v_fd, VIDIOC_S_FMT, (unsigned long)&fmt);
+  if (ret)
+    {
+      printf("Fail set format %d\n", errno);
+      return -1;
+    }
+
+  /*-init_device/init_userp-------------------------------------*/
+  memset(&req, 0, sizeof(v4l2_requestbuffers_t));
+  req.count  = 1;
+  req.type   = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  req.memory = V4L2_MEMORY_USERPTR;
+
+  ret = ioctl(v_fd, VIDIOC_REQBUFS, (unsigned long)&req);
+  if (ret)
+    {
+      printf("Does not support user pointer i/o %d\n", errno);
+      return -1;
+    }
 
   /* Get MP shared memory for JPEG capture */
 
-  ret = mpshm_init(&shm, KEY_SHM, 896*1024);
+  ret = mpshm_init(&shm, KEY_SHM, IMAGE_JPG_SIZE);
   if (ret < 0)
     {
       printf("mpshm_init() failure. %d\n", ret);
@@ -109,87 +143,61 @@ err_t CameraClass::begin(void)
 
   buffer = (uint8_t *)mpshm_virt2phys(&shm, (void *)vbuffer);
 
-  return ret;
-}
+  buffers->length = IMAGE_JPG_SIZE;
+  buffers->start  = (uint32_t *)buffer;
 
-/*--------------------------------------------------------------------------*/
-err_t CameraClass::end(void)
-{
-  err_t ret = 0;
+  /*-start_capturing--------------------------------------------*/
+  memset(&buf, 0, sizeof(v4l2_buffer_t));
+  buf.type      = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  buf.memory    = V4L2_MEMORY_USERPTR;
+  buf.index     = 0;
+  buf.m.userptr = (unsigned long)buffers->start;
+  buf.length    = buffers->length;
 
-  /* Finalize MP shared memory */
-
-  mpshm_detach(&shm);
-  mpshm_destroy(&shm);
-  sem_destroy(&sem);
-
-  return ret;
-}
-
-/*--------------------------------------------------------------------------*/
-err_t CameraClass::initialize(cisif_param_t param)
-{
-  err_t ret = cxd56_cisifinit(&param);
-  if (ret != OK)
+  ret = ioctl(v_fd, VIDIOC_QBUF, (unsigned long)&buf);
+  if (ret)
     {
-      printf("camera_main: cxd56_cisifinit failed: %d\n", ret);
+      printf("Fail QBUF %d\n", errno);
+      return -1;
+    }
+
+  type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  ret = ioctl(v_fd, VIDIOC_STREAMON, (unsigned long)&type);
+  if (ret)
+    {
+      printf("Fail STREAMON %d\n", errno);
+      return -1;
     }
 
   return ret;
-
-}
-
-/*--------------------------------------------------------------------------*/
-err_t CameraClass::initialize()
-{
-  err_t ret = cxd56_cisifinit(&cis_param);
-  if (ret != OK)
-    {
-      printf("camera_main: cxd56_cisifinit failed: %d\n", ret);
-    }
-  return ret;
-
-}
-
-/*--------------------------------------------------------------------------*/
-err_t CameraClass::read(uint8_t** addr, int* size)
-{
-  cis_area.strg_addr = buffer;
-  cis_area.strg_size = *size;
-
-   err_t ret = cxd56_cisifcaptureframe(NULL, &cis_area);
-   if (ret != OK) 
-	{
-		printf("camera_main: cxd56_cisifcaptureframe failed: %d\n", ret);
-	}
-
-  sem_wait(&sem);
-
-  *addr = buffer;
-  *size = capture_size;
-
-  return ret;
-
 }
 
 /*--------------------------------------------------------------------------*/
 err_t CameraClass::read(File& myFile)
 {
-  cis_area.strg_addr = buffer;
-  cis_area.strg_size = 1920*1200;
+  err_t ret=0;
+  struct v4l2_buffer         buf;
 
-   err_t ret = cxd56_cisifcaptureframe(NULL, &cis_area);
-   if (ret != OK) 
-	{
-		printf("camera_main: cxd56_cisifcaptureframe failed: %d\n", ret);
-	}
+  memset(&buf, 0, sizeof(v4l2_buffer_t));
+  buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+  buf.memory = V4L2_MEMORY_USERPTR;
 
-  sem_wait(&sem);
+  ret = ioctl(v_fd, VIDIOC_DQBUF, (unsigned long)&buf);
+  if (ret)
+    {
+      printf("Fail DQBUF %d\n", errno);
+      return -1;
+    }
 
-  /* Save to SD card */
-
-  myFile.write(buffer, capture_size);
+  myFile.write((uint8_t *)buf.m.userptr, buf.bytesused);
   myFile.close();
+
+  ret = ioctl(v_fd, VIDIOC_QBUF, (unsigned long)&buf);
+  if (ret)
+    {
+      printf("Fail QBUF %d\n", errno);
+      return -1;
+    }
 
   return ret;
 

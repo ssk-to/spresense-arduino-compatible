@@ -38,7 +38,7 @@
 #include <nuttx/arch.h>
 #include <nuttx/board.h>
 #include <video/isx012.h>
-#include <arch/chip/cisif.h>
+#include <video/video.h>
 #include <asmp/mpshm.h>
 
 #define err_t int
@@ -94,14 +94,8 @@ public:
    * この関数は、Cameraライブラリの初期化を行うものです。
    *
    */
+  err_t initialize();
 
-  /* TODO:AS_OUT_SPの定義する位置。 */
-  err_t initialize(
-	cisif_param_s param
-  );
-
-  err_t initialize(
-  );
   /**
    * Read Camera Library.
    *
@@ -110,8 +104,7 @@ public:
    * OUTパラメータで返します。
    *
    */
-  err_t read(uint8_t** addr, int *size
-  );
+  err_t read(uint8_t** addr, int *size);
 
   /**
    * Read Camera Library and save to sdcard.
@@ -133,14 +126,12 @@ public:
   CameraClass& operator=(const CameraClass&);
   ~CameraClass() {}
 */
-	
+
 private:
-	
-  cisif_param_t  cis_param;
-  cisif_sarea_t  cis_area;
   mpshm_t        shm;
   uint8_t        *buffer;
   int fd;
+  v_buffer_t     *buffers;
 };
 
 extern CameraClass Camera;

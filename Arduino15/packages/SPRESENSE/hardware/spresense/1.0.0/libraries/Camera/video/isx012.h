@@ -1,7 +1,7 @@
 /****************************************************************************
  * nuttx/drivers/sensors/isx012.h
  *
- * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
+ *   Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -39,7 +39,6 @@
  * Included Files
  ****************************************************************************/
 
-#include <nuttx/config.h>
 #include <sdk/config.h>
 #include <nuttx/fs/ioctl.h>
 
@@ -47,7 +46,7 @@
  * Pre-processor Definitions
  ****************************************************************************/
 
-#define _IMGIOCBASE   (0x1000)
+#define _IMGIOCBASE   (0x1100)
 
 #define _IMGIOC(nr)       _IOC(_IMGIOCBASE,nr)
 
@@ -58,11 +57,17 @@
 
 #define IMGIOC_SETSTATE   _IMGIOC(0x0001)
 #define IMGIOC_SETMODE    _IMGIOC(0x0002)
+#define IMGIOC_SETMODEP   _IMGIOC(0x0003)
+#define IMGIOC_SETCISIF   _IMGIOC(0x0004)
+#define IMGIOC_READREG    _IMGIOC(0x0005)
+#define IMGIOC_WRITEREG   _IMGIOC(0x0006)
+#define IMGIOC_MONIREF    _IMGIOC(0x0007)
 
 enum isx012_state_e {
   STATE_ISX012_PRESLEEP,
   STATE_ISX012_SLEEP,
   STATE_ISX012_ACTIVE,
+  STATE_ISX012_POWEROFF,
 };
 
 typedef enum isx012_state_e isx012_state_t;
@@ -94,6 +99,7 @@ typedef enum isx012_rate_e isx012_rate_t;
 enum isx012_mode_e {
   MODE_ISX012_MONITORING,
   MODE_ISX012_CAPTURE,
+  MODE_ISX012_HALFRELEASE,
 };
 
 typedef enum isx012_mode_e isx012_mode_t;
@@ -133,6 +139,14 @@ struct isx012_dev_s
 
 typedef struct isx012_dev_s isx012_dev_t;
 
+struct isx012_reg_s {
+  uint16_t regaddr;
+  uint16_t regval;
+  uint8_t  regsize;
+};
+
+typedef struct isx012_reg_s isx012_reg_t;
+
 /****************************************************************************
  * Public Data
  ****************************************************************************/
@@ -150,6 +164,9 @@ extern "C"
  ****************************************************************************/
 
 int isx012_initialize(isx012_dev_t *priv);
+int isx012_open( void );
+int isx012_close( void );
+int isx012_ioctl(int cmd, unsigned long arg);
 
 #undef EXTERN
 #ifdef __cplusplus
