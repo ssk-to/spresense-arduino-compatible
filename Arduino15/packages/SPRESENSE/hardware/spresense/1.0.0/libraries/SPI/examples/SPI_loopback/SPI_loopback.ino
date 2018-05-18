@@ -1,5 +1,5 @@
 /*
-   SPI.ino
+   SPI_loopback.ino
 
    This example is used to demonstrate the SPI port.
    In this example the SPI port is used as an SPI master.
