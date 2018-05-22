@@ -49,6 +49,11 @@ spresense-arduinolibs
 `-- tools                            - Import/Export tools
 ```
 
+# Getting started
+### [developer_guide_arduino_en (English)](https://github.com/sonydevworld/spresense-docs/blob/master/developer_guide/arduino/developer_guide_arduino_en.adoc)
+
+### [developer_guide_arduino_ja (日本語)](https://github.com/sonydevworld/spresense-docs/blob/master/developer_guide/arduino/developer_guide_arduino_ja.adoc)
+
 # How to use
 ## Import local SDK build
 
