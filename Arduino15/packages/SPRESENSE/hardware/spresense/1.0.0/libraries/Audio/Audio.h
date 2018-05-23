@@ -235,6 +235,7 @@ public:
       PlayerId id,    /**< Player IDの指定 */
       uint8_t codec,  /**< 圧縮Codecの指定。Select from enumulation "AsInitPlayerCodecType”。
                            AS_INITPLAYER_MP3 = 0 or AS_INITPLAYER_WAV or AS_INITPLAYER_AAC or AS_INITPLAYER_OPUS or AS_INITPLAYER_MEDIA */
+      const char *codec_path,
       uint32_t fs,    /**< サンプリングレートの指定。AsInitPlayerSamplingRateIndexを使用してもよいですし、周波数の値を直接入れてもよいです。*/
       uint8_t channel /**< チャンネル数の指定。AsInitPlayerChannelNumberIndexを使用してもよいですし、チャンネル数を直接入れてもよいです。*/
   );
@@ -254,6 +255,7 @@ public:
   err_t initRecorder(
       uint8_t codec,  /**< 圧縮Codecの指定。Select from enumulation "AsInitRecorderCodecType"。
                            AS_INITREC_MP3 or AS_INITREC_WAV or AS_INITREC_OPUS */
+      const char *codec_path,
       uint32_t fs,    /**< サンプリングレートの指定。AsInitRecorderSamplingRateIndexを使用してもよいですし、周波数の値を直接入れてもよいです。*/
       uint8_t channel /**< チャンネル数の指定。AsInitRecorderChannelNumberIndexを使用してもよいですし、チャンネル数を直接入れてもよいです。*/
   );

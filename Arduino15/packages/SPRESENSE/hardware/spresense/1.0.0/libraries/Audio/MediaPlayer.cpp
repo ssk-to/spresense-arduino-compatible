@@ -138,6 +138,7 @@ err_t MediaPlayer::activate(PlayerId id, uint8_t output_device, MediaPlayerCallb
 /*--------------------------------------------------------------------------*/
 err_t MediaPlayer::init(PlayerId id,
                                    uint8_t codec_type,
+                                   const char *codec_path,
                                    uint32_t sampling_rate,
                                    uint8_t channel_number)
 {
@@ -147,6 +148,7 @@ err_t MediaPlayer::init(PlayerId id,
   player_init.bit_length     = AS_BITLENGTH_16;
   player_init.channel_number = channel_number/*AS_CHANNEL_STEREO*/;
   player_init.sampling_rate  = sampling_rate/*AS_SAMPLINGRATE_48000*/;
+  snprintf(player_init.dsp_path, AS_AUDIO_DSP_PATH_LEN, "%s", codec_path);
 
   if (id == Player0)
     {

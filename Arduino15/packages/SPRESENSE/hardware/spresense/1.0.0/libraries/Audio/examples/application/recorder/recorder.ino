@@ -21,7 +21,7 @@ void setup()
   puts("initialization Audio Library");
 
   theAudio->setRecorderMode(AS_SETRECDR_STS_INPUTDEVICE_MIC_A);
-  theAudio->initRecorder(AS_CODECTYPE_MP3,AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO); 
+  theAudio->initRecorder(AS_CODECTYPE_MP3,"/mnt/sd0/BIN",AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO);
   puts("Init Recorder!");
 
   myFile = theSD.open("Sound.mp3", FILE_WRITE);

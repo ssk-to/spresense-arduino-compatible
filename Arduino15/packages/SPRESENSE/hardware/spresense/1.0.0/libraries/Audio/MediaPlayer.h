@@ -77,7 +77,7 @@ public:
   err_t begin(void);
   err_t create(PlayerId id);
   err_t activate(PlayerId id, uint8_t output_device, MediaPlayerCallback mpcb);
-  err_t init(PlayerId id, uint8_t codec_type, uint32_t sampling_rate, uint8_t channel_number);
+  err_t init(PlayerId id, uint8_t codec_type, const char *codec_path, uint32_t sampling_rate, uint8_t channel_number);
   err_t start(PlayerId id, DecodeDoneCallback dccb);
   err_t stop(PlayerId id);
   err_t reqNextProcess(PlayerId id, AsRequestNextType type);
