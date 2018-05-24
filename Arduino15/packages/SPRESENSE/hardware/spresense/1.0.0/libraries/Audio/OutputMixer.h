@@ -61,11 +61,7 @@ public:
   err_t activate(AsOutputMixerHandle handle, OutputMixerCallback omcb);
   err_t sendData(AsOutputMixerHandle handle,
                  PcmProcDoneCallback pcmdone_cb,
-                 MemMgrLite::MemHandle mh,
-                 uint32_t sample,
-                 uint32_t size,
-                 bool is_end,
-                 bool is_valid);
+                 AsPcmDataParam pcm);
   err_t deactivate(AsOutputMixerHandle handle);
 
   err_t activateBaseband(void);

@@ -56,11 +56,7 @@ void mediaplayer_decode_callback(AsPcmDataParam pcm_param)
   
   theMixer->sendData(OutputMixer0,
                      outmixer_send_callback,
-                     pcm_param.mh,
-                     pcm_param.sample,
-                     pcm_param.size,
-                     pcm_param.is_end,
-                     pcm_param.is_valid);
+                     pcm_param);
 }
 
 void setup()

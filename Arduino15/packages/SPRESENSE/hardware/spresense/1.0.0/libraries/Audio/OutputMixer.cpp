@@ -86,21 +86,13 @@ err_t OutputMixer::activate(AsOutputMixerHandle handle, OutputMixerCallback omcb
 /*--------------------------------------------------------------------------*/
 err_t OutputMixer::sendData(AsOutputMixerHandle handle,
                             PcmProcDoneCallback pcmdone_cb,
-                            MemMgrLite::MemHandle mh,
-                            uint32_t sample,
-                            uint32_t size,
-                            bool is_end,
-                            bool is_valid)
+                            AsPcmDataParam pcm)
 {
   AsSendDataOutputMixer data;
 
   data.handle   = handle;
   data.callback = pcmdone_cb;
-  data.pcm.mh        = mh;
-  data.pcm.sample    = sample;
-  data.pcm.size      = size;
-  data.pcm.is_end    = is_end;
-  data.pcm.is_valid  = is_valid;
+  data.pcm      = pcm;
 
   AS_SendDataOutputMixer(data);
 
