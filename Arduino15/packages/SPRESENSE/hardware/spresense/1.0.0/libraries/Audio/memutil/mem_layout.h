@@ -1,44 +1,56 @@
-/*
- * mem_layout.h -- MemMgrLite layout definition.
- * Copyright (C) 2018 Sony Semiconductor Solutions Corp.
+/****************************************************************************
+ * mem_layout.h
  *
- * This file was created by mem_layout.conf
- * !!! CAUTION! don't edit this file manually !!!
+ *   Copyright (C) 2018 Sony Corporation
  *
- *   Notes: (C) Copyright 2014 Sony Corporation
- */
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
+ * 3. Neither the name NuttX nor Sony nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+ * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
+ * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+ * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+ * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ ****************************************************************************/
+
 #ifndef MEM_LAYOUT_H_INCLUDED
 #define MEM_LAYOUT_H_INCLUDED
-
-/*
- * Memory Manager Configurations
- */
-//#define USE_MEMMGR_FENCE /* TODO This define macro should be set by Kconfig. */
-
-/*
- * User defined constants
- */
 
 /*
  * Memory devices
  */
 /* AUD_SRAM: type=RAM, use=0x0003f440, remainder=0x00000bc0 */
-#define AUD_SRAM_ADDR	0x000c0000
-#define AUD_SRAM_SIZE	0x00040000
-
-/* RESERVED: type=RAM, use=0x00000080, remainder=0x0003ff80 */
-#define RESERVED_ADDR	0x0e000000
-#define RESERVED_SIZE	0x00040000
+#define AUD_SRAM_ADDR  0x000c0000
+#define AUD_SRAM_SIZE  0x00040000
 
 /*
  * Fixed areas
  */
-#define AUDIO_WORK_AREA_ALIGN   0x00020000
+#define AUDIO_WORK_AREA_ALIGN   0x00000008
 #define AUDIO_WORK_AREA_ADDR    0x000c0000
 #define AUDIO_WORK_AREA_DRM     0x000c0000 /* _DRM is obsolete macro. to use _ADDR */
 #define AUDIO_WORK_AREA_SIZE    0x0003c000
 
-#define MSG_QUE_AREA_ALIGN   0x00000040
+#define MSG_QUE_AREA_ALIGN   0x00000008
 #define MSG_QUE_AREA_ADDR    0x000fc000
 #define MSG_QUE_AREA_DRM     0x000fc000 /* _DRM is obsolete macro. to use _ADDR */
 #define MSG_QUE_AREA_SIZE    0x00003140
@@ -53,48 +65,42 @@
 #define MEMMGR_DATA_AREA_DRM     0x000ff340 /* _DRM is obsolete macro. to use _ADDR */
 #define MEMMGR_DATA_AREA_SIZE    0x00000100
 
-#define SPL_MGR_AREA_ALIGN   0x00000008
-#define SPL_MGR_AREA_ADDR    0x0e000000
-#define SPL_MGR_AREA_DRM     0x0e000000 /* _DRM is obsolete macro. to use _ADDR */
-#define SPL_MGR_AREA_SIZE    0x00000040
-
-#define APU_LOG_AREA_ALIGN   0x00000008
-#define APU_LOG_AREA_ADDR    0x0e000040
-#define APU_LOG_AREA_DRM     0x0e000040 /* _DRM is obsolete macro. to use _ADDR */
-#define APU_LOG_AREA_SIZE    0x00000040
-
 /*
  * Memory Manager max work area size
  */
-#define MEMMGR_MAX_WORK_SIZE  0x0000009c
+#define MEMMGR_MAX_WORK_SIZE  0x0000010c
 
 /*
  * Pool IDs
  */
-#define NULL_POOL	0
-#define DEC_ES_MAIN_BUF_POOL	1
-#define REND_PCM_BUF_POOL	2
-#define REND_PCM_SUB_BUF_POOL	3
-#define DEC_APU_CMD_POOL	4
-#define DEC_ES_SUB_BUF_POOL	5
-#define OUTPUT_BUF_POOL	6
-#define MIC_IN_BUF_POOL	7
-#define ENC_APU_CMD_POOL	8
-#define SRC_APU_CMD_POOL	9
-#define I2S_IN_BUF_POOL	10
-#define HP_OUT_BUF_POOL	11
-#define I2S_OUT_BUF_POOL	12
-#define MFE_OUT_BUF_POOL	13
+#define NULL_POOL  0
+#define DEC_ES_MAIN_BUF_POOL  1
+#define REND_PCM_BUF_POOL  2
+#define REND_PCM_SUB_BUF_POOL  3
+#define DEC_APU_CMD_POOL  4
+#define DEC_ES_SUB_BUF_POOL  5
+#define PF0_PCM_BUF_POOL  6
+#define PF1_PCM_BUF_POOL  7
+#define PF0_APU_CMD_POOL  8
+#define PF1_APU_CMD_POOL  9
+#define OUTPUT_BUF_POOL  10
+#define MIC_IN_BUF_POOL  11
+#define ENC_APU_CMD_POOL  12
+#define SRC_APU_CMD_POOL  13
+#define I2S_IN_BUF_POOL  14
+#define HP_OUT_BUF_POOL  15
+#define I2S_OUT_BUF_POOL  16
+#define MFE_OUT_BUF_POOL  17
 
-#define NUM_MEM_LAYOUTS	3
-#define NUM_MEM_POOLS	14
+#define NUM_MEM_LAYOUTS  3
+#define NUM_MEM_POOLS  18
 
 
 /*
  * Pool areas
  */
 /* Layout0: */
-#define MEMMGR_L0_WORK_SIZE   0x0000009c
+#define MEMMGR_L0_WORK_SIZE   0x0000010c
 
 /* Skip 0x0004 bytes for alignment. */
 #define L0_DEC_ES_MAIN_BUF_POOL_ALIGN    0x00000008
@@ -137,7 +143,39 @@
 #define L0_DEC_ES_SUB_BUF_POOL_NUM_SEG  0x00000004
 #define L0_DEC_ES_SUB_BUF_POOL_SEG_SIZE 0x00000c00
 
-/* Remainder AUDIO_WORK_AREA=0x0000ec3c */
+#define L0_PF0_PCM_BUF_POOL_ALIGN    0x00000008
+#define L0_PF0_PCM_BUF_POOL_L_FENCE  0x000ed3c4
+#define L0_PF0_PCM_BUF_POOL_ADDR     0x000ed3c8
+#define L0_PF0_PCM_BUF_POOL_SIZE     0x00002008
+#define L0_PF0_PCM_BUF_POOL_U_FENCE  0x000ef3d0
+#define L0_PF0_PCM_BUF_POOL_NUM_SEG  0x00000001
+#define L0_PF0_PCM_BUF_POOL_SEG_SIZE 0x00002008
+
+#define L0_PF1_PCM_BUF_POOL_ALIGN    0x00000008
+#define L0_PF1_PCM_BUF_POOL_L_FENCE  0x000ef3d4
+#define L0_PF1_PCM_BUF_POOL_ADDR     0x000ef3d8
+#define L0_PF1_PCM_BUF_POOL_SIZE     0x00002008
+#define L0_PF1_PCM_BUF_POOL_U_FENCE  0x000f13e0
+#define L0_PF1_PCM_BUF_POOL_NUM_SEG  0x00000001
+#define L0_PF1_PCM_BUF_POOL_SEG_SIZE 0x00002008
+
+#define L0_PF0_APU_CMD_POOL_ALIGN    0x00000008
+#define L0_PF0_APU_CMD_POOL_L_FENCE  0x000f13e4
+#define L0_PF0_APU_CMD_POOL_ADDR     0x000f13e8
+#define L0_PF0_APU_CMD_POOL_SIZE     0x00000398
+#define L0_PF0_APU_CMD_POOL_U_FENCE  0x000f1780
+#define L0_PF0_APU_CMD_POOL_NUM_SEG  0x0000000a
+#define L0_PF0_APU_CMD_POOL_SEG_SIZE 0x0000005c
+
+#define L0_PF1_APU_CMD_POOL_ALIGN    0x00000008
+#define L0_PF1_APU_CMD_POOL_L_FENCE  0x000f1784
+#define L0_PF1_APU_CMD_POOL_ADDR     0x000f1788
+#define L0_PF1_APU_CMD_POOL_SIZE     0x00000398
+#define L0_PF1_APU_CMD_POOL_U_FENCE  0x000f1b20
+#define L0_PF1_APU_CMD_POOL_NUM_SEG  0x0000000a
+#define L0_PF1_APU_CMD_POOL_SEG_SIZE 0x0000005c
+
+/* Remainder AUDIO_WORK_AREA=0x0000a4dc */
 
 /* Layout1: */
 #define MEMMGR_L1_WORK_SIZE   0x00000060
