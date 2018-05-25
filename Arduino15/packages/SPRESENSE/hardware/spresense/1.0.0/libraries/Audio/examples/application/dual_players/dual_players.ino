@@ -21,8 +21,8 @@ void setup()
   theAudio->begin();
 
   theAudio->setPlayerMode(AS_OUT_SP);
-  theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3,AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO); 
-  theAudio->initPlayer(AudioClass::Player1, AS_CODECTYPE_MP3,AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO); 
+  theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3,"/mnt/sd0/BIN",AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO);
+  theAudio->initPlayer(AudioClass::Player1, AS_CODECTYPE_MP3,"/mnt/sd0/BIN",AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO);
 
 
   mainFile = theSD.open("Sound0.mp3");

@@ -22,7 +22,7 @@ void setup()
   puts("initialization Audio Library");
 
   theAudio->setRecorderMode(AS_SETRECDR_STS_INPUTDEVICE_MIC_A);
-  theAudio->initRecorder(AS_CODECTYPE_PCM,AS_SAMPLINGRATE_48000,AS_CHANNEL_4CH); 
+  theAudio->initRecorder(AS_CODECTYPE_PCM,"/mnt/sd0/BIN",AS_SAMPLINGRATE_48000,AS_CHANNEL_4CH);
   puts("Init Recorder!");
 
   puts("Rec!");
