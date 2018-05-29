@@ -146,6 +146,13 @@ static analog_timer_info_t s_sim_timers[] __attribute__((aligned (4))) = {
     { PIN_D19, 0,   0,   0,   0,   0,   0,   0 },
     { PIN_D20, 0,   0,   0,   0,   0,   0,   0 },
     { PIN_D21, 0,   0,   0,   0,   0,   0,   0 },
+    { PIN_D22, 0,   0,   0,   0,   0,   0,   0 },
+    { PIN_D23, 0,   0,   0,   0,   0,   0,   0 },
+    { PIN_D24, 0,   0,   0,   0,   0,   0,   0 },
+    { PIN_D25, 0,   0,   0,   0,   0,   0,   0 },
+    { PIN_D26, 0,   0,   0,   0,   0,   0,   0 },
+    { PIN_D27, 0,   0,   0,   0,   0,   0,   0 },
+    { PIN_D28, 0,   0,   0,   0,   0,   0,   0 },
 };
 
 static pwm_timer_info_t s_pwm_timers[] __attribute__((aligned (4))) = {
