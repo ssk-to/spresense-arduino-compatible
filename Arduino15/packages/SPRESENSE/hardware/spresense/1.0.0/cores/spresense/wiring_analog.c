@@ -482,8 +482,13 @@ int analogRead(uint8_t pin)
   uint16_t adjust = 0;
 
   uint8_t aidx = _PIN_OFFSET(pin);
-  if (pin < PIN_A0 || pin > PIN_A5 || s_adcs[aidx].running) {
+  if ((pin < PIN_A0) || (pin > PIN_A5)) {
     printf("ERROR: Invalid pin number [%u]\n", pin);
+    printf("pin must be specified as A0 to A5\n");
+    return 0;
+  }
+  if (s_adcs[aidx].running) {
+    printf("ERROR: Already in progress A%u\n", aidx);
     return 0;
   }
 
