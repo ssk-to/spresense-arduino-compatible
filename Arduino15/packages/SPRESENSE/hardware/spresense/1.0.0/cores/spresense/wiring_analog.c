@@ -420,6 +420,8 @@ static void pwm_stop(uint8_t pin)
     s_pwm_timers[slot].running = false;
 
     close(s_pwm_timers[slot].fd);
+    
+    s_pwm_timers[slot].fd = 0;
   }
 }
 
@@ -429,6 +431,13 @@ static void pwm_write(uint8_t pin, uint32_t pulse_width, uint32_t freq)
 
   if (slot < 0) {
     return;
+  }
+  
+  if (pulse_width==0){
+    if (s_pwm_timers[slot].running){
+      pwm_stop(pin);
+	  }
+	  return;
   }
 
   if (s_pwm_timers[slot].running &&
