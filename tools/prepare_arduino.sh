@@ -158,6 +158,9 @@ function install_sdk_from_build()
 		exit
 	fi
 
+	# Get SDK comonent configuration
+	export SDK_CONFIG=`cat ${SCRIPT_DIR}/configs/${VARIANT_NAME}.conf | head -n 1`
+
 	# Export SDK build
 	${SCRIPT_DIR}/sdk_export.sh ${SPRESENSE_SDK_PATH}
 

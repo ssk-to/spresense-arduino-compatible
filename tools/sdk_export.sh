@@ -6,7 +6,7 @@ if [ $# != 1 ]; then
 	echo "Usage: $0 <SDK_TOPDIR>"
 	echo ""
 	echo "Example:"
-	echo "$0 your/path/to/spritzer"
+	echo "$1 your/path/to/spresense"
 	echo ""
 	exit 1
 fi
@@ -30,6 +30,25 @@ sh sdk/tools/mkversion.sh && mv .version nuttx/.version
 
 # create sdk-export.zip
 cd $SDK_DIR/sdk
+
+## clean
+echo "Clean SDK objects..."
+make distcleankernel &>/dev/null
+make cleankernel &>/dev/null
+make distclean &>/dev/null
+
+## Configuration
+echo "Configure SDK components..."
+echo "Kernel : release"
+echo "SDK    : ${SDK_CONFIG}"
+./tools/config.py --kernel release
+./tools/config.py ${SDK_CONFIG}
+
+## Build kernel
+echo "Build kernel..."
+make buildkernel &>/dev/null
+
+echo "Export to Arduino..."
 make export >/dev/null
 if [ $? != 0 ]; then
 	echo "make export failed"
