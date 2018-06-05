@@ -132,7 +132,15 @@ err_t OutputMixer::activateBaseband(void)
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
 
-  error_code = cxd56_audio_en_output(true);
+  error_code = cxd56_audio_set_spout(true);
+
+  if (error_code != CXD56_AUDIO_ECODE_OK)
+    {
+      print_err("cxd56_audio_set_spout() error!\n");
+      return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+    }
+
+  error_code = cxd56_audio_en_output();
 
   if (error_code != CXD56_AUDIO_ECODE_OK)
     {
