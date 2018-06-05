@@ -59,9 +59,9 @@ unzip $PACKAGE_NAME -d $TMP_DIR >/dev/null
 rm $PACKAGE_NAME
 
 # create sdk directory
-mkdir -p $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}
+mkdir -p $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}/${SDL_KERNEL_CONF}
 
-cd $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}
+cd $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}/${SDL_KERNEL_CONF}
 
 # create arch, include, startup
 mv $TMP_DIR/${NUTTX_EXPORT}/nuttx/* .
@@ -75,15 +75,14 @@ mv $TMP_DIR/${NUTTX_EXPORT}/sdk/libs/* ./libs
 mv ./libs/libsdk.a ./libs/libnuttx.a
 
 # create debug, release
-mkdir -p debug release
-cp -a build libs release
-cp -a build libs debug
+mkdir -p prebuilt
+cp -a build libs prebuilt
 rm -rf build libs
 
 # copy firmwares
 FW_LOADER="${SDK_DIR}/proprietary/spresense/bin/loader.espk"
 FW_GNSSFW="${SDK_DIR}/proprietary/spresense/bin/gnssfw.espk"
-FW_DIR="firmware"
+FW_DIR="../firmware"
 mkdir -p ${FW_DIR}
 cp ${FW_LOADER} ${FW_DIR}
 cp ${FW_GNSSFW} ${FW_DIR}
