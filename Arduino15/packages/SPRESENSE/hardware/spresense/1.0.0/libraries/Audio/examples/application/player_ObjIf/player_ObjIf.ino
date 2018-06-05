@@ -115,7 +115,7 @@ void setup()
 
   // Init Player
 
-  thePlayer->init(MediaPlayer::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_48000, AS_CHANNEL_STEREO);
+  thePlayer->init(MediaPlayer::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
 
   myFile = theSD.open("Sound.mp3");
   printf("Open! %d\n", myFile);

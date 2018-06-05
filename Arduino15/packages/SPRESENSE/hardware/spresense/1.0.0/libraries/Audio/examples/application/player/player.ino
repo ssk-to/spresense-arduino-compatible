@@ -40,7 +40,7 @@ void setup()
   puts("initialization Audio Library");
 
   theAudio->setPlayerMode(AS_OUT_SP);
-  theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO);
+  theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO,AS_CHANNEL_STEREO);
 
   myFile = theSD.open("Sound.mp3");
   printf("Open! %d\n",myFile);
