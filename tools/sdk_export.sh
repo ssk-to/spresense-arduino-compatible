@@ -39,9 +39,9 @@ make distclean &>/dev/null
 
 ## Configuration
 echo "Configure SDK components..."
-echo "Kernel : release"
+echo "Kernel : ${SDL_KERNEL_CONF}"
 echo "SDK    : ${SDK_CONFIG}"
-./tools/config.py --kernel release
+./tools/config.py --kernel ${SDL_KERNEL_CONF}
 ./tools/config.py ${SDK_CONFIG}
 
 ## Build kernel

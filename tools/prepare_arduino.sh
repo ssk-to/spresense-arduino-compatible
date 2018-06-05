@@ -48,13 +48,15 @@ function debug_print()
 function show_help()
 {
 	echo "  Usage:"
-	echo "       $0 -H <Host Name> [-S <sdk build path> -g <gcc archive path> -s <sdk archive path> -H <Target Host> -p]"
+	echo "       $0 -H <Host Name> [-S <sdk build path> -v <variant> -k <kernel config> -g <gcc archive path> -s <sdk archive path> -H <Target Host> -p]"
 	echo ""
 	echo "  Mandatory argument:"
 	echo "       -H: Target Arduino IDE Host name (Windows/Linux32/Linux64/Mac)"
 	echo ""
 	echo "  Optional arguments:"
 	echo "       -S: Spresense SDK build root path (if you use local build)"
+	echo "       -v: Spresense variant name (default: generic)"
+	echo "       -k: Spresense kernel configuration (release/debug) (default: release)"
 	echo "       -g: GCC tool archive path (if you use local archive)"
 	echo "       -s: Spresense SDK archive path (if you use local archive)"
 	echo "       -H: Arduino IDE Host name(Windows/Linux32/Linux64/Mac)"
@@ -159,6 +161,7 @@ function install_sdk_from_build()
 	fi
 
 	# Get SDK comonent configuration
+	export SDL_KERNEL_CONF=${SDL_KERNEL_CONF}
 	export SDK_CONFIG=`cat ${SCRIPT_DIR}/configs/${VARIANT_NAME}.conf | head -n 1`
 
 	# Export SDK build
@@ -178,15 +181,17 @@ SPRESENSE_SDK_PATH=""
 GCC_ARCHIVE_PATH=""
 SDK_ARCHIVE_PATH=""
 SDK_VARIANT_NAME="generic"
+SDL_KERNEL_CONF="release"
 AURDUINO_IDE_HOST=""
 PRIVATE_ACCESS=""
-while getopts S:g:s:v:H:ph OPT
+while getopts S:g:s:v:k:H:ph OPT
 do
 	case $OPT in
 		'S' ) SPRESENSE_SDK_PATH=$OPTARG;;
 		'g' ) GCC_ARCHIVE_PATH=$OPTARG;;
 		's' ) SDK_ARCHIVE_PATH=$OPTARG;;
 		'v' ) SDK_VARIANT_NAME=$OPTARG;;
+		'k' ) SDL_KERNEL_CONF=$OPTARG;;
 		'H' ) AURDUINO_IDE_HOST=$OPTARG;;
 		'p' ) PRIVATE_ACCESS=true;;
 		'h' ) show_help;;
