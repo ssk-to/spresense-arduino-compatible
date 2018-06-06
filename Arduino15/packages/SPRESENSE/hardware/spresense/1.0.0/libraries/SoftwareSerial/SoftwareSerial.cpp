@@ -1,22 +1,33 @@
 /*
-  SoftwareSerial.cpp - SoftwareSerial implement file for the Spresense SDK
-  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *  SoftwareSerial.cpp - Spresense Arduino Software Serial library
+ *  Copyright 2018 Sony Semiconductor Solutions Corporation
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
-//***************************************************************************
-// Included Files
-//***************************************************************************
+/**
+ * @file SoftwareSerial.cpp
+ * @author Sony Corporation
+ * @brief SPRESENSE Arduino Software Serial library 
+ * 
+ * @details The Software Serial library has been developed to allow serial 
+ *          communication on any digital pins of the SPRESENSE. It is possible
+ *          to have 12 software serial ports operating at the same time with 
+ *          speeds up to 250,000 bps.
+ */
+
 #include <Arduino.h>
 #include <SoftwareSerial.h>
 #include <common/up_arch.h>
@@ -26,15 +37,17 @@ extern "C" {
 #include "wiring_private.h"
 #include "utility.h"
 
-//***************************************************************************
-// Definitions
-//***************************************************************************
-
+/**
+ * @brief Active listener.
+ */
 typedef struct __listener {
     SoftwareSerial *object;
     int irq;
 } listener_t;
 
+/**
+ * @brief Table for 12 active listeners
+ */
 static listener_t _listeners[] = {
     { NULL, -1 },
     { NULL, -1 },
@@ -50,9 +63,6 @@ static listener_t _listeners[] = {
     { NULL, -1 },
 };
 
-/****************************************************************************
- * Private methods
- ****************************************************************************/
 inline void SoftwareSerial::tunedDelay(unsigned long delay) { 
   /* following loop takes 4 cycles */
   do {
@@ -115,8 +125,6 @@ SoftwareSerial *SoftwareSerial::findActiveListener(int irq)
   return object;
 }
 
-/* This function sets the current object as the "listening"
-   one and returns true if it is added */
 bool SoftwareSerial::listen()
 {
   if (!isActiveListener(this))
@@ -143,7 +151,6 @@ bool SoftwareSerial::listen()
   return false;
 }
 
-/* Stop listening. Returns true if we were actually listening. */
 bool SoftwareSerial::stopListening()
 {
   if (isActiveListener(this))
@@ -157,9 +164,6 @@ bool SoftwareSerial::stopListening()
   return false;
 }
 
-/****************************************************************************
- * The receive routine called by the interrupt handler
- ****************************************************************************/
 void SoftwareSerial::recv()
 {
   uint8_t d = 0;
@@ -191,9 +195,6 @@ void SoftwareSerial::recv()
   }
 }
 
-/****************************************************************************
- * Interrupt handling
- ****************************************************************************/
 int inline SoftwareSerial::handle_interrupt(int irq, FAR void* context, FAR void *arg)
 {
   SoftwareSerial *active_object;
@@ -225,9 +226,6 @@ SoftwareSerial::~SoftwareSerial()
   end();
 }
 
-/****************************************************************************
- * Public methods
- ****************************************************************************/
 void SoftwareSerial::begin(long speed)
 {
   unsigned long bitDelay;
@@ -249,7 +247,6 @@ void SoftwareSerial::end()
   stopListening();
 }
 
-/* Read data from buffer */
 int SoftwareSerial::read()
 {
   if (!isListening())
