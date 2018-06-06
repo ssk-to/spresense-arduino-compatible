@@ -249,7 +249,7 @@ static bool sim_timer_handler(FAR uint32_t *next_interval_us, FAR void *arg)
       s_sim_timers[i].expire = now + ((reg_val & mask) ? s_sim_timers[i].off_duration : s_sim_timers[i].on_duration);
       reg_val ^= mask;
       putreg32(reg_val, s_sim_timers[i].pin_addr);
-      printf("timer [%d] will expire at %llu, pin value = %d\n", i, s_sim_timers[i].expire, bitRead(reg_val, GPIO_OUTPUT_SHIFT));
+      //printf("timer [%d] will expire at %llu, pin value = %d\n", i, s_sim_timers[i].expire, bitRead(reg_val, GPIO_OUTPUT_SHIFT));
     }
 
     if (s_sim_timers[i].expire < next_expire) {
