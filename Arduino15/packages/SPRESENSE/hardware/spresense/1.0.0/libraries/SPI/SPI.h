@@ -21,6 +21,15 @@
 #ifndef Spi_h
 #define Spi_h
 
+/**
+ * @file SPI.h
+ * @author Sony Corporation
+ * @brief SPRESENSE Arduino SPI library 
+ * 
+ * @details It is a library for communicating with SPI devices, with the 
+ *          SPRESENSE as the master device. 
+ */
+
 /*
   This header file maybe inclued in plain C file.
   To avoid compiling error all C++ stuff should be ignored
@@ -36,101 +45,209 @@
 #define SPI_MODE2 SPIDEV_MODE2
 #define SPI_MODE3 SPIDEV_MODE3
 
+/**
+ * @enum SpiInterruptMode
+ * @brief Spi interrupt mode
+ */
 enum SpiInterruptMode {
     SPI_INT_MODE_NONE = 0,
     SPI_INT_MODE_MASK,
     SPI_INT_MODE_GLOBAL
 };
 
+/**
+ * @class SPISettings
+ * @brief SPI settings
+ *
+ * @details Store SPI settings:
+ *            - SPI clock frequency\n
+ *              The default clock frequency is 4 MHz. The maximum frequency 
+ *              supported is 20 MHz.
+ *            - SPI bit order\n
+ *              The default bit order is MSBFIRST.
+ *            - SPI mode\n
+ *              The default mode is SPI_MODE0.
+ */
 class SPISettings {
 public:
+    /**
+     * @brief Construct a new SPISettings object
+     * 
+     * @param clock 
+     * @param bitOrder 
+     * @param dataMode 
+     */
     SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
         : clock_(clock), bit_order_(bitOrder), data_mode_(dataMode) { }
+
+    /**
+     * @brief Construct a new SPISettings object
+     * 
+     */
     SPISettings()
         : clock_(4000000), bit_order_(MSBFIRST), data_mode_(SPI_MODE0) { }
 
 private:
     friend class SPIClass;
-    uint32_t clock_;
-    uint8_t bit_order_;
-    uint8_t data_mode_;
+    uint32_t clock_;       /**< SPI clock frequency */
+    uint8_t bit_order_;    /**< SPI bit order */
+    uint8_t data_mode_;    /**< SPI mode */
 };
 
+/**
+ * @class SPIClass
+ * @brief SPI controller
+ *
+ * @details You can control SPI comunication by operating SPIClass objects 
+ *          instantiated in your app.
+ */
 class SPIClass {
 public:
-    // Create SPI object
+    /**
+     * @brief Create SPIClass object
+     * 
+     * @param port The default port is 4. You can control SPI4 using object SPI\n
+     *             e.g. SPI.begin();\n SPI5 is also supported. You can control
+     *             SPI5 using object SPI5\n e.g. SPI5.begin();
+     */
     SPIClass(int port);
 
-    // Initialize the SPI library
+    /**
+     * @brief Initialize the SPI library
+     * 
+     */
     void begin(void);
 
-    // Disable the SPI bus
+    /**
+     * @brief Disable the SPI bus
+     * 
+     */
     void end(void);
 
-    // Before using SPI.transfer() or asserting chip select pins,
-    // this function is used to gain exclusive access to the SPI bus
-    // and configure the correct settings.
+    /**
+     * @brief Before using SPI.transfer() or asserting chip select pins,
+     *        this function is used to gain exclusive access to the SPI bus
+     *        and configure the correct settings.
+     * 
+     * @param settings 
+     */
     void beginTransaction(SPISettings settings);
 
-    // After performing a group of transfers and releasing the chip select
-    // signal, this function allows others to access the SPI bus
+    /**
+     * @brief After performing a group of transfers and releasing the chip select
+     *        signal, this function allows others to access the SPI bus
+     * 
+     */
     void endTransaction(void);
 
-    // This function is deprecated.  New applications should use
-    // beginTransaction() to configure SPI settings.
+    /**
+     * @brief This function is deprecated.  New applications should use
+     *        beginTransaction() to configure SPI settings.
+     * 
+     * @param bitOrder 
+     */
     void setBitOrder(uint8_t bitOrder);
 
-    // This function is deprecated.  New applications should use
-    // beginTransaction() to configure SPI settings.
+    /**
+     * @brief This function is deprecated.  New applications should use
+     *        beginTransaction() to configure SPI settings.
+     * 
+     * @param dataMode 
+     */
     void setDataMode(uint8_t dataMode);
 
-    // This function is deprecated.  New applications should use
-    // beginTransaction() to configure SPI settings.
+    /**
+     * @brief This function is deprecated.  New applications should use
+     *        beginTransaction() to configure SPI settings.
+     * 
+     * @param clockDiv 
+     */
     void setClockDivider(uint8_t clockDiv);
 
-    // If SPI is used from within an interrupt, this function registers
-    // that interrupt with the SPI library, so beginTransaction() can
-    // prevent conflicts.  The input interruptNumber is the number used
-    // with attachInterrupt.  If SPI is used from a different interrupt
-    // (eg, a timer), interruptNumber should be 255.
+    /**
+     * @brief Register interrupt with the SPI library
+     *
+     * @details If SPI is used from within an interrupt, this function registers
+     *          that interrupt with the SPI library, so beginTransaction() can
+     *          prevent conflicts.  The input interruptNumber is the number used
+     *          with attachInterrupt.  If SPI is used from a different interrupt
+     *          (eg, a timer), interruptNumber should be 255.
+     * @note    The usingInterrupt and notUsingInterrupt functions should
+     *          not to be called from ISR context or inside a transaction.
+     * @see     For details see:\n
+     *          <https://github.com/arduino/Arduino/pull/2381>\n
+     *          <https://github.com/arduino/Arduino/pull/2449>
+     * 
+     * @param interruptNumber 
+     */
     void usingInterrupt(uint8_t interruptNumber);
-    // And this does the opposite.
-    void notUsingInterrupt(uint8_t interruptNumber);
-    // Note: the usingInterrupt and notUsingInterrupt functions should
-    // not to be called from ISR context or inside a transaction.
-    // For details see:
-    // https://github.com/arduino/Arduino/pull/2381
-    // https://github.com/arduino/Arduino/pull/2449
 
-    // Write to the SPI bus (MOSI pin) and also receive (MISO pin)
+    /**
+     * @brief Disable interrupt with the SPI library
+     * 
+     * @note  The usingInterrupt and notUsingInterrupt functions should
+     *        not to be called from ISR context or inside a transaction.
+     * @see   For details see:\n
+     *        <https://github.com/arduino/Arduino/pull/2381>\n
+     *        <https://github.com/arduino/Arduino/pull/2449>
+     * 
+     * @param interruptNumber 
+     */
+    void notUsingInterrupt(uint8_t interruptNumber);
+
+    /**
+     * @brief Write 8-bit data to the SPI bus and also receive 8-bit data
+     * 
+     * @param data 
+     * @return uint8_t 
+     */
     uint8_t transfer(uint8_t data);
+
+    /**
+     * @brief Write 16-bit data to the SPI bus and also receive 16-bit data
+     * 
+     * @param data 
+     * @return uint16_t 
+     */
     uint16_t transfer16(uint16_t data);
+
+    /**
+     * @brief Write data to the SPI bus and also receive data
+     * 
+     * @param data 
+     * @param count 
+     */
     void transfer(void *buf, size_t count);
 
 private:
-    int spi_port;
-    uint8_t ref_count;
-    FAR struct spi_dev_s* spi_dev;
-    uint32_t spi_base_clock;
-    uint8_t spi_bit_order;
+    int spi_port;                  /**< SPI port number */
+    uint8_t ref_count;             /**< Count of SPI references */
+    FAR struct spi_dev_s* spi_dev; /**< SPI specific state data */
+    uint32_t spi_base_clock;       /**< SPI base clock */
+    uint8_t spi_bit_order;         /**< SPI bit order */
 
-    uint8_t spi_transmitting;
+    uint8_t spi_transmitting;      /**< Transmitting state */
 
-    // mode : 0=none, 1=mask, 2=global
-    SpiInterruptMode interrupt_mode;
+    SpiInterruptMode interrupt_mode; /**< mode : 0=none, 1=mask, 2=global */
 
-    // mask : which interrupts to mask
-    // 0 indicates bit not used
-    // E0 indicates CXD56_IRQ_EXDEVICE_0 + 0
-    // E1 indicates CXD56_IRQ_EXDEVICE_0 + 1
-    // ...
-    // E11 indicates CXD56_IRQ_EXDEVICE_0 + 11
-    // bit 15 14 13 12 11  10  09 08 07 06 05 04 03 02 01 00
-    //     0  0  0  0  E11 E10 E9 E8 E7 E6 E5 E4 E3 E2 E1 E0
+    /**
+     * @brief Interrupts to mask
+     * 
+     * @details 0 indicates bit not used\n
+     *          E0 indicates CXD56_IRQ_EXDEVICE_0 + 0\n
+     *          E1 indicates CXD56_IRQ_EXDEVICE_0 + 1\n
+     *          ...\n
+     *          E11 indicates CXD56_IRQ_EXDEVICE_0 + 11\n
+     *          bit 15 14 13 12 11  10  09 08 07 06 05 04 03 02 01 00\n
+     *              0  0  0  0  E11 E10 E9 E8 E7 E6 E5 E4 E3 E2 E1 E0
+     */
     uint16_t interrupt_mask;
 
-    // temp storage, to restore state
-    // (in case some interrupts are disabled before calling usingInterrupt)
+    /**
+     * @brief Temporary storage to restore state
+     * 
+     * @details In case some interrupts are disabled before calling usingInterrupt
+     */
     uint16_t interrupt_save;
 };
 
