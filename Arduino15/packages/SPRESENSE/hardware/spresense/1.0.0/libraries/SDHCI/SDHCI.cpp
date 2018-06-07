@@ -224,7 +224,7 @@ int SDClass::endUsbMsc()
 }
 
 File::File(const char *name, uint8_t mode)
-: _name(0), _fd(NULL), _dir(0), _size(0) {
+: _name(NULL), _fd(NULL), _size(0), _curpos(0), _dir(NULL) {
   int stat_ret;
   struct stat stat;
   char fpbuf[MAX_PATH_LENGTH];
@@ -294,7 +294,7 @@ File::File(const char *name, uint8_t mode)
 }
 
 File::File(void):
-_name(0), _fd(NULL), _dir(0) {
+_name(NULL), _fd(NULL), _size(0), _curpos(0), _dir(NULL) {
 }
 
 File::~File() {
@@ -408,19 +408,19 @@ void File::close() {
     _fd = NULL;
   }
 
-  if (_dir != 0) {
+  if (_dir) {
     closedir((DIR*)_dir);
-    _dir = 0;
+    _dir = NULL;
   }
 
   if (_name) {
     free(_name);
-    _name = 0;
+    _name = NULL;
   }
 }
 
 File::operator bool() {
-  return (_fd || (_dir != 0));
+  return (_fd) || (_dir);
 }
 
 char * File::name() {
@@ -428,7 +428,7 @@ char * File::name() {
 }
 
 boolean File::isDirectory(void) {
-  return (_dir != 0);
+  return (_dir != NULL);
 }
 
 File File::openNextFile(uint8_t mode) {
