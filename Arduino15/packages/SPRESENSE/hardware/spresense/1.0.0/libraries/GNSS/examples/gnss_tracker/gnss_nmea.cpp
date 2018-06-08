@@ -1,41 +1,48 @@
 /*
-  gnss_nmea.cpp - GNSS sample application
-  Copyright (C) 2017 Sony Corporation  All right reserved.
+ *  gnss_nmea.cpp - NMEA's GGA sentence
+ *  Copyright 2017 Sony Semiconductor Solutions Corporation
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
+/**
+ * @file gnss_nmea.cpp
+ * @author Sony Corporation
+ * @brief NMEA's GGA sentence
+ */
 
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
+/* include the GNSS library */
 #include <GNSS.h>
 
-/* Coordinate type */
-#define CORIDNATE_TYPE_LATITUDE   0
-#define CORIDNATE_TYPE_LONGITUDE  1
+#define CORIDNATE_TYPE_LATITUDE   0  /**< Coordinate type latitude */
+#define CORIDNATE_TYPE_LONGITUDE  1  /**< Coordinate type longitude */
 
-/* Sentence buffer. */
-#define STRING_BUFFER_SIZE  128     /* byte */
+#define STRING_BUFFER_SIZE  128      /**< Sentence buffer size */
 
-/*
-   Calculate the checksum and add it to the end.
-*/
+/**
+ * @brief Calculate the checksum and add it to the end.
+ * 
+ * @param [in] pStrDest Data to calculate checksum
+ * @return checksum
+ */
 static unsigned short CalcCheckSum(const char *pStrDest)
 {
   unsigned short CheckSum = 0;
   int cnt;
 
   /* Calculate checksum as xor of characters. */
-
   for (cnt = 1; pStrDest[cnt] != 0x00; cnt++)
   {
     CheckSum = CheckSum ^ pStrDest[cnt];
@@ -44,9 +51,14 @@ static unsigned short CalcCheckSum(const char *pStrDest)
   return CheckSum;
 }
 
-/*
-   Convert coordinate values for NMEA.
-*/
+/**
+ * @brief Convert coordinate values for NMEA.
+ * 
+ * @param [out] pBuffer %Buffer to write converted values
+ * @param [in] length Size of pBuffer
+ * @param [in] Coordinate Latitude or longitude
+ * @param [in] cordinate_type Coordinate type: CORIDNATE_TYPE_LATITUDE or CORIDNATE_TYPE_LONGITUDE
+ */
 static void CoordinateToString(char *pBuffer, int length, double Coordinate,
                                unsigned int cordinate_type)
 {
@@ -93,9 +105,6 @@ static void CoordinateToString(char *pBuffer, int length, double Coordinate,
   return ;
 }
 
-/*
-   Create NMEA's GGA sentence
-*/
 String getNmeaGga(SpNavData* pNavData)
 {
   String Gga;
@@ -104,21 +113,17 @@ String getNmeaGga(SpNavData* pNavData)
   unsigned short CheckSum;
 
   /* Set Header. */
-
   Gga = "$GPGGA,";
 
   /* Set time. */
-
   msec = pNavData->time.usec / 10000;
   snprintf(StringBuffer, STRING_BUFFER_SIZE, "%02d%02d%02d.%02d,", pNavData->time.hour, pNavData->time.minute, pNavData->time.sec, msec);
   Gga += StringBuffer;
 
   /* Set Coordinate. */
-
   if (pNavData->posDataExist)
   {
     /* Convert to DMM(Degree,Minute,Minute). */
-
     CoordinateToString(StringBuffer, STRING_BUFFER_SIZE, pNavData->latitude, CORIDNATE_TYPE_LATITUDE);
     Gga += StringBuffer;
 
@@ -128,40 +133,33 @@ String getNmeaGga(SpNavData* pNavData)
   else
   {
     /* Position not fixed. */
-
     snprintf(StringBuffer, STRING_BUFFER_SIZE, ",,,,");
     Gga += StringBuffer;
   }
 
   /* Set Quality indicator. */
-
   if (pNavData->type != SpPvtTypeGnss)
   {
     /* Fix invalid. */
-
     snprintf(StringBuffer, STRING_BUFFER_SIZE, "0,");
   }
   else
   {
     /* Set fixed value. */
     /* GPS SPS mode,fix valid. */
-
     snprintf(StringBuffer, STRING_BUFFER_SIZE, "1,");
   }
   Gga += StringBuffer;
 
   /* Set Number of satellites in use. */
-
   snprintf(StringBuffer, STRING_BUFFER_SIZE, "%02d,", pNavData->numSatellitesCalcPos);
   Gga += StringBuffer;
 
   /* Set the HDOP to string. */
-
   snprintf(StringBuffer, STRING_BUFFER_SIZE, ",");
   if (pNavData->posDataExist)
   {
     /* Position fixed. */
-
     if (pNavData->hdop != -1.0) {
       snprintf(StringBuffer, STRING_BUFFER_SIZE, "%.1f,", pNavData->hdop);
     }
@@ -170,34 +168,28 @@ String getNmeaGga(SpNavData* pNavData)
 
   /* Set the MSL altitude. */
   /* Set the MSL units. */
-
   snprintf(StringBuffer, STRING_BUFFER_SIZE, ",,");
   if (pNavData->posDataExist)
   {
     /* Position fixed. */
-
     snprintf(StringBuffer, STRING_BUFFER_SIZE, "%.1f,M,", pNavData->altitude);
   }
   Gga += StringBuffer;
 
   /* Set the Geiod separation. */
   /* Setthe Geiod separation. */
-
   snprintf(StringBuffer, STRING_BUFFER_SIZE, ",,");
   if (pNavData->posDataExist)
   {
     /* Skip Geoid */
-
     snprintf(StringBuffer, STRING_BUFFER_SIZE, ",M,");
   }
   Gga += StringBuffer;
 
   /* Set the Age of Differential GPS data. Not really applicable. */
-
   Gga += ",";
 
   /* Set checksum "*hh". */
-
   CheckSum = CalcCheckSum(Gga.c_str());
   snprintf(StringBuffer, STRING_BUFFER_SIZE, "*%02X\r\n", CheckSum);
   Gga += StringBuffer;
