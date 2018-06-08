@@ -15,29 +15,32 @@
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- *
- *  Spresense has an built in GNSS receiver which supports GPS and other GNSS satellites.  
- *  This skecth provides an example the GNSS operation.
- *  Simply upload the sketch, reset the board and check the USB serial output.
- *  After 3 seconds status information should start to appear.
- *
- *  This example code is in the public domain.
  */
 
+/**
+ * @file gnss.ino
+ * @author Sony Corporation
+ * @brief GNSS example application
+ * @details Spresense has an built in GNSS receiver which supports GPS and other
+ *          GNSS satellites. This skecth provides an example the GNSS operation.
+ *          Simply upload the sketch, reset the board and check the USB serial 
+ *          output. After 3 seconds status information should start to appear.\n\n
+ *
+ *          This example code is in the public domain.
+ */
+
+/* include the GNSS library */
 #include <GNSS.h>
 
-/* Buffer size. */
-#define STRING_BUFFER_SIZE  128     /* byte */
+#define STRING_BUFFER_SIZE  128       /**< %Buffer size */
 
-/* positioning test term. */
-#define RESTART_CYCLE       (60 * 5)
+#define RESTART_CYCLE       (60 * 5)  /**< positioning test term */
 
-//volatile uint8_t g_dbg = 1;
-static SpGnss Gnss;
+static SpGnss Gnss;                   /**< SpGnss object */
 
-/*
-   Turn on / off the LED0 for CPU active notification.
-*/
+/**
+ * @brief Turn on / off the LED0 for CPU active notification.
+ */
 static void Led_isActive(void)
 {
   static int state = 1;
@@ -53,12 +56,14 @@ static void Led_isActive(void)
   }
 }
 
-/*
-   Turn on / off the LED1 for positioning state notification.
-*/
-static void Led_isPosfix(int state)
+/**
+ * @brief Turn on / off the LED1 for positioning state notification.
+ * 
+ * @param [in] state Positioning state
+ */
+static void Led_isPosfix(bool state)
 {
-  if (state == 1)
+  if (state)
   {
     ledOn(PIN_LED1);
   }
@@ -68,12 +73,14 @@ static void Led_isPosfix(int state)
   }
 }
 
-/*
-   Turn on / off the LED3 for error notification.
-*/
-static void Led_isError(int state)
+/**
+ * @brief Turn on / off the LED3 for error notification.
+ * 
+ * @param [in] state Error state
+ */
+static void Led_isError(bool state)
 {
-  if (state == 1)
+  if (state)
   {
     ledOn(PIN_LED3);
   }
@@ -83,41 +90,44 @@ static void Led_isError(int state)
   }
 }
 
+/**
+ * @brief Activate GNSS device and start positioning.
+ */
 void setup() {
-  // put your main code here, to run repeatedly:
-  // put your setup code here, to run once:
-  //while (g_dbg) {}
+  /* put your setup code here, to run once: */
 
   int error_flag = 0;
 
   /* Set serial baudrate. */
-
   Serial.begin(115200);
 
   /* Wait HW initialization done. */
-
   sleep(3);
 
   /* Turn on all LED:Setup start. */
-
   ledOn(PIN_LED0);
   ledOn(PIN_LED1);
   ledOn(PIN_LED2);
   ledOn(PIN_LED3);
 
+  /* Set Debug mode to Info */
   Gnss.setDebugMode(PrintInfo);
 
-  int r;
-  r = Gnss.begin();
-  if (r != 0)
+  int result;
+
+  /* Activate GNSS device */
+  result = Gnss.begin();
+
+  if (result != 0)
   {
     Serial.println("Gnss begin error!!");
     error_flag = 1;
   }
   else
   {
-    r = Gnss.start(COLD_START);
-    if (r != 0)
+    /* Start positioning */
+    result = Gnss.start(COLD_START);
+    if (result != 0)
     {
       Serial.println("Gnss start error!!");
       error_flag = 1;
@@ -129,27 +139,27 @@ void setup() {
   }
 
   /* Turn off all LED:Setup done. */
-
   ledOff(PIN_LED0);
   ledOff(PIN_LED1);
   ledOff(PIN_LED2);
   ledOff(PIN_LED3);
 
   /* Set error LED. */
-
   if (error_flag == 1)
   {
-    Led_isError(1);
+    Led_isError(true);
     exit(0);
   }
 }
 
-void print_pos(SpNavData *pNavData)
+/**
+ * @brief %Print position information.
+ */
+static void print_pos(SpNavData *pNavData)
 {
   char StringBuffer[STRING_BUFFER_SIZE];
 
   /* print time */
-
   snprintf(StringBuffer, STRING_BUFFER_SIZE, "%04d/%02d/%02d ", pNavData->time.year, pNavData->time.month, pNavData->time.day);
   Serial.print(StringBuffer);
 
@@ -157,12 +167,10 @@ void print_pos(SpNavData *pNavData)
   Serial.print(StringBuffer);
 
   /* print satellites count */
-
   snprintf(StringBuffer, STRING_BUFFER_SIZE, "numSat:%2d, ", pNavData->numSatellites);
   Serial.print(StringBuffer);
 
-  /* print pos data */
-
+  /* print position data */
   if (pNavData->posDataExist == 0)
   {
     Serial.print("pos not fixed");
@@ -178,13 +186,15 @@ void print_pos(SpNavData *pNavData)
   Serial.println("");
 }
 
-void print_condition(SpNavData *pNavData)
+/**
+ * @brief %Print satellite condition.
+ */
+static void print_condition(SpNavData *pNavData)
 {
   char StringBuffer[STRING_BUFFER_SIZE];
   unsigned long cnt;
 
   /* Print satellite count. */
-
   snprintf(StringBuffer, STRING_BUFFER_SIZE, "numSatellites:%2d\n", pNavData->numSatellites);
   Serial.print(StringBuffer);
 
@@ -194,7 +204,6 @@ void print_condition(SpNavData *pNavData)
 
     /* Get satellite type. */
     /* Keep it to three letters. */
-
     if ( pNavData->isSatelliteTypeGps(cnt) )
     {
       pType = "GPS";
@@ -205,74 +214,74 @@ void print_condition(SpNavData *pNavData)
     }
 
     /* Get print conditions. */
-
     unsigned long Id  = pNavData->getSatelliteId(cnt);
     unsigned long Elv = pNavData->getSatelliteElevation(cnt);
     unsigned long Azm = pNavData->getSatelliteAzimuth(cnt);
     float sigLevel = pNavData->getSatelliteSignalLevel(cnt);
 
     /* Print satellite condition. */
-
     snprintf(StringBuffer, STRING_BUFFER_SIZE, "[%2d] Type:%s, Id:%2d, Elv:%2d, Azm:%3d, Lv:", cnt, pType, Id, Elv, Azm );
     Serial.print(StringBuffer);
     Serial.println(sigLevel, 6);
   }
 }
 
+/**
+ * @brief %Print position information and satellite condition.
+ * 
+ * @details When the loop count reaches the RESTART_CYCLE value, GNSS device is 
+ *          restarted.
+ */
 void loop()
 {
+  /* put your main code here, to run repeatedly: */
+
   static int LoopCount = 0;
   static int LastPrintMin = 0;
 
   /* Blink LED. */
-
   Led_isActive();
 
   /* Check update. */
-
   if (Gnss.waitUpdate(-1))
   {
     /* Get NaviData. */
-
     SpNavData NavData;
     Gnss.getNavData(&NavData);
 
     /* Set posfix LED. */
-
-    int LedSet = (NavData.posDataExist && (NavData.posFixMode != FixInvalid));
+    bool LedSet = (NavData.posDataExist && (NavData.posFixMode != FixInvalid));
     Led_isPosfix(LedSet);
 
     /* Print satellite information every minute. */
-
     if (NavData.time.minute != LastPrintMin)
     {
       print_condition(&NavData);
       LastPrintMin = NavData.time.minute;
     }
 
-    /* Print pos information. */
-
+    /* Print position information. */
     print_pos(&NavData);
   }
   else
   {
     /* Not update. */
-
     Serial.println("data not update");
   }
 
   /* Check loop count. */
-
   LoopCount++;
   if (LoopCount >= RESTART_CYCLE)
   {
     int error_flag = 0;
 
+    /* Turn off LED0 */
     ledOff(PIN_LED0);
+
+    /* Set posfix LED. */
     Led_isPosfix(false);
 
     /* Restart GNSS. */
-
     if (Gnss.stop() != 0)
     {
       Serial.println("Gnss stop error!!");
@@ -306,10 +315,9 @@ void loop()
     LoopCount = 0;
 
     /* Set error LED. */
-
     if (error_flag == 1)
     {
-      Led_isError(1);
+      Led_isError(true);
       exit(0);
     }
   }
