@@ -19,10 +19,10 @@
 */
 
 /**
- * Camera Library for Arduino IDE on SPRITZER.
+ * Camera Library for Arduino IDE on SPRESENSE.
  *
- * SPRITZER上のArduino 向け Camera Library Classです。
- * こちらのライブラリを使用することで、SPRITZER上での
+ * SPRESENSE上のArduino 向け Camera Library Classです。
+ * こちらのライブラリを使用することで、SPRESENSE上での
  *  - 写真撮影
  * が可能になります。
  *

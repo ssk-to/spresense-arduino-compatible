@@ -19,10 +19,10 @@
 */
 
 /**
- * Audio Library for Arduino IDE on SPRITZER.
+ * Audio Library for Arduino IDE on SPRESENSE.
  *
- * SPRITZER上のArduino 向け Audio Library Classです。
- * こちらのライブラリを使用することで、SPRITZER上での
+ * SPRESENSE上のArduino 向け Audio Library Classです。
+ * こちらのライブラリを使用することで、SPRESENSE上での
  *  - 音楽再生
  *  - 音声録音
  *  - 音声通話

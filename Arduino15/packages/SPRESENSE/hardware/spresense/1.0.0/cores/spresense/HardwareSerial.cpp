@@ -238,7 +238,7 @@ size_t HardwareSerial::write(const uint8_t* buffer, size_t size)
 #define TTYS_2 2
 int HardwareSerial::ch_to_tty(uint8_t *tty)
 {
-    /* please refer SpritzerNuttx cxd56_serial.c */
+    /* please refer SpresenseNuttx cxd56_serial.c */
     int ttys[UART_CH_NUM];
     uint8_t ch;
 

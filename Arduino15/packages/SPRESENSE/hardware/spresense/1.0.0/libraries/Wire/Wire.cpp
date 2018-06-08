@@ -59,13 +59,13 @@ void TwoWire::begin()
 void TwoWire::begin(uint8_t address)
 {
     unuse(address);
-    printf("ERROR: I2C slave mode not supported on Spritzer\n");
+    printf("ERROR: I2C slave mode not supported on CXD5602\n");
 }
 
 void TwoWire::begin(uint16_t address)
 {
     unuse(address);
-    printf("ERROR: I2C slave mode not supported on Spritzer\n");
+    printf("ERROR: I2C slave mode not supported on CXD5602\n");
 }
 
 void TwoWire::end()
@@ -207,7 +207,7 @@ size_t TwoWire::write(uint8_t value)
     else {
         // in slave send mode
         // reply to master
-        printf("ERROR: I2C slave mode not supported on Spritzer\n");
+        printf("ERROR: I2C slave mode not supported on CXD5602\n");
     }
     return 1;
 }
@@ -225,7 +225,7 @@ size_t TwoWire::write(const uint8_t* data, size_t quantity)
     else {
         // in slave send mode
         // reply to master
-        printf("ERROR: I2C slave mode not supported on Spritzer\n");
+        printf("ERROR: I2C slave mode not supported on CXD5602\n");
     }
     return quantity;
 }

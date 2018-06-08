@@ -38,10 +38,10 @@ extern "C"{
 #define GPIO_INPUT_SHIFT        (0)
 #define GPIO_INPUT_MASK         (1u << GPIO_INPUT_SHIFT)
 
-// convert physical pin number to spritzer internal pin number
+// convert physical pin number to CXD5602 internal pin number
 uint8_t pin_convert(uint8_t pin);
 
-// get gpio register address via spritzer internal pin number
+// get gpio register address via CXD5602 internal pin number
 uint32_t get_gpio_regaddr(uint32_t pin);
 
 // start analog output on physical pin number, with pulse width and frequency
