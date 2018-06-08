@@ -115,15 +115,19 @@ static const uint8_t A3 = PIN_A3;
 static const uint8_t A4 = PIN_A4;
 static const uint8_t A5 = PIN_A5;
 
-// SPI pins
-#define PIN_SPI_SS    PIN_D10
-#define PIN_SPI_MOSI  PIN_D11
-#define PIN_SPI_MISO  PIN_D12
-#define PIN_SPI_SCK   PIN_D13
-static const uint8_t SS   = PIN_SPI_SS;
-static const uint8_t MOSI = PIN_SPI_MOSI;
-static const uint8_t MISO = PIN_SPI_MISO;
-static const uint8_t SCK  = PIN_SPI_SCK;
+// SPI pins - 2 SPI ports
+//
+// The main SPI(SPI4) port
+//  SS   D10
+//  MOSI D11
+//  MISO D12
+//  SCK  D13
+//
+// SPI5 port - see SPI Library documents
+//  SPI5_SS   D24
+//  SPI5_MOSI D16
+//  SPI5_MISO D17
+//  SPI5_SCK  D23
 
 // TWI pins
 #define PIN_WIRE_SDA  PIN_D14
