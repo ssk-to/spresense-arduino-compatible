@@ -1,0 +1,9 @@
+# Class
+Camera	KEYWORD2
+CameraClass	KEYWORD2
+
+# Function
+initialize	KEYWORD2
+
+# Constants
+err_t	KEYWORD2
