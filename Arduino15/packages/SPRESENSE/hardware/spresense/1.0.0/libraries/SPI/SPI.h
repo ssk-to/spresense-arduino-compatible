@@ -1,22 +1,21 @@
 /*
-  SPI.h - SPI include file for the Sparduino SDK
-  Copyright (C) 2018 Sony Semiconductor Solutions Corp.
-  Copyright (c) 2017 Sony Corporation  All right reserved.
-
-  This library is free software; you can redistribute it and/or
-  modify it under the terms of the GNU Lesser General Public
-  License as published by the Free Software Foundation; either
-  version 2.1 of the License, or (at your option) any later version.
-
-  This library is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-  Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public
-  License along with this library; if not, write to the Free Software
-  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
+ *  SPI.h - SPRESENSE Arduino SPI library 
+ *  Copyright 2018 Sony Semiconductor Solutions Corporation
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Lesser General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2.1 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Lesser General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Lesser General Public
+ *  License along with this library; if not, write to the Free Software
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 #ifndef Spi_h
 #define Spi_h
@@ -41,19 +40,19 @@
 #include <nuttx/spi/spi.h>
 #include <Arduino.h>
 
-#define SPI_MODE0 SPIDEV_MODE0
-#define SPI_MODE1 SPIDEV_MODE1
-#define SPI_MODE2 SPIDEV_MODE2
-#define SPI_MODE3 SPIDEV_MODE3
+#define SPI_MODE0 SPIDEV_MODE0  /**< SPI mode 0 */
+#define SPI_MODE1 SPIDEV_MODE1  /**< SPI mode 1 */
+#define SPI_MODE2 SPIDEV_MODE2  /**< SPI mode 2 */
+#define SPI_MODE3 SPIDEV_MODE3  /**< SPI mode 3 */
 
 /**
  * @enum SpiInterruptMode
  * @brief Spi interrupt mode
  */
 enum SpiInterruptMode {
-    SPI_INT_MODE_NONE = 0,
-    SPI_INT_MODE_MASK,
-    SPI_INT_MODE_GLOBAL
+    SPI_INT_MODE_NONE = 0,  /**< None */
+    SPI_INT_MODE_MASK,      /**< Mask */
+    SPI_INT_MODE_GLOBAL     /**< Global */
 };
 
 /**
@@ -74,16 +73,15 @@ public:
     /**
      * @brief Construct a new SPISettings object
      * 
-     * @param clock 
-     * @param bitOrder 
-     * @param dataMode 
+     * @param [in] clock Clock frequency
+     * @param [in] bitOrder Bit order
+     * @param [in] dataMode SPI mode
      */
     SPISettings(uint32_t clock, uint8_t bitOrder, uint8_t dataMode)
         : clock_(clock), bit_order_(bitOrder), data_mode_(dataMode) { }
 
     /**
      * @brief Construct a new SPISettings object
-     * 
      */
     SPISettings()
         : clock_(4000000), bit_order_(MSBFIRST), data_mode_(SPI_MODE0) { }
@@ -107,21 +105,19 @@ public:
     /**
      * @brief Create SPIClass object
      * 
-     * @param port The default port is 4. You can control SPI4 using object SPI\n
-     *             e.g. SPI.begin();\n SPI5 is also supported. You can control
-     *             SPI5 using object SPI5\n e.g. SPI5.begin();
+     * @param [in] port The default port is 4. You can control SPI4 using object SPI\n
+     *                  e.g. SPI.begin();\n SPI5 is also supported. You can control
+     *                  SPI5 using object SPI5\n e.g. SPI5.begin();
      */
     SPIClass(int port);
 
     /**
      * @brief Initialize the SPI library
-     * 
      */
     void begin(void);
 
     /**
      * @brief Disable the SPI bus
-     * 
      */
     void end(void);
 
@@ -130,14 +126,13 @@ public:
      *        this function is used to gain exclusive access to the SPI bus
      *        and configure the correct settings.
      * 
-     * @param settings 
+     * @param [in] settings SPISettings object
      */
     void beginTransaction(SPISettings settings);
 
     /**
      * @brief After performing a group of transfers and releasing the chip select
      *        signal, this function allows others to access the SPI bus
-     * 
      */
     void endTransaction(void);
 
@@ -145,7 +140,7 @@ public:
      * @brief This function is deprecated.  New applications should use
      *        beginTransaction() to configure SPI settings.
      * 
-     * @param bitOrder 
+     * @param [in] bitOrder Bit order
      */
     void setBitOrder(uint8_t bitOrder);
 
@@ -153,7 +148,7 @@ public:
      * @brief This function is deprecated.  New applications should use
      *        beginTransaction() to configure SPI settings.
      * 
-     * @param dataMode 
+     * @param [in] dataMode SPI mode
      */
     void setDataMode(uint8_t dataMode);
 
@@ -161,7 +156,7 @@ public:
      * @brief This function is deprecated.  New applications should use
      *        beginTransaction() to configure SPI settings.
      * 
-     * @param clockDiv 
+     * @param [in] clockDiv Clock divider
      */
     void setClockDivider(uint8_t clockDiv);
 
@@ -179,7 +174,7 @@ public:
      *          <https://github.com/arduino/Arduino/pull/2381>\n
      *          <https://github.com/arduino/Arduino/pull/2449>
      * 
-     * @param interruptNumber 
+     * @param [in] interruptNumber Interrupt number
      */
     void usingInterrupt(uint8_t interruptNumber);
 
@@ -192,31 +187,31 @@ public:
      *        <https://github.com/arduino/Arduino/pull/2381>\n
      *        <https://github.com/arduino/Arduino/pull/2449>
      * 
-     * @param interruptNumber 
+     * @param [in] interruptNumber Interrupt number
      */
     void notUsingInterrupt(uint8_t interruptNumber);
 
     /**
      * @brief Write 8-bit data to the SPI bus and also receive 8-bit data
      * 
-     * @param data 
-     * @return uint8_t 
+     * @param [in] data  8-bit data to send 
+     * @return Received 8-bit data 
      */
     uint8_t transfer(uint8_t data);
 
     /**
      * @brief Write 16-bit data to the SPI bus and also receive 16-bit data
      * 
-     * @param data 
-     * @return uint16_t 
+     * @param [in] data 16-bit data to send
+     * @return Received 16-bit data 
      */
     uint16_t transfer16(uint16_t data);
 
     /**
      * @brief Write data to the SPI bus and also receive data
      * 
-     * @param data 
-     * @param count 
+     * @param [in] data Buffer to send
+     * @param [in] count The number of bytes to transmit 
      */
     void transfer(void *buf, size_t count);
 
