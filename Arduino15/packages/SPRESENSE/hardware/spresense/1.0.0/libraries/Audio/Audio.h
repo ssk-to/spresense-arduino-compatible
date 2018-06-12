@@ -21,12 +21,10 @@
 /**
  * Audio Library for Arduino IDE on SPRESENSE.
  *
- * SPRESENSE上のArduino 向け Audio Library Classです。
- * こちらのライブラリを使用することで、SPRESENSE上での
- *  - 音楽再生
- *  - 音声録音
- *  - 音声通話
- * が可能になります。
+ * Audio Library Class for Arduino on SPRESENSE.
+ * By using this library, you can use the follow features on SPRESSENSE.
+ * - Music playback
+ * - Voice recording
  *
  */
 
@@ -135,10 +133,19 @@ class AudioClass
 public:
 
   /**
+   * Get instance of AudioClass for singleton.
+   */
+  static AudioClass* getInstance()
+    {
+      static AudioClass instance;
+      return &instance;
+    }
+
+  /**
    * Player ID
    *
-   * Audio Libraryでは2つのplayerを同時に使用することが出来ます。
-   * 使用するplayerを指定する際にはPlayer IDを使用して下さい。
+   * Audio library allows you to use two players simultaneously.
+   * Please set Player ID that player instance id created to use.
    */
 
   typedef enum
@@ -150,11 +157,13 @@ public:
   /**
    * Initialize the audio library and HW modules.
    *
-   * この関数は、Audioライブラリを使用する際に、1回だけ呼び出します。
-   * 複数回呼び出すと、エラーが発生しますが、"end()" を呼び出した場合、再度、この関数を呼ぶ必要があります。
+   * This function is called only once when using the Audio library.
+   * In this function, initialization of required shared memory management library,
+   * initialization of inter-task communication library, Initialize Audio MW, 
+   * initialize FIFO for ES supply, set callback at error occurrence, etc.
    *
-   * 本関数の中で、必要な共有メモリ管理ライブラリの初期化、タスク間通信ライブラリの初期化、
-   * Audio MWの初期化、ES供給用のFIFOの初期化、エラー発生時callback設定のなどを行っていきます。
+   * If you call it more than once, an error occurs, 
+   * but if you call "end ()" you need to call this function again.
    *
    */
   err_t begin(void);
@@ -162,59 +171,62 @@ public:
   /**
    * Finalization the audio library and HW modules.
    *
-   * この関数は、Audioライブラリがbeginを呼ばれて、活性化された際に1回だけ呼び出します。
-   * "begin()"を呼ぶ前に呼んでしまったり、複数回呼び出すと、エラーが発生します。
+   * This function is called when you want to exit the Audio library.
+   * In this function, necessary termination processing of the shared memory management
+   * library, end processing of the inter-task communication library,
+   * end processing of Audio MW, destruction of FIFO for ES supply,
+   * clearing of callback setting at error occurrence, etc.
    *
-   * 本関数の中で、必要な共有メモリ管理ライブラリの終了処理、タスク間通信ライブラリの終了処理、
-   * Audio MWの終了処理、ES供給用のFIFOの破棄、エラー発生時callback設定のクリアのなどを行っていきます。
+   * This can only be called once when activated.
+   * If you call it before calling "begin ()" or call it more than once, an error occurs.
    *
    */
   err_t end(void);
 
-  /*TODO:外部からは、setModeとして、引数で、Modeを決める方向で検討。*/
-
   /**
    * Set Audio Library Mode to Music Player.
    *
-   * この関数は、Audioライブラリの動作モードをMusic Playerに切り替えるものです。
-   * Modeに関しては、別紙の状態遷移表に従います。
-   * 状態が、"Music Playerモード"に遷移した後では呼べません。
-   * 元の状態に戻す場合は、setReadyMode() を呼んでください。
+   * This function switches the mode of the Audio library to Music Player.
+   * For mode details, follow the state transition chart on the developer guide.
+   * 
+   * This function cannot be called after transition to "Music Player mode".
+   * To return to the original state, please call setReadyMode ().
    *
-   * 本関数の中で、音楽再生に必要なHWの設定、ESバッファの設定などを行っていきます。
+   * In this function, setting HW necessary for music playback, and setting ES buffer configuration etc.
    *
    */
-
-  /* TODO:AS_OUT_SPの定義する位置。 */
   err_t setPlayerMode(
-      uint8_t device  /**< 出力デバイスの指定。AS_SETPLAYER_OUTPUTDEVICE_SPHP or AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT。 */
+      uint8_t device  /**< Select output device. AS_SETPLAYER_OUTPUTDEVICE_SPHP or 
+                           AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT. */
   );
 
   /**
    * Set Audio Library Mode to Sound Recorder.
    *
-   * この関数は、Audioライブラリの動作モードをSound Recorderに切り替えるものです。
-   * Modeに関しては、別紙の状態遷移表に従います。
-   * 状態が、"Sound Recorderモード"に遷移した後では呼べません。
-   * 元の状態に戻す場合は、setReadyMode() を呼んでください。
+   * This function switches the mode of the Audio library to Sound Recorder.
+   * For mode details, follow the state transition chart on the developer guide.
+   * 
+   * This function cannot be called after transition to "Sound Recorder mode".
+   * To return to the original state, please call setReadyMode ().
    *
-   * 本関数の中で、音声記録に必要なHWの設定、ESバッファの設定などを行っていきます。
+   * In this function, setting HW necessary for sound recording, and setting ES buffer configuration etc.
    *
    */
-  /* TODO:マクロの名前。長い。INはいらない。 */
   err_t setRecorderMode(
-      uint8_t device /**< 入力デバイスの指定。Select from enumulation "AsSetRecorderStsInputDevice"。
-      AS_SETRECDR_STS_INPUTDEVICE_MIC_A or AS_SETRECDR_STS_INPUTDEVICE_MIC_D or AS_SETRECDR_STS_INPUTDEVICE_I2S_IN。*/
+      uint8_t device /**<  Select input device. AS_SETRECDR_STS_INPUTDEVICE_MIC_A or
+                           AS_SETRECDR_STS_INPUTDEVICE_MIC_D or AS_SETRECDR_STS_INPUTDEVICE_I2S_IN. */
   );
 
   /**
    * Set Audio Library Mode to Ready.
    *
-   * この関数は、Audioライブラリの動作モードを初期状態に切り替えるものです。
-   * Modeに関しては、別紙の状態遷移表に従います。
-   * 状態が、"Readyモード"に遷移した後では呼べません。begin直後は、Ready状態になっています。
+   * This function switches the mode of the Audio library to the initial state.
+   * For mode details, follow the state transition chart on the developer guide.
    *
-   * 本関数の中で、各モードで使用したリソースの解放、HWを待機状態への変更するなどを行っていきます。
+   * This function cannot be called after transition to "Ready mode".
+   * Immediately after boot, it is in Ready mode.
+   *
+   * In this function, we will release resources which used in each mode, change HW to the standby state, etc.
    *
    */
   err_t setReadyMode(void);
@@ -222,68 +234,71 @@ public:
   /**
    * Initialize player.
    *
-   * この関数は、Player動作の初期化及び、設定を行います。
-   * 音楽再生が行われていなければ、何度でも呼び出せます。
-   * この関数によって、
-   *  - 圧縮コーデック
-   *  - サンプリングレート
-   *  - チャンネル数
-   * を決めることができます。
+   * This function initializes and sets Player action.
+   * When player do not play music, you can call it as many times as you like.
+   *
+   * By this function,
+   *   - Compression codec
+   *   - Sampling rate
+   *   - Number of channels
+   * You need to set. 
    *
    */
   err_t initPlayer(
-      PlayerId id,    /**< Player IDの指定 */
-      uint8_t codec,  /**< 圧縮Codecの指定。Select from enumulation "AsInitPlayerCodecType”。
-                           AS_INITPLAYER_MP3 = 0 or AS_INITPLAYER_WAV or AS_INITPLAYER_AAC or AS_INITPLAYER_OPUS or AS_INITPLAYER_MEDIA */
-      const char *codec_path,
-      uint32_t fs,    /**< サンプリングレートの指定。AsInitPlayerSamplingRateIndexを使用してもよいですし、周波数の値を直接入れてもよいです。*/
-      uint8_t channel /**< チャンネル数の指定。AsInitPlayerChannelNumberIndexを使用してもよいですし、チャンネル数を直接入れてもよいです。*/
+      PlayerId id,    /**< Select Player ID. */
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      const char *codec_path,  /**< Set DPS Binary path. Maximum length is 24 bytes.*/
+      uint32_t fs,    /**< Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO or AS_CHANNEL_STEREO */
   );
 
   /**
    * Initialize recorder
    *
-   * この関数は、Recoder動作の初期化及び、設定を行います。
-   * 音声記録が行われていなければ、何度でも呼び出せます。
-   * この関数によって、
-   *  - 圧縮コーデック
-   *  - サンプリングレート
-   *  - チャンネル数
-   * を決めることができます。
+   * This function initializes and sets Recorder action.
+   * When recorder do not start, you can call it as many times as you like.
+   *
+   * By this function,
+   *   - Compression codec
+   *   - Sampling rate
+   *   - Number of channels
+   * You need to set. 
    *
    */
   err_t initRecorder(
-      uint8_t codec,  /**< 圧縮Codecの指定。Select from enumulation "AsInitRecorderCodecType"。
-                           AS_INITREC_MP3 or AS_INITREC_WAV or AS_INITREC_OPUS */
-      const char *codec_path,
-      uint32_t fs,    /**< サンプリングレートの指定。AsInitRecorderSamplingRateIndexを使用してもよいですし、周波数の値を直接入れてもよいです。*/
-      uint8_t channel /**< チャンネル数の指定。AsInitRecorderChannelNumberIndexを使用してもよいですし、チャンネル数を直接入れてもよいです。*/
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      const char *codec_path, /**< Set DPS Binary path. Maximum length is 24 bytes.*/
+      uint32_t fs,    /**<Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO, AS_CHANNEL_STEREO, AS_CHANNEL_4CH, or etc...  */
   );
 
   /**
    * Start Player
    *
-   * この関数は、Playerの開始を行います。
-   * 一度、この関数を呼ぶとPlayerは、Playing状態になるので、StopPlayerを呼ぶまで呼び出せません。
+   * This function starts Player.
+   * Once you call this function, the Player will be in the active state,
+   * so you can not call it until you call StopPlayer.
    *
-   * Playを開始すると、Stream Dataの読み出しバッファからAccess Unit分のデータの読み出しを開始します。
-   * そのため、Playを開始するためには、事前に、PlayerのバッファにStream Dataを供給した状態にする必要があります。
-   * startPlay前に、必ず、writeFramesを呼び出してください。
-   * writeFramesの呼び出しを行わずに実行すると、ES_UNDER_FLOW_ERRが発生します。
+   * When Player is started, it starts reading the data for the Access Unit[
+   * from the stream data buffer.
+   * Therefore, in order to start Player, it is necessary to supply
+   * Stream Data to the stream buffer beforehand.
+   * Be sure to call writeFrames before startPlay.
+   * If you execute without calling * writeFrames, ES_UNDER_FLOW_ERR will be occurs.
    *
    */
   err_t startPlayer(
-      PlayerId id    /**< Player IDの指定*/
+      PlayerId id    /**< Select Player ID. */
   );
 
   /**
    * Start Recorder
    *
-   * この関数は、Recorderの開始を行います。
-   * 一度、この関数を呼ぶとRecodrderは、Recording状態になるので、StopRecorderを呼ぶまで呼び出せません。
-   *
-   * また、WAVデータでの書き込みの場合、ファイルの先頭でWav Headerを作成する必要があるため、
-   * writeWavHeader関数を呼び出す必要があります。
+   * This function starts Recorder.
+   * Once you call this function, the Recorder will be in the active state,
+   * so you can not call it until you call StopRecorder.
+   * And, in the case of WAV data, it is necessary to create a Wav Header
+   * at the beginning of the file, you need to call writeWavHeader function at first.
    *
    */
   err_t startRecorder(void);
@@ -291,24 +306,26 @@ public:
   /**
    * Stop Player
    *
-   * この関数は、Playerの停止を行います。
-   * 関数は、startPlayerを呼び出し、Playing状態になったときのみ呼び出すことが可能です。
-   * Playを停止すると、Stream Dataの読み出しを停止を開始し、最終フレームまで発音すると停止されます。
-   * 完全にAudio出力が停止（100ms程度かかります）されるまで、次のAPIを受け付けません。
-   * ※今後仕様変更されます。
+   * This function stops Player.
+   * The function can be called only when called startPlayer and changed to the Playing state.
+   *
+   * When stop player, it read Stream Data until the last frame, and stops.
+   * The next API will not be accepted until the audio output
+   * stops completely. (it takes about 100 ms).
    *
    */
   err_t stopPlayer(
-      PlayerId id /**< Player IDの指定 */
+      PlayerId id /**< Select Player ID. */
   );
 
   /**
    * Stop Recorder
    *
-   * この関数は、Recorderの停止を行います。
-   * 関数は、startRecorderを呼び出し、Recording状態になったときのみ呼び出すことが可能です。
-   * Recorderを停止すると、音声キャプチャの停止を行い、最後にキャプチャした音声データの書き込みまで行います。
-   * この関数が戻ってくれば、記録処理は終了していることを保証します。
+   * This function stops Recorder.
+   * The function can be called only when called startRecorder and changed to the Recording state.
+   *
+   * When stop the Recorder, stop the audio capture and write until the last captured audio data.
+   * If this function return, the recording process had ended.
    *
    */
   err_t stopRecorder(void);
@@ -316,138 +333,130 @@ public:
   /**
    * Set Beep Sound
    *
-   * この関数は、Beep音の設定を行います。
-   * Beep音のOn/Off、音量、音程（周波数）が指定できます。PlayerModeもしくは、ReadyModeで実行できます。
+   * This function sets beep sound.
+   * Beep sound On / Off, volume, pitch (frequency) can be configured.
+   * It can call on PlayerMode or ReadyMode status.
    *
    */
   err_t setBeep(
-      char  enable, /**< Beep音のon/off指定。enable(On) = 1, disable(Off) = 0。*/
-      short volume, /**< Beep音の音量指定。0?100までの値で指定できる。*/
-      short frequency /**< Beep音の周波数（音程）を指定できる。周波数の値をそのまま指定する。(example, 1000)*/
+      char  enable, /**< Set beep sound On/Off. enable(On) = 1, disable(Off) = 0. */
+      short volume, /**< Set beep sound volume. -90(db) - 0(db) can be set. 0db is Maximum amplitude. */
+      short frequency /**< Set beep sound. frequency (pitch). Set the frequency value as it is. (example, 1000 is 1kHz sound) */
   );
 
   /**
    * Set Player Volume
    *
-   * この関数は、Player再生時の音量を設定できます。
-   * PlayerModeで実行できます。
+   * This function can set the volume when playing the player.
+   * It can be called on PlayerMode.
+   *
    */
   err_t setVolume(
-      int volume /**< マスタ音量の指定。Range of volume is 0 - 100。*/
+      int volume /**< Set the master volume. Range of volume is -1020(-102db) - 120(12db). A value larger than 0 may distort the sound. */
   );
 
   err_t setVolume(
-      int master,  /**< マスタ音量の指定。Range of volume is 0 - 100。*/
-      int player0, /**< Player0音量の指定。Range of volume is 0 - 100。*/
-      int player1  /**< Player1音量の指定。Range of volume is 0 - 100。*/
+      int master,  /**< Set the master volume. Range of volume is -1020(-102db) - 120(12db). A value larger than 0 may distort the sound. */
+      int player0, /**< Set the player0 volume. Range of volume is -1020(-102db) - 120(12db). This value is before Mixing. */
+      int player1  /**< Set the player1 volume. Range of volume is -1020(-102db) - 120(12db). This value is before Mixing.*/
   );
 
   /**
    * Set Player L/R Gain
    *
-   * この関数は、Player再生時のL/R gainを設定できます。
-   * PlayerModeで実行できます。
+   * This function can set the Left and Right channel gain for Player playback.
+   * It can be executed with PlayerMode.
+   * If you do not call this, the sound is original.
+   *
    */
   err_t setLRgain(
-      PlayerId id,          /**< Player ID の指定 */
-      unsigned char l_gain, /**< L gain */
-      unsigned char r_gain  /**< R gain */
+      PlayerId id,          /**< Select Player ID. */
+      unsigned char l_gain, /**< Set left gain. 0(%) - 200(%) can be set. 100% is orignal and a value larger than 100 may distort the sound. */
+      unsigned char r_gain  /**< Set right gain. 0(%) - 200(%) can be set. 100% is orignal and a value larger than 100 may distort the sound. */
   );
 
   /** APIs for Player Mode */
+
   /**
    * Write Stream Data from a file to FIFO by some frames.(now 5 frames)
    *
-   * この関数は、Fileクラスで指定した音声ファイルから、StreamデータをAudioライブラリ内に持つFIFOに
-   * 数フレーム分のデータ分（現在は5フレーム分）、書き込みます。
-   * PlayerModeで実行できます。
+   * This function writes from the audio file specified by the File class
+   * to the Stream  data FIFO in the Audio library.
+   * It writes for several frames data (now five frames).
+   * It can be called on PlayerMode.
+   * 
+   * This FIFO is cleared when calling StopPlayer or setReadyMode.
+   * 
+   * During music playback, please call this function periodically.
+   * When an error occurs, you should error handling as properly
    *
-   * このFIFOは、StopPlayerを呼び出すか、ReadyModeに遷移した際に、クリアされます。
-   *
-   * 音楽再生中は、定期的にこの関数を呼び出してください。
-   * この関数の戻り値が、1のとき、発音すべき音声データがないことを示しますので、StopPlayerを呼び出し、再生を停止してください。
    */
   err_t writeFrames(
-      PlayerId id, /**< Player ID の指定 */
-      File& myfile /**< 音声ファイルを制御しているFileクラスのインスタンスを指定します。*/
+      PlayerId id, /**< Select Player ID. */
+      File& myfile /**< Specify an instance of the File class of the audio file. */
   );
 
 
   /** APIs for Recorder Mode */
+
   /**
    * Write WAV Header.
    *
-   * この関数は、ファイルフォーマットがWAVファイルでの音声記録時に呼び出す関数です。
-   * InitRecoderのcodecが、wavの時に、必ずStartRecoderの前に呼び出してください。
-   * 他のCodecを指定した場合は、呼び出さないでください。
+   * This function should call when file format is WAV file recording.
+   * When codec of InitRecoder is "wav", be sure to call it before StartRecoder.
+   * Do not call it if other codecs are selected.
    *
    */
   err_t writeWavHeader(
-      File& /**< 音声ファイルを制御しているFileクラスのインスタンスを指定します。*/
+      File& myFile/**< Specify an instance of the File class of the audio file. */
   );
 
   /**
    * Read Stream Data from FIFO to a file by some frames.(now 5 frames)
    *
-   * この関数は、Audioライブラリ内に持つFIFOから、生成されたStreamデータをFileクラスで指定したファイルに
-   * 数フレーム分のデータ分（現在は5フレーム分）、書き込みます。
-   * RecorderModeで実行できます。
+   * This function reads the generated Stream data from the Stream FIFO
+   * into the file specified by the File class.
+   * It reads for several frames data (now five frames).
+   * It can be called on RecorderMode.
    *
-   * 音声記録中は、定期的にこの関数を呼び出してください。
+   * During sound recording, please call this function periodically.
+   *
    */
-  err_t readFrames(File&);
-
+  err_t readFrames(
+      File& myFile/**< Specify an instance of the File class of the audio file. */
+  );
 
   /**
    * Close Outputfile
    *
-   * この関数は、ESを書き込んでいるファイルのclose処理を行う関数です。
-   * StopRecorderの呼び出し後、必ず呼び出すようにしてください。
-   * RecorderModeで実行できます。
+   * This function do closing processing on the file in which stream is written.
+   * Be sure to call it after calling StopRecorder.
+   * It can be called on RecorderMode.
+   *
    */
-  err_t closeOutputFile(File&);
+  err_t closeOutputFile(
+      File& myFile/**< Specify an instance of the File class of the audio file. */
+  );
 
-  /**
-   * Audio Object Interfaces
-   */
-
-  err_t objIf_createStaticPools(uint8_t layout_no);
-  err_t objIf_createMediaPlayer(PlayerId id);
-  err_t objIf_createOutputMixer(void);
-  err_t objIf_activateMediaPlayer(PlayerId id, uint8_t output_device, MediaPlayerCallback mpcb);
-  err_t objIf_activateOutputMixer(AsOutputMixerHandle handle, OutputMixerCallback omcb);
-  err_t objIf_initMediaPlayer(PlayerId id, uint8_t codec_type, uint32_t sampling_rate, uint8_t channel_number);
-  err_t objIf_startMediaPlayer(PlayerId id, DecodeDoneCallback dccb);
-  err_t objIf_stopMediaPlayer(PlayerId id);
-  err_t objIf_sendDataOutputMixer(AsOutputMixerHandle handle, MemMgrLite::MemHandle mh, uint32_t sample, uint32_t size, bool is_end, bool is_valid);
-  err_t objIf_reqNextMediaPlayerProcess(PlayerId id, AsRequestNextType type);
-  err_t objIf_deactMediaPlayer(PlayerId id);
-  err_t objIf_deactOutputMixer(void);
-
-  err_t objIf_activateBaseband(void);
-  err_t objIf_deactivateBaseband(void);
-
-  /**
-   * To get instance of AudioClass
-   */
-  static AudioClass* getInstance()
-    {
-      static AudioClass instance;
-      return &instance;
-    }
 
   /**
    * Read Stream Data from FIFO to a file by some frames.(now 5 frames)
    *
-   * この関数は、Audioライブラリ内に持つFIFOから、生成されたStreamデータを指定したバッファー領域に書き込みます。
-   * RecorderModeで実行できます。
+   * This function reads the generated Stream data from the Stream FIFO
+   * into the specified buffer area.
+   * 
+   * This function is for you want to process sounds in applications.
+   * 
+   * It reads for several frames data (now five frames).
+   * It can be called on RecorderMode.
    *
-   * 音声記録中は、定期的にこの関数を呼び出してください。
+   * During sound recording, please call this function periodically.
+   *
    */
   err_t readFrames(
-      char*     p_buffer,    /**< バッファー領域のアドレス */
-      uint32_t  buffer_size, /**< バッファーのサイズ */
-      uint32_t* read_size    /**< 読込みサイズ */
+      char*     p_buffer,    /**< Address of buffer area. */
+      uint32_t  buffer_size, /**< Buffer size.(byte) */
+      uint32_t* read_size    /**< Read size.(byte) */
   );
 
 private:
