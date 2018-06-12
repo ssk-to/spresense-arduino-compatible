@@ -28,6 +28,8 @@
 #include <string.h>
 #include <ctype.h>
 
+// Not support F() Macro Definition
+#define F(string_literal) (string_literal)
 
 // An inherited class for holding the result of a concatenation.  These
 // result objects are assumed to be writable by subsequent concatenations.
