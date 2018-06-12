@@ -27,8 +27,8 @@ extern "C"
 #endif
 
 /* LED control */
-void Led_On(int ledch);
-void Led_Off(int ledch);
+#define ledOn(x)  digitalWrite(x, HIGH)
+#define ledOff(x) digitalWrite(x, LOW)
 
 #ifdef __cplusplus
 }

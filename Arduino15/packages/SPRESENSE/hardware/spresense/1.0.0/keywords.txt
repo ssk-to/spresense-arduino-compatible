@@ -37,8 +37,8 @@ getTimeout	KEYWORD2
 getWriteError	KEYWORD2
 init	KEYWORD3
 initVariant	KEYWORD3
-Led_Off	KEYWORD2
-Led_On	KEYWORD2
+ledOff	KEYWORD2
+ledOn	KEYWORD2
 makeWord	KEYWORD2
 microsecondsToClockCycles	KEYWORD2
 printTo	KEYWORD2

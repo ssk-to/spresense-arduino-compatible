@@ -43,12 +43,12 @@ static void Led_isActive(void)
   static int state = 1;
   if (state == 1)
   {
-    Led_On(PIN_LED0);
+    ledOn(PIN_LED0);
     state = 0;
   }
   else
   {
-    Led_Off(PIN_LED0);
+    ledOff(PIN_LED0);
     state = 1;
   }
 }
@@ -60,11 +60,11 @@ static void Led_isPosfix(int state)
 {
   if (state == 1)
   {
-    Led_On(PIN_LED1);
+    ledOn(PIN_LED1);
   }
   else
   {
-    Led_Off(PIN_LED1);
+    ledOff(PIN_LED1);
   }
 }
 
@@ -75,11 +75,11 @@ static void Led_isError(int state)
 {
   if (state == 1)
   {
-    Led_On(PIN_LED3);
+    ledOn(PIN_LED3);
   }
   else
   {
-    Led_Off(PIN_LED3);
+    ledOff(PIN_LED3);
   }
 }
 
@@ -100,10 +100,10 @@ void setup() {
 
   /* Turn on all LED:Setup start. */
 
-  Led_On(PIN_LED0);
-  Led_On(PIN_LED1);
-  Led_On(PIN_LED2);
-  Led_On(PIN_LED3);
+  ledOn(PIN_LED0);
+  ledOn(PIN_LED1);
+  ledOn(PIN_LED2);
+  ledOn(PIN_LED3);
 
   Gnss.setDebugMode(PrintInfo);
 
@@ -130,10 +130,10 @@ void setup() {
 
   /* Turn off all LED:Setup done. */
 
-  Led_Off(PIN_LED0);
-  Led_Off(PIN_LED1);
-  Led_Off(PIN_LED2);
-  Led_Off(PIN_LED3);
+  ledOff(PIN_LED0);
+  ledOff(PIN_LED1);
+  ledOff(PIN_LED2);
+  ledOff(PIN_LED3);
 
   /* Set error LED. */
 
@@ -268,7 +268,7 @@ void loop()
   {
     int error_flag = 0;
 
-    Led_Off(PIN_LED0);
+    ledOff(PIN_LED0);
     Led_isPosfix(false);
 
     /* Restart GNSS. */
