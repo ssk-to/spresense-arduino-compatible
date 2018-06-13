@@ -20,22 +20,15 @@
 
 #include <stdbool.h>
 #include <stdio.h>
-#include <common/up_arch.h>
-#include <cxd56_gpio.h>
+#include <sdk/config.h>
+#include <arch/board/board.h>
+#include <arch/chip/pin.h>
 #include <chip/cxd5602_memorymap.h>
 #include <chip/cxd5602_topreg.h>
+#include <common/up_arch.h>
 #include <Arduino.h>
 #include "utility.h"
 #include "wiring_private.h"
-
-#define __PINCONF_SET_GPIO_INPUT(pin) \
-    PINCONF_SET((pin), PINCONF_MODE0, PINCONF_INPUT_ENABLE, PINCONF_DRIVE_NORMAL, PINCONF_FLOAT)
-#define __PINCONF_SET_GPIO_OUTPUT(pin) \
-    PINCONF_SET((pin), PINCONF_MODE0, PINCONF_INPUT_DISABLE, PINCONF_DRIVE_NORMAL, PINCONF_FLOAT)
-#define __PINCONF_SET_GPIO_INPUT_PULLUP(pin) \
-    PINCONF_SET((pin), PINCONF_MODE0, PINCONF_INPUT_ENABLE, PINCONF_DRIVE_NORMAL, PINCONF_PULLUP)
-#define __PINCONF_SET_GPIO_INPUT_PULLDOWN(pin) \
-    PINCONF_SET((pin), PINCONF_MODE0, PINCONF_INPUT_ENABLE, PINCONF_DRIVE_NORMAL, PINCONF_PULLDOWN)
 
 uint32_t get_gpio_regaddr(uint32_t pin)
 {
@@ -124,23 +117,35 @@ void pinMode(uint8_t pin, uint8_t mode)
     if (_pin == PIN_NOT_ASSIGNED)
         return;
 
-    uint32_t pinconf = mode == INPUT          ? __PINCONF_SET_GPIO_INPUT(_pin)          :
-                       mode == OUTPUT         ? __PINCONF_SET_GPIO_OUTPUT(_pin)         :
-                       mode == INPUT_PULLUP   ? __PINCONF_SET_GPIO_INPUT_PULLUP(_pin)   :
-                       mode == INPUT_PULLDOWN ? __PINCONF_SET_GPIO_INPUT_PULLDOWN(_pin) : 0;
+    bool input;
+    bool highdrive = true; // always use high drive current
+    int  pull;
 
-    if (pinconf == 0) {
+    switch (mode) {
+    case INPUT:
+        input = true;
+        pull = PIN_FLOAT;
+        break;
+    case OUTPUT:
+        input = false;
+        pull = PIN_FLOAT;
+        break;
+    case INPUT_PULLUP:
+        input = true;
+        pull = PIN_PULLUP;
+        break;
+    case INPUT_PULLDOWN:
+        input = true;
+        pull = PIN_PULLDOWN;
+        break;
+    default:
         printf("ERROR: unknown pin mode [%d]\n", mode);
         return;
     }
 
-    int ret = cxd56_pin_config(pinconf);
-    //printf("cxd56_pin_config returns [%d]\n", ret);
-    unuse(ret);
-
     /* disable output, it will be enabled on digitalWrite call */
-    uint32_t regaddr = get_gpio_regaddr(_pin);
-    putreg32(GPIO_OUTPUT_DISABLE, regaddr);
+    board_gpio_write(_pin, -1);
+    board_gpio_config(_pin, 0, input, highdrive, pull);
 }
 
 void digital_write(uint8_t pin, uint8_t value, uint8_t stop_pwm)
@@ -151,8 +156,8 @@ void digital_write(uint8_t pin, uint8_t value, uint8_t stop_pwm)
 
     value = (value == LOW ? LOW : HIGH);
     if (stop_pwm) analog_stop(pin);
-    // cxd56_gpio_write will enable output
-    cxd56_gpio_write(_pin, value);
+    // board_gpio_write will enable output
+    board_gpio_write(_pin, value);
 }
 
 void digitalWrite(uint8_t pin, uint8_t value)
@@ -167,5 +172,5 @@ int digitalRead(uint8_t pin)
         return LOW;
 
     analog_stop(pin);
-    return cxd56_gpio_read(_pin);
+    return board_gpio_read(_pin);
 }
