@@ -27,7 +27,6 @@
 #include <nuttx/fs/ioctl.h>
 #include <nuttx/serial/tioctl.h>
 #include <HardwareSerial.h>
-#include <cxd56_pinconfig.h>
 
 HardwareSerial::HardwareSerial(uint8_t ch)
 : _fd(-1),
@@ -46,7 +45,6 @@ void HardwareSerial::begin(unsigned long baud, uint8_t config)
     const char* dev = 0;
     char node[8];
     uint8_t tty;
-    uint32_t pinconf;
 
     if (_fd >= 0) {
         ::close(_fd);
@@ -87,15 +85,6 @@ void HardwareSerial::begin(unsigned long baud, uint8_t config)
     if (_fd < 0)
         return;
 
-    if (_ch == 2) {
-        // Set pull-down to avoid CTS floating
-        pinconf = PINCONF_SET(PIN_UART2_CTS,
-                              PINCONF_MODE1,
-                              PINCONF_INPUT_ENABLE,
-                              PINCONF_DRIVE_NORMAL,
-                              PINCONF_PULLDOWN);
-        cxd56_pin_config(pinconf);
-    }
     // Apply baud rate
     ret = ioctl(_fd, TCGETS, (long unsigned int)&tio);
     if (ret != 0)
