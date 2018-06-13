@@ -86,7 +86,7 @@ err_t OutputMixer::activate(AsOutputMixerHandle handle, OutputMixerCallback omcb
   mixer_act.mixer_type    = MainOnly;
   mixer_act.cb            = omcb;
 
-  AS_ActivateOutputMixer(handle, mixer_act);
+  AS_ActivateOutputMixer(handle, &mixer_act);
 
   return OUTPUTMIXER_ECODE_OK;
 }
@@ -102,7 +102,7 @@ err_t OutputMixer::sendData(AsOutputMixerHandle handle,
   data.callback = pcmdone_cb;
   data.pcm      = pcm;
 
-  AS_SendDataOutputMixer(data);
+  AS_SendDataOutputMixer(&data);
 
   return OUTPUTMIXER_ECODE_OK;
 }
@@ -112,7 +112,7 @@ err_t OutputMixer::deactivate(AsOutputMixerHandle handle)
 {
   AsDeactivateOutputMixer mixer_deact;
 
-  AS_DeactivateOutputMixer(handle, mixer_deact);
+  AS_DeactivateOutputMixer(handle, &mixer_deact);
 
   return OUTPUTMIXER_ECODE_OK;
 }

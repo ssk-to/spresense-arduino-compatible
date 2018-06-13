@@ -125,11 +125,11 @@ err_t MediaPlayer::activate(PlayerId id, uint8_t output_device, MediaPlayerCallb
 
   if (id == Player0)
     {
-      AS_ActivatePlayer(AS_PLAYER_ID_0, player_act);
+      AS_ActivatePlayer(AS_PLAYER_ID_0, &player_act);
     }
   else
     {
-      AS_ActivatePlayer(AS_PLAYER_ID_1, player_act);
+      AS_ActivatePlayer(AS_PLAYER_ID_1, &player_act);
     }
 
   return MEDIAPLAYER_ECODE_OK;
@@ -152,11 +152,11 @@ err_t MediaPlayer::init(PlayerId id,
 
   if (id == Player0)
     {
-      AS_InitPlayer(AS_PLAYER_ID_0, player_init);
+      AS_InitPlayer(AS_PLAYER_ID_0, &player_init);
     }
   else
     {
-      AS_InitPlayer(AS_PLAYER_ID_1, player_init);
+      AS_InitPlayer(AS_PLAYER_ID_1, &player_init);
     }
 
   return MEDIAPLAYER_ECODE_OK;
@@ -174,11 +174,11 @@ err_t MediaPlayer::start(PlayerId id, DecodeDoneCallback dccb)
 
   if (id == Player0)
     {
-      AS_PlayPlayer(AS_PLAYER_ID_0, player_play);
+      AS_PlayPlayer(AS_PLAYER_ID_0, &player_play);
     }
   else
     {
-      AS_PlayPlayer(AS_PLAYER_ID_1, player_play);
+      AS_PlayPlayer(AS_PLAYER_ID_1, &player_play);
     }
 
   return MEDIAPLAYER_ECODE_OK;
@@ -193,11 +193,11 @@ err_t MediaPlayer::stop(PlayerId id)
 
   if (id == Player0)
     {
-      AS_StopPlayer(AS_PLAYER_ID_0, player_stop);
+      AS_StopPlayer(AS_PLAYER_ID_0, &player_stop);
     }
   else
     {
-      AS_StopPlayer(AS_PLAYER_ID_1, player_stop);
+      AS_StopPlayer(AS_PLAYER_ID_1, &player_stop);
     }
 
   return MEDIAPLAYER_ECODE_OK;
@@ -212,11 +212,11 @@ err_t MediaPlayer::reqNextProcess(PlayerId id, AsRequestNextType type)
 
   if (id == Player0)
     {
-      AS_RequestNextPlayerProcess(AS_PLAYER_ID_0, next);
+      AS_RequestNextPlayerProcess(AS_PLAYER_ID_0, &next);
     }
   else
     {
-      AS_RequestNextPlayerProcess(AS_PLAYER_ID_1, next);
+      AS_RequestNextPlayerProcess(AS_PLAYER_ID_1, &next);
     }
 
   return MEDIAPLAYER_ECODE_OK;
@@ -229,11 +229,11 @@ err_t MediaPlayer::deactivate(PlayerId id)
 
   if (id == Player0)
     {
-      AS_DeactivatePlayer(AS_PLAYER_ID_0, player_deact);
+      AS_DeactivatePlayer(AS_PLAYER_ID_0, &player_deact);
     }
   else
     {
-      AS_DeactivatePlayer(AS_PLAYER_ID_1, player_deact);
+      AS_DeactivatePlayer(AS_PLAYER_ID_1, &player_deact);
     }
 
   return MEDIAPLAYER_ECODE_OK;

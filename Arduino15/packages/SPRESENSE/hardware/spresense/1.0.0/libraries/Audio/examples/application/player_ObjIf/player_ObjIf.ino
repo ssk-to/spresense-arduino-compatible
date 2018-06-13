@@ -45,7 +45,7 @@ static void outmixer_send_callback(int32_t identifier, bool is_end)
 
   next.type = (!is_end) ? AsNextNormalRequest : AsNextStopResRequest;
 
-  AS_RequestNextPlayerProcess(AS_PLAYER_ID_0, next);
+  AS_RequestNextPlayerProcess(AS_PLAYER_ID_0, &next);
 
   return;
 }
