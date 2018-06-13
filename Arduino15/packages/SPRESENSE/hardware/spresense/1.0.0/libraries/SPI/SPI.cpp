@@ -39,13 +39,6 @@
 #define SPI_INT_BASE      (CXD56_IRQ_EXDEVICE_0)
 #define SPI_INT_MAX       (CXD56_IRQ_EXDEVICE_0 + 12)
 
-#define PINCONF_SPI4_MISO PINCONF(PIN_SPI4_MISO,      1, 1, 0, 0)
-#define PINCONF_SPI4_MOSI PINCONF(PIN_SPI4_MOSI,      1, 0, 1, 0)
-#define PINCONF_SPI4_SCK  PINCONF(PIN_SPI4_SCK,       1, 0, 0, 0)
-#define PINCONF_SPI4_CS_X PINCONF(PIN_SPI4_CS_X,      1, 0, 0, 0)
-#define PINCONFS_SPI4     { PINCONF_SPI4_CS_X, PINCONF_SPI4_SCK, \
-                            PINCONF_SPI4_MOSI, PINCONF_SPI4_MISO }
-
 #ifdef CONFIG_CXD56_SPI4
 SPIClass SPI4(SPIDEV_PORT_4);
 
@@ -94,10 +87,6 @@ void SPIClass::begin(void)
             spi_base_clock = cxd56_get_spi_baseclock(spi_port);
             interrupts();
             spi_bit_order = MSBFIRST;
-            if (spi_port == 4) {
-                uint32_t pinconf[] = PINCONFS_SPI4;
-                cxd56_pin_configs(pinconf, sizeof(pinconf) / sizeof(pinconf[0]));
-            }
         }
     }
 
