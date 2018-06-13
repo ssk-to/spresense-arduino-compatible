@@ -29,6 +29,7 @@
 #include <stdbool.h>
 #include <nuttx/config.h>
 #include <nuttx/i2c/i2c_master.h>
+#include <sdk/config.h>
 #include "Stream.h"
 
 // I2C frequence supported
