@@ -36,6 +36,7 @@
  */
 #ifdef __cplusplus
 
+#include <sdk/config.h>
 #include <nuttx/config.h>
 #include <nuttx/spi/spi.h>
 #include <Arduino.h>
