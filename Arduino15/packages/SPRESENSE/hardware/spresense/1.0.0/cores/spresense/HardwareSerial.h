@@ -62,7 +62,7 @@
 #elif defined(CONFIG_CXD56_UART2)
 #define SERIAL_DEFAULT_CHANNEL 2
 #elif defined(CONFIG_UART1_SERIAL_CONSOLE) || defined(CONFIG_UART2_SERIAL_CONSOLE)
-#error Please enable UART in Nuttx
+#error Please enable UART in NuttX
 #else
 /* in this case, no objects will be created */
 #define SERIAL_DEFAULT_CHANNEL 0

@@ -29,15 +29,15 @@
 #include <Arduino.h>
 
 #ifndef CONFIG_RTC
-# error Please enable RTC in Nuttx
+# error Please enable RTC in NuttX
 #endif // CONFIG_RTC
 
 #ifndef CONFIG_RTC_HIRES
-# error Please enable RTC High Resolution in Nuttx
+# error Please enable RTC High Resolution in NuttX
 #endif // CONFIG_RTC_HIRES
 
 #ifndef CONFIG_CLOCK_MONOTONIC
-# error Please enable monotonic clock in Nuttx
+# error Please enable monotonic clock in NuttX
 #endif // CONFIG_CLOCK_MONOTONIC
 
 #define DELAY_CORRECTION    (1228)

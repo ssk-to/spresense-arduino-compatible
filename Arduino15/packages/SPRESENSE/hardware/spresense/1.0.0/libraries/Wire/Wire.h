@@ -114,7 +114,7 @@ private:
 #ifdef CONFIG_CXD56_I2C0
 extern TwoWire Wire;
 #else
-#error Please enable I2C0 in Nuttx
+#error Please enable I2C0 in NuttX
 #endif
 
 #endif //__cplusplus

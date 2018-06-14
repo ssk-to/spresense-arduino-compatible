@@ -40,35 +40,35 @@
 #include "wiring_private.h"
 
 #ifndef CONFIG_CXD56_PWM0
-# error Please enable PWM0 in Nuttx
+# error Please enable PWM0 in NuttX
 #endif // CONFIG_CXD56_PWM0
 
 #ifndef CONFIG_CXD56_PWM1
-# error Please enable PWM1 in Nuttx
+# error Please enable PWM1 in NuttX
 #endif // CONFIG_CXD56_PWM1
 
 #ifndef CONFIG_CXD56_PWM2
-# error Please enable PWM2 in Nuttx
+# error Please enable PWM2 in NuttX
 #endif // CONFIG_CXD56_PWM2
 
 #ifndef CONFIG_CXD56_PWM3
-# error Please enable PWM3 in Nuttx
+# error Please enable PWM3 in NuttX
 #endif // CONFIG_CXD56_PWM3
 
 #ifndef CONFIG_CXD56_ADC
-# error Please enable ADC in Nuttx
+# error Please enable ADC in NuttX
 #endif // CONFIG_CXD56_ADC
 
 #ifndef CONFIG_CXD56_HPADC0
-# error Please enable HPADC0 in Nuttx
+# error Please enable HPADC0 in NuttX
 #endif // CONFIG_CXD56_HPADC0
 
 #ifndef CONFIG_CXD56_HPADC1
-# error Please enable HPADC1 in Nuttx
+# error Please enable HPADC1 in NuttX
 #endif // CONFIG_CXD56_HPADC1
 
 #ifndef CONFIG_CXD56_LPADC_ALL
-# error Please enable LPADC ALL in Nuttx
+# error Please enable LPADC ALL in NuttX
 #endif // CONFIG_CXD56_LPADC_ALL
 
 #define ANALOG_TIMER_ID         CXD56_TIMER1
