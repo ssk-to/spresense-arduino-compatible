@@ -127,22 +127,45 @@ int util_stop_timer(int fd)
 
 int util_open_timer(const char* dev_name, int* fd)
 {
+    int ch;
+
     // timer init is done in boardctl
+
+    if (strcmp(dev_name, "/dev/timer0") == 0) {
+        ch = 0;
+    } else if (strcmp(dev_name, "/dev/timer1") == 0) {
+        ch = 1;
+    } else {
+        printf("ERROR: Invalid device name: %s\n", dev_name);
+        return ERROR;
+    }
+
+    if (s_timer_map[ch].fd != -1) {
+        printf("ERROR: Already used ch %d\n", ch);
+        return ERROR;
+    }
+
     *fd = open(dev_name, O_RDONLY);
     if (*fd < 0) {
         printf("ERROR: Failed to open %s: %d\n", dev_name, errno);
         return ERROR;
     }
 
-    if (strcmp(dev_name, "/dev/timer0") == 0)
-        s_timer_map[0].fd = *fd;
-    else
-        s_timer_map[1].fd = *fd;
+    s_timer_map[ch].fd = *fd;
 
     return OK;
 }
 
 int util_close_timer(int fd)
 {
-    return close(fd);
+    int ret = 0;
+
+    arrayForEach(s_timer_map, i) {
+        if (s_timer_map[i].fd == fd) {
+            ret = close(fd);
+            s_timer_map[i].fd = -1;
+            break;
+        }
+    }
+    return ret;
 }
