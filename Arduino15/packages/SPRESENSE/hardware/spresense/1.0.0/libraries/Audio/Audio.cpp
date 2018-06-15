@@ -98,7 +98,7 @@ err_t AudioClass::activateAudio(void)
   ids.effector    = 0xFF;
   ids.recognizer  = 0xFF;
 
-  AS_ActivateAudioSubSystem(ids);
+  AS_CreateAudioManager(ids);
 
   /*ここまででパワーオンもする?*/
   ret = powerOn();
@@ -285,7 +285,7 @@ err_t AudioClass::setPlayerMode(uint8_t device)
 
   AudioClass::set_output(device);
 
-  AsActRendererParam_t renderer_act_param;
+  AsCreateRendererParam_t renderer_act_param;
   renderer_act_param.msgq_id.dev0_req  = MSGQ_AUD_RND_PLY;
   renderer_act_param.msgq_id.dev0_sync = MSGQ_AUD_RND_PLY_SYNC;
   renderer_act_param.msgq_id.dev1_req   = MSGQ_AUD_RND_SUB;
@@ -596,7 +596,7 @@ err_t AudioClass::setRecorderMode(uint8_t input_device)
   assert(layout_no < NUM_MEM_LAYOUTS);
   createStaticPools(layout_no);
 
-  AsActRecorderParam_t recorder_act_param;
+  AsCreateRecorderParam_t recorder_act_param;
   recorder_act_param.msgq_id.recorder      = MSGQ_AUD_RECORDER;
   recorder_act_param.msgq_id.mng           = MSGQ_AUD_MGR;
   recorder_act_param.msgq_id.dsp           = MSGQ_AUD_DSP;
@@ -610,7 +610,7 @@ err_t AudioClass::setRecorderMode(uint8_t input_device)
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
-  AsActCaptureParam_t capture_act_param;
+  AsCreateCaptureParam_t capture_act_param;
   capture_act_param.msgq_id.dev0_req  = MSGQ_AUD_CAP;
   capture_act_param.msgq_id.dev0_sync = MSGQ_AUD_CAP_SYNC;
   capture_act_param.msgq_id.dev1_req  = 0xFF;

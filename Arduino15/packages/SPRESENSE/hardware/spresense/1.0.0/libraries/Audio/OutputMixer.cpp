@@ -60,7 +60,7 @@ err_t OutputMixer::create(void)
 
   /* Create renderer feature. */
 
-  AsActRendererParam_t renderer_act_param;
+  AsCreateRendererParam_t renderer_act_param;
 
   renderer_act_param.msgq_id.dev0_req  = MSGQ_AUD_RND_PLY;
   renderer_act_param.msgq_id.dev0_sync = MSGQ_AUD_RND_PLY_SYNC;
