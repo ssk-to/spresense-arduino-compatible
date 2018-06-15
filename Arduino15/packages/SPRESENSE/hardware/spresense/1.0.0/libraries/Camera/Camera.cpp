@@ -42,6 +42,11 @@
 #define KEY_SHM        (0)
 #define IMAGE_JPG_SIZE (896*1024)
 
+struct v_buffer {
+  uint32_t *start;
+  uint32_t length;
+};
+
 struct v_buffer *buffers;
 static int       v_fd;
 

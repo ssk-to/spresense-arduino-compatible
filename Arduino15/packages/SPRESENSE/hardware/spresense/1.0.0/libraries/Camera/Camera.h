@@ -131,7 +131,6 @@ private:
   mpshm_t        shm;
   uint8_t        *buffer;
   int fd;
-  v_buffer_t     *buffers;
 };
 
 extern CameraClass Camera;
