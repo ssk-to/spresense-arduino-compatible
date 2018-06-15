@@ -153,3 +153,54 @@ void detachInterrupt(uint8_t interrupt)
         return;
     detach_interrupt(_pin);
 }
+
+// Timer Interrupt
+
+static struct timer_int_s {
+    int fd;
+    unsigned int (*isr)(void);
+} s_timer_int = { -1, NULL };
+
+static bool timer_handler(unsigned int *next_interval_us, void *arg)
+{
+    unuse(arg);
+
+    unsigned int next;
+
+    if (!s_timer_int.isr) {
+        return false;
+    }
+
+    next = s_timer_int.isr();
+    if (next) {
+        *next_interval_us = next;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void attachTimerInterrupt(unsigned int (*isr)(void), unsigned int us)
+{
+    int ret;
+    int fd;
+
+    if (s_timer_int.fd == -1) {
+        ret = util_open_timer("/dev/timer0", &fd);
+        if (ret) {
+            return;
+        }
+
+        s_timer_int.fd = fd;
+    }
+
+    s_timer_int.isr = isr;
+    util_start_timer(s_timer_int.fd, us, timer_handler);
+}
+
+void detachTimerInterrupt(void)
+{
+    util_stop_timer(s_timer_int.fd);
+    util_close_timer(s_timer_int.fd);
+    s_timer_int.fd = -1;
+}

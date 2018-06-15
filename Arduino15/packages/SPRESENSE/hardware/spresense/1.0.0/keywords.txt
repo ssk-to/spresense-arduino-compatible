@@ -57,3 +57,5 @@ util_open_timer	KEYWORD2
 util_start_timer	KEYWORD2
 util_stop_timer	KEYWORD2
 util_timer_is_running	KEYWORD2
+attachTimerInterrupt	KEYWORD2
+detachTimerInterrupt	KEYWORD2

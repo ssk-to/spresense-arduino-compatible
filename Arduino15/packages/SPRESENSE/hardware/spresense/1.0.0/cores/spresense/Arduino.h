@@ -168,6 +168,18 @@ void attachInterrupt(uint8_t interrupt, void (*isr)(void), int mode);
 void detachInterrupt(uint8_t interrupt);
 #define digitalPinToInterrupt(p) (p) /* treat pin number as the interrupt number */
 
+/* Timer Interrupt */
+void attachTimerInterrupt(unsigned int (*isr)(void), unsigned int us);
+// Parameter:
+//   isr: the function to call when the timer interrupt occurs.
+//        This function must return the next timer period [microseconds].
+//        If this function returns 0, the timer stops and it behaves as oneshot timer.
+//   us: microseconds.
+//       The maximum value is about 26 seconds and if it exceeds, an error occurs.
+// Note:
+//   This can not be used at the same time with tone().
+void detachTimerInterrupt(void);
+
 #endif // __cplusplus
 
 #include <HardwareSerial.h>
