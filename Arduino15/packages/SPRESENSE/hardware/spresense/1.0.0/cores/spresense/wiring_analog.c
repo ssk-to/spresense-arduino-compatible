@@ -517,6 +517,13 @@ int analogRead(uint8_t pin)
         goto out;
       }
 
+      /* ADC FIFO size */
+
+      if (ioctl(fd, ANIOC_CXD56_FIFOSIZE, 2) < 0) {
+        printf("ERROR: Failed to set ADC FIFO size\n");
+        goto out;
+      }
+
       /* start ADC */
 
       if (ioctl(fd, ANIOC_CXD56_START, 0) < 0) {
