@@ -27,7 +27,7 @@
           "toolsDependencies": [
             {
               "packager": "SPRESENSE",
-              "version": "2.2",
+              "version": "1.0.0",
               "name": "spresense-sdk"
             },
             {
@@ -46,7 +46,7 @@
       ],
       "tools": [
         {
-          "version": "2.2",
+          "version": "1.0.0",
           "name": "spresense-sdk",
           "systems": [
             {
