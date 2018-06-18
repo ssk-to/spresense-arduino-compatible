@@ -95,9 +95,6 @@
 
 #define DUTY_CONVERT(d) (d * 65535 / 255)
 
-#define ANALOG_BUF_SIZE     (16)
-#define ANALOG_READ_COUNT   (16)
-
 typedef struct {
     uint8_t pin;
     uint8_t duty;
@@ -436,8 +433,8 @@ static void pwm_write(uint8_t pin, uint32_t pulse_width, uint32_t freq)
   if (pulse_width==0){
     if (s_pwm_timers[slot].running){
       pwm_stop(pin);
-	  }
-	  return;
+    }
+    return;
   }
 
   if (s_pwm_timers[slot].running &&
@@ -486,16 +483,10 @@ void analogReference(uint8_t mode)
 static int ad_pin_fd[6]= {-1,-1,-1,-1,-1,-1};
 int analogRead(uint8_t pin)
 {
-  char *buftop = NULL;
-  char *bufptr = NULL;
   int ret = 0;
   int errval = 0;
   int fd;
-  int retry;
   ssize_t nbytes = 0;
-  ssize_t totalbytes = 0;
-  uint32_t interval = 0;
-  uint16_t adjust = 0;
 
   uint8_t aidx = _PIN_OFFSET(pin);
   if ((pin < PIN_A0) || (pin > PIN_A5)) {
@@ -506,13 +497,6 @@ int analogRead(uint8_t pin)
   if (s_adcs[aidx].running) {
     printf("ERROR: Already in progress A%u\n", aidx);
     return 0;
-  }
-
-  buftop = (char *)malloc(ANALOG_BUF_SIZE);
-  if (!buftop) {
-    printf("malloc failed. size:%d\n", ANALOG_BUF_SIZE);
-    errval = 3;
-    goto out;
   }
 
   if (ad_pin_fd[aidx] < 0) {
@@ -544,59 +528,21 @@ int analogRead(uint8_t pin)
       fd = ad_pin_fd[aidx];
   }
 
-  cxd56_adc_getinterval(aidx + SCU_BUS_LPADC0, &interval, &adjust);
-  interval = interval * (1000000/32768 + 1);
-  bufptr = buftop;
-
   /* read data */
 
-  for (retry = 0; retry < ANALOG_READ_COUNT; retry++) {
+  int16_t sample;
 
-    /* wait */
-
-    delayMicroseconds(interval);
-
-    /* read data */
-
-    nbytes = read(fd, bufptr, ANALOG_BUF_SIZE);
-
+  do {
+    nbytes = read(fd, &sample, sizeof(sample));
+    //printf("nbytes=%d\n", nbytes);
     if (nbytes < 0) {
       errval = errno;
       printf("read failed:%d\n", errval);
       goto out;
-    } else {
-      totalbytes += nbytes;
-      bufptr += nbytes;
     }
+  } while (nbytes == 0);
 
-    /* check total read data */
-
-    if (totalbytes >= ANALOG_BUF_SIZE) {
-      int32_t count = 0;
-      char *start = buftop;
-      char *end = buftop + ANALOG_BUF_SIZE;
-      int16_t data = 0, min = 0, max = 0;
-      int32_t sum = 0;
-
-      while (1) {
-        data = (int16_t)(*(uint16_t *)(start));
-        min = ((min == 0) || (data < min)) ? data : min;
-        max = ((max == 0) || (data > max)) ? data : max;
-        sum += (int32_t)data;
-        count++;
-        start += sizeof(uint16_t);
-        if (start >= end) {
-          break;
-        }
-      }
-
-      if (count > 0) {
-        ret = map(sum / count, SHRT_MIN, SHRT_MAX, 0, 1023);
-        //printf("Pin:%d Interval:%d Ave:%d Min:%d Max:%d Cnt:%d\n", pin, interval, sum / count, min, max, count);
-        break;
-      }
-    }
-  }
+  ret = map(sample, SHRT_MIN, SHRT_MAX, 0, 1023);
 
 out:
 #if 0
@@ -610,11 +556,6 @@ out:
 #endif
 
   s_adcs[aidx].running = false;
-
-  if (buftop) {
-    free(buftop);
-    buftop = NULL;
-  }
 
   return ret;
 }
