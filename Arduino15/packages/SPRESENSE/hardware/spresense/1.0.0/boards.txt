@@ -1,97 +1,50 @@
 menu.Debug=Debug
 menu.UploadSpeed=UploadSpeed
 
-############## SPRESENSE Proto 3 BOARD ##############
-generic.name=SPRESENSE Proto 3 SC
+############## SPRESENSE BOARD ##############
+spresense.name=SPRESENSE
 
-generic.upload.tool=spresense-tools
-generic.upload.speed=115200
-generic.upload.resetmethod=ck
-generic.upload.wait_for_upload_port=true
-generic.serial.disableDTR=false
-generic.serial.disableRTS=true
+spresense.upload.tool=spresense-tools
+spresense.upload.speed=115200
+spresense.upload.resetmethod=ck
+spresense.upload.wait_for_upload_port=true
+spresense.serial.disableDTR=false
+spresense.serial.disableRTS=true
 
-generic.bootloader.tool=spresense-tools
+spresense.bootloader.tool=spresense-tools
 
-generic.build.mcu=spresense
-generic.build.f_cpu=156000000L
-generic.build.board=spresense_ast
-generic.build.core=spresense
-generic.build.variant=generic
-generic.build.debug=
-generic.build.libpath=
+spresense.build.mcu=spresense
+spresense.build.f_cpu=156000000L
+spresense.build.board=spresense_ast
+spresense.build.core=spresense
+spresense.build.variant=spresense
+spresense.build.debug=
+spresense.build.libpath=
 
-generic.menu.Debug.Disabled=Disabled
-generic.menu.Debug.Disabled.build.debug=
-generic.menu.Debug.Disabled.build.kernel={runtime.tools.spresense-sdk.path}/generic/release
-generic.menu.Debug.Disabled.build.libpath={build.kernel}/prebuilt
+spresense.menu.Debug.Disabled=Disabled
+spresense.menu.Debug.Disabled.build.debug=
+spresense.menu.Debug.Disabled.build.kernel={runtime.tools.spresense-sdk.path}/spresense/release
+spresense.menu.Debug.Disabled.build.libpath={build.kernel}/prebuilt
 
-generic.menu.Debug.Enabled=Enabled
-generic.menu.Debug.Enabled.build.debug=
-generic.menu.Debug.Enabled.build.kernel={runtime.tools.spresense-sdk.path}/generic/debug
-generic.menu.Debug.Enabled.build.libpath={build.kernel}/prebuilt
+spresense.menu.Debug.Enabled=Enabled
+spresense.menu.Debug.Enabled.build.debug=
+spresense.menu.Debug.Enabled.build.kernel={runtime.tools.spresense-sdk.path}/spresense/debug
+spresense.menu.Debug.Enabled.build.libpath={build.kernel}/prebuilt
 
-generic.menu.UploadSpeed.115200=115200
-generic.menu.UploadSpeed.115200.upload.speed=
-generic.menu.UploadSpeed.230400=230400
-generic.menu.UploadSpeed.230400.upload.speed=-b 230400
-generic.menu.UploadSpeed.460800=460800
-generic.menu.UploadSpeed.460800.upload.speed=-b 460800
-generic.menu.UploadSpeed.500000=500000
-generic.menu.UploadSpeed.500000.upload.speed=-b 500000
-generic.menu.UploadSpeed.576000=576000
-generic.menu.UploadSpeed.576000.upload.speed=-b 576000
-generic.menu.UploadSpeed.921600=921600
-generic.menu.UploadSpeed.921600.upload.speed=-b 921600
-generic.menu.UploadSpeed.1000000=1000000
-generic.menu.UploadSpeed.1000000.upload.speed=-b 1000000
-generic.menu.UploadSpeed.1152000=1152000
-generic.menu.UploadSpeed.1152000.upload.speed=-b 1152000
-
-############## SPRESENSE DVT BOARD ##############
-spresense_dvt.name=SPRESENSE DVT
-
-spresense_dvt.upload.tool=spresense-tools
-spresense_dvt.upload.speed=115200
-spresense_dvt.upload.resetmethod=ck
-spresense_dvt.upload.wait_for_upload_port=true
-spresense_dvt.serial.disableDTR=false
-spresense_dvt.serial.disableRTS=true
-
-spresense_dvt.bootloader.tool=spresense-tools
-
-spresense_dvt.build.mcu=spresense
-spresense_dvt.build.f_cpu=156000000L
-spresense_dvt.build.board=spresense_ast
-spresense_dvt.build.core=spresense
-spresense_dvt.build.variant=spresense_dvt
-spresense_dvt.build.debug=
-spresense_dvt.build.libpath=
-
-spresense_dvt.menu.Debug.Disabled=Disabled
-spresense_dvt.menu.Debug.Disabled.build.debug=
-spresense_dvt.menu.Debug.Disabled.build.kernel={runtime.tools.spresense-sdk.path}/spresense_dvt/release
-spresense_dvt.menu.Debug.Disabled.build.libpath={build.kernel}/prebuilt
-
-spresense_dvt.menu.Debug.Enabled=Enabled
-spresense_dvt.menu.Debug.Enabled.build.debug=
-spresense_dvt.menu.Debug.Enabled.build.kernel={runtime.tools.spresense-sdk.path}/spresense_dvt/debug
-spresense_dvt.menu.Debug.Enabled.build.libpath={build.kernel}/prebuilt
-
-spresense_dvt.menu.UploadSpeed.115200=115200
-spresense_dvt.menu.UploadSpeed.115200.upload.speed=
-spresense_dvt.menu.UploadSpeed.230400=230400
-spresense_dvt.menu.UploadSpeed.230400.upload.speed=-b 230400
-spresense_dvt.menu.UploadSpeed.460800=460800
-spresense_dvt.menu.UploadSpeed.460800.upload.speed=-b 460800
-spresense_dvt.menu.UploadSpeed.500000=500000
-spresense_dvt.menu.UploadSpeed.500000.upload.speed=-b 500000
-spresense_dvt.menu.UploadSpeed.576000=576000
-spresense_dvt.menu.UploadSpeed.576000.upload.speed=-b 576000
-spresense_dvt.menu.UploadSpeed.921600=921600
-spresense_dvt.menu.UploadSpeed.921600.upload.speed=-b 921600
-spresense_dvt.menu.UploadSpeed.1000000=1000000
-spresense_dvt.menu.UploadSpeed.1000000.upload.speed=-b 1000000
-spresense_dvt.menu.UploadSpeed.1152000=1152000
-spresense_dvt.menu.UploadSpeed.1152000.upload.speed=-b 1152000
+spresense.menu.UploadSpeed.115200=115200
+spresense.menu.UploadSpeed.115200.upload.speed=
+spresense.menu.UploadSpeed.230400=230400
+spresense.menu.UploadSpeed.230400.upload.speed=-b 230400
+spresense.menu.UploadSpeed.460800=460800
+spresense.menu.UploadSpeed.460800.upload.speed=-b 460800
+spresense.menu.UploadSpeed.500000=500000
+spresense.menu.UploadSpeed.500000.upload.speed=-b 500000
+spresense.menu.UploadSpeed.576000=576000
+spresense.menu.UploadSpeed.576000.upload.speed=-b 576000
+spresense.menu.UploadSpeed.921600=921600
+spresense.menu.UploadSpeed.921600.upload.speed=-b 921600
+spresense.menu.UploadSpeed.1000000=1000000
+spresense.menu.UploadSpeed.1000000.upload.speed=-b 1000000
+spresense.menu.UploadSpeed.1152000=1152000
+spresense.menu.UploadSpeed.1152000.upload.speed=-b 1152000
 
