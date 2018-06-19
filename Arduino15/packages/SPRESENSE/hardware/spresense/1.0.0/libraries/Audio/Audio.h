@@ -247,7 +247,7 @@ public:
   err_t initPlayer(
       PlayerId id,    /**< Select Player ID. */
       uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
-      const char *codec_path,  /**< Set DPS Binary path. Maximum length is 24 bytes.*/
+      const char *codec_path,  /**< Set DSP Binary path. Maximum length is 24 bytes.*/
       uint32_t fs,    /**< Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
       uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO or AS_CHANNEL_STEREO */
   );
@@ -267,7 +267,7 @@ public:
    */
   err_t initRecorder(
       uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
-      const char *codec_path, /**< Set DPS Binary path. Maximum length is 24 bytes.*/
+      const char *codec_path, /**< Set DSP Binary path. Maximum length is 24 bytes.*/
       uint32_t fs,    /**<Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
       uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO, AS_CHANNEL_STEREO, AS_CHANNEL_4CH, or etc...  */
   );
@@ -478,7 +478,6 @@ private:
   uint32_t m_player0_simple_fifo_buf[SIMPLE_FIFO_BUF_SIZE/sizeof(uint32_t)];
   uint32_t m_player1_simple_fifo_buf[SIMPLE_FIFO_BUF_SIZE/sizeof(uint32_t)];
 
-  /* TODO: AsPlayerInputDeviceHdlrForRAM?  RAMを削除、これに付随した、EMMC削除、union削除 */
   AsPlayerInputDeviceHdlrForRAM m_player0_input_device_handler;
   AsPlayerInputDeviceHdlrForRAM m_player1_input_device_handler;
 

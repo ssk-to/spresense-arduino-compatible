@@ -100,7 +100,6 @@ err_t AudioClass::activateAudio(void)
 
   AS_CreateAudioManager(ids);
 
-  /*ここまででパワーオンもする?*/
   ret = powerOn();
   if (ret != AUDIOLIB_ECODE_OK)
     {
@@ -137,8 +136,7 @@ err_t AudioClass::powerOn(void)
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
-  /*TODO:外部アンプの制御は詳細に。*/
-  print_dbg("power on!\n");
+	print_dbg("power on!\n");
 
   return AUDIOLIB_ECODE_OK;
 }
