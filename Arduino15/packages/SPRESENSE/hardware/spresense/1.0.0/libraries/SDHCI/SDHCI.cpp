@@ -222,7 +222,7 @@ int File::peek() {
   int pos;
   int byte = -1;
 
-  if (_fd >= 0) {
+  if (_fd) {
     pos = position();
     byte = read();
     seek(pos);
@@ -240,14 +240,14 @@ int File::available() {
 }
 
 void File::flush() {
-  if (_fd >= 0)
+  if (_fd)
     fflush(_fd);
 }
 
 int File::read(void *buf, uint16_t nbyte) {
   int ret;
 
-  if (_fd >= 0) {
+  if (_fd) {
     ret = ::fread(buf, sizeof(char), nbyte, _fd);
     if (ret >= 0) {
       _curpos += nbyte;
@@ -286,7 +286,7 @@ uint32_t File::size() {
 }
 
 void File::close() {
-  if (_fd >= 0) {
+  if (_fd) {
     ::fclose(_fd);
     _fd = NULL;
   }
@@ -303,7 +303,7 @@ void File::close() {
 }
 
 File::operator bool() {
-  return (_fd > 0) || (_dir != 0);
+  return (_fd || (_dir != 0));
 }
 
 char * File::name() {
