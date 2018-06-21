@@ -511,6 +511,9 @@ private:
 
   /* Functions for initialization on recorder mode. */
   err_t init_mic_gain(int, int);
+
+  bool check_decode_dsp(uint8_t codec_type, const char *path);
+  bool check_encode_dsp(uint8_t codec_type, const char *path, uint32_t fs);
 };
 
 extern AudioClass Audio;

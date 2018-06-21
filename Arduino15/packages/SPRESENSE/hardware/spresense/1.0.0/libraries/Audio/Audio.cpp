@@ -351,6 +351,11 @@ err_t AudioClass::setPlayerMode(uint8_t device)
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, const char* codec_path, uint32_t sampling_rate, uint8_t channel_number)
 {
+  if (!check_decode_dsp(codec_type, codec_path))
+    {
+      return AUDIOLIB_ECODE_FILEACCESS_ERROR;
+    }
+
   AudioCommand command;
 
   command.header.packet_length = LENGTH_INIT_PLAYER;
@@ -763,6 +768,12 @@ err_t AudioClass::init_recorder_pcm(AudioCommand* command, uint32_t sampling_rat
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::initRecorder(uint8_t codec_type, const char *codec_path, uint32_t sampling_rate, uint8_t channel)
 {
+  
+  if (!check_encode_dsp(codec_type, codec_path, sampling_rate))
+    {
+      return AUDIOLIB_ECODE_FILEACCESS_ERROR;
+    }
+
   AudioCommand command;
 
   command.header.packet_length = LENGTH_INIT_RECORDER;
@@ -1196,5 +1207,84 @@ err_t AudioClass::init_mic_gain(int dev, int gain)
     }
 
   return AUDIOLIB_ECODE_OK;
+}
+
+/****************************************************************************
+ * Private API for DSP check
+ ****************************************************************************/
+bool AudioClass::check_decode_dsp(uint8_t codec_type, const char *path)
+{
+  char fullpath[32];
+  
+  switch (codec_type)
+    {
+      case AS_CODECTYPE_MP3:
+        snprintf(fullpath, sizeof(fullpath), "%s/MP3DEC", path);
+        break;
+
+      case AS_CODECTYPE_AAC:
+      case AS_CODECTYPE_MEDIA:
+        snprintf(fullpath, sizeof(fullpath), "%s/AACDEC", path);
+        break;
+
+      case AS_CODECTYPE_WAV:
+      case AS_CODECTYPE_LPCM:
+        snprintf(fullpath, sizeof(fullpath), "%s/WAVDEC", path);
+        break;
+
+      case AS_CODECTYPE_OPUS:
+        snprintf(fullpath, sizeof(fullpath), "%s/OPUSDEC", path);
+        break;
+
+      default:
+        break;
+    }
+
+  if (NULL == fopen(fullpath, "r"))
+    {
+      print_err("DSP file %s cannot open.\n", fullpath);
+      return false;
+    }
+
+  return true;
+}
+
+/*--------------------------------------------------------------------------*/
+bool AudioClass::check_encode_dsp(uint8_t codec_type, const char *path, uint32_t fs)
+{
+  char fullpath[32];
+
+  switch (codec_type)
+    {
+      case AS_CODECTYPE_MP3:
+        snprintf(fullpath, sizeof(fullpath), "%s/MP3ENC", path);
+        break;
+
+      case AS_CODECTYPE_LPCM:
+        if (fs == AS_SAMPLINGRATE_48000)
+          {
+            return true;
+          }
+        else
+          {
+            snprintf(fullpath, sizeof(fullpath), "%s/SRC", path);
+          }
+        break;
+
+      case AS_CODECTYPE_OPUS:
+        snprintf(fullpath, sizeof(fullpath), "%s/OPUSENC", path);
+        break;
+
+      default:
+        break;
+    }
+
+  if (NULL == fopen(fullpath, "r"))
+    {
+      print_err("DSP file %s cannot open.\n", fullpath);
+      return false;
+    }
+
+  return true;
 }
 

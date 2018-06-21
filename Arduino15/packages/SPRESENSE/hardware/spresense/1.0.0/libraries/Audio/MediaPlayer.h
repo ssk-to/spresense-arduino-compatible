@@ -122,6 +122,7 @@ private:
   char m_es_player1_buf[MEDIAPLAYER_BUF_FRAME_SIZE];
 
   err_t write_fifo(File& myFile, char *p_es_buf, CMN_SimpleFifoHandle *handle);
+  bool check_decode_dsp(uint8_t codec_type, const char *path);
 };
 
 #endif // __cplusplus

@@ -141,6 +141,11 @@ err_t MediaPlayer::init(PlayerId id,
                                    uint32_t sampling_rate,
                                    uint8_t channel_number)
 {
+  if (!check_decode_dsp(codec_type, codec_path))
+    {
+      return MEDIAPLAYER_ECODE_FILEACCESS_ERROR;
+    }
+
   AsInitPlayerParam player_init;
 
   player_init.codec_type     = codec_type/*AS_CODECTYPE_MP3*/;
@@ -300,4 +305,43 @@ err_t MediaPlayer::write_fifo(File& myFile, char *p_es_buf, CMN_SimpleFifoHandle
 
   return MEDIAPLAYER_ECODE_OK;
 }
+
+/*--------------------------------------------------------------------------*/
+bool MediaPlayer::check_decode_dsp(uint8_t codec_type, const char *path)
+{
+  char fullpath[32];
+  
+  switch (codec_type)
+    {
+      case AS_CODECTYPE_MP3:
+        snprintf(fullpath, sizeof(fullpath), "%s/MP3DEC", path);
+        break;
+
+      case AS_CODECTYPE_AAC:
+      case AS_CODECTYPE_MEDIA:
+        snprintf(fullpath, sizeof(fullpath), "%s/AACDEC", path);
+        break;
+
+      case AS_CODECTYPE_WAV:
+      case AS_CODECTYPE_LPCM:
+        snprintf(fullpath, sizeof(fullpath), "%s/WAVDEC", path);
+        break;
+
+      case AS_CODECTYPE_OPUS:
+        snprintf(fullpath, sizeof(fullpath), "%s/OPUSDEC", path);
+        break;
+
+      default:
+        break;
+    }
+
+  if (NULL == fopen(fullpath, "r"))
+    {
+      print_err("DSP file %s cannot open.\n", fullpath);
+      return false;
+    }
+
+  return true;
+}
+
 
