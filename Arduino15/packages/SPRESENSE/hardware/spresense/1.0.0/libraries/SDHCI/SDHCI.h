@@ -35,9 +35,9 @@ class File : public Stream {
 private:
   char* _name;
   FILE* _fd;
+  void* _dir;
   unsigned long _size;
   unsigned long _curpos;
-  void* _dir;
 
 public:
   File(const char *name, uint8_t mode = FILE_READ);
