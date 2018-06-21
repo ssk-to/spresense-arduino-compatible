@@ -17,55 +17,70 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/**
+ * @file read_write.ino
+ * @author Sony Corporation
+ * @brief SD Card read/write sample application.
+ */
+
 #include <SDHCI.h>
-SDClass SD;
 
-File myFile;
+SDClass SD;  /**< SDClass object */ 
 
+File myFile; /**< File object */ 
+
+/**
+ * @brief Write to the file and read from the file.
+ * 
+ * @details The file is located on the SD card.
+ */
 void setup() {
-  // Open serial communications and wait for port to open:
+  /* Open serial communications and wait for port to open */
   Serial.begin(115200);
   while (!Serial) {
-    ; // wait for serial port to connect. Needed for native USB port only
+    ; /* wait for serial port to connect. Needed for native USB port only */
   }
 
   Serial.print("Initializing SD card...");
 
-  Serial.println("initialization done.");
-
-  // open the file. note that only one file can be open at a time,
-  // so you have to close this one before opening another.
+  /* Open the file. Note that only one file can be open at a time,
+     so you have to close this one before opening another. */
   myFile = SD.open("test.txt", FILE_WRITE);
 
-  // if the file opened okay, write to it:
+  /* If the file opened okay, write to it */
   if (myFile) {
     Serial.print("Writing to test.txt...");
     myFile.println("testing 1, 2, 3.");
-    // close the file:
+    /* Close the file */
     myFile.close();
     Serial.println("done.");
   } else {
-    // if the file didn't open, print an error:
+    /* If the file didn't open, print an error */
     Serial.println("error opening test.txt");
   }
 
-  // re-open the file for reading:
+  /* Re-open the file for reading */
   myFile = SD.open("test.txt");
   if (myFile) {
     Serial.println("test.txt:");
 
-    // read from the file until there's nothing else in it:
+    /* Read from the file until there's nothing else in it */
     while (myFile.available()) {
       Serial.write(myFile.read());
     }
-    // close the file:
+    /* Close the file */
     myFile.close();
   } else {
-    // if the file didn't open, print an error:
+    /* If the file didn't open, print an error */
     Serial.println("error opening test.txt");
   }
 }
 
+/**
+ * @brief Run repeatedly.
+ * 
+ * @details Does not do anything.
+ */
 void loop() {
-  // nothing happens after setup
+
 }
