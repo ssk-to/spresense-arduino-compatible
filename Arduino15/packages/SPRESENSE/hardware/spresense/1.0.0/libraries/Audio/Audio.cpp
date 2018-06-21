@@ -1240,11 +1240,14 @@ bool AudioClass::check_decode_dsp(uint8_t codec_type, const char *path)
         break;
     }
 
-  if (NULL == fopen(fullpath, "r"))
+  FILE *fp = fopen(fullpath, "r");
+  if (fp == NULL)
     {
       print_err("DSP file %s cannot open.\n", fullpath);
       return false;
     }
+
+  fclose(fp);
 
   return true;
 }
@@ -1279,11 +1282,14 @@ bool AudioClass::check_encode_dsp(uint8_t codec_type, const char *path, uint32_t
         break;
     }
 
-  if (NULL == fopen(fullpath, "r"))
+  FILE *fp = fopen(fullpath, "r");
+  if (fp == NULL)
     {
       print_err("DSP file %s cannot open.\n", fullpath);
       return false;
     }
+
+  fclose(fp);
 
   return true;
 }
