@@ -17,9 +17,24 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
  
-#include <SDHCI.h>
-SDClass SD;
+/**
+ * @file sdhci_api.ino
+ * @author Sony Corporation
+ * @brief SD Card sample application.
+ */
 
+#include <SDHCI.h>
+
+SDClass SD;  /**< SDClass object */ 
+
+/**
+ * @brief Write to the file and read from the file.
+ * 
+ * @details The file is located on the SD card.
+ * @note Since SDK 2.X SDHCI driver has bugs so SD writing is impossible right 
+ *       now. So please prepare a "sd_test.txt" file in SD card in advance.
+ *       The content of the file should be "hello\r\n" (no quotation marks).
+ */
 void setup() {
   printf("Since SDK 2.X SDHCI driver has bugs so SD writing is impossible right now.\n");
   printf("So please prepare a \"sd_test.txt\" file in SD card in advance.\n");
@@ -56,5 +71,11 @@ void setup() {
   printf("SDHCI library read only mode OK!\n");
 }
 
+/**
+ * @brief Run repeatedly.
+ * 
+ * @details Does not do anything.
+ */
 void loop() {
+
 }
