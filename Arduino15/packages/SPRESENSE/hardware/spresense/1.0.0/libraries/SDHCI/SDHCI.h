@@ -67,6 +67,8 @@ public:
 class SDClass {
 
 public:
+  SDClass() : mshandle(NULL) {};
+
   File open(const char *filename, uint8_t mode = FILE_READ);
   File open(const String &filename, uint8_t mode = FILE_READ) { return open( filename.c_str(), mode ); }
 
@@ -82,8 +84,19 @@ public:
   boolean rmdir(const char *filepath);
   boolean rmdir(const String &filepath) { return rmdir(filepath.c_str()); }
 
+  /**
+   * @brief Start USB Mass Storage Class
+   */
+  int beginUsbMsc();
+
+  /**
+   * @brief Stop USB Mass Storage Class
+   */
+  int endUsbMsc();
+
 private:
 
+  void *mshandle;
   friend class File;
 };
 
