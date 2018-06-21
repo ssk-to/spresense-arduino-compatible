@@ -17,21 +17,48 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/**
+ * @file Servo.ino
+ * @author Sony Corporation
+ * @brief %Servo sample application.
+ */
+
 #include <Servo.h>
 
-static Servo s_servo;
+static Servo s_servo; /**< Servo object */
 
+/**
+ * @brief Initialize servo motor.
+ */
 void setup() {
-  // put your setup code here, to run once:
+  /* put your setup code here, to run once: */
+
+  /* Attached to a servo motor whose input is connected to PIN_D09 
+     Note: The pin selected must support PWM. */
   s_servo.attach(PIN_D09);
+
+  /* Set the servo motor angle to 90 degrees */
   s_servo.write(90);
+
+  /* Wait 5000ms */
   delay(5000);
 }
 
+/**
+ * @brief Change servo motor angle.
+ */
 void loop() {
-  // put your main code here, to run repeatedly:
+  /* put your main code here, to run repeatedly: */
+
+  /* Set the servo motor angle to 0 degrees */
   s_servo.write(0);
+
+  /* Wait 1000ms */
   delay(1000);
+
+  /* Set the servo motor angle to 180 degrees */
   s_servo.write(180);
+
+  /* Wait 1000ms */
   delay(1000);
 }
