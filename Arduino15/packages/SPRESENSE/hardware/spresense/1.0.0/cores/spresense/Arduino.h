@@ -27,6 +27,13 @@
 #include <nuttx/config.h>
 #include <sdk/config.h>
 
+// Some libraries assumes that AVR-specific definitions are
+// automatically included from Arduino.h... Therefore, here
+// includes the following dummy avr files.
+
+#include "avr/pgmspace.h"
+#include "avr/interrupt.h"
+
 #ifdef CONFIG_LIBM
 #include <math.h>
 #else
