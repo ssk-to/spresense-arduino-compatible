@@ -61,7 +61,7 @@ static char* fullpathname(char* buf, int bufsize, const char * filepath)
     return buf;
   }
 
-  return 0;
+  return NULL;
 }
 
 File SDClass::open(const char *filepath, uint8_t mode) {
@@ -234,6 +234,9 @@ File::File(const char *name, uint8_t mode)
 
   if (!fpname)
     return;
+
+  /* Wait for the SD card to be mounted */
+  while (::stat(SD_MOUNT_POINT, &stat) < 0);
 
   stat_ret = ::stat(fpname, &stat);
 
