@@ -1,5 +1,5 @@
 # Class
-TwoWire	KEYWORD2
+TwoWire	KEYWORD1
 
 # Constants
 Wire	LITERAL1

@@ -1,12 +1,12 @@
 # Class
-DhcpClass	KEYWORD2
-DNSClient	KEYWORD2
-EthernetClass	KEYWORD2
-HardwareSerial	KEYWORD2
-Printable	KEYWORD2
-Print	KEYWORD2
-StringSumHelper	KEYWORD2
-UDP	KEYWORD2
+DhcpClass	KEYWORD1
+DNSClient	KEYWORD1
+EthernetClass	KEYWORD1
+HardwareSerial	KEYWORD1
+Printable	KEYWORD1
+Print	KEYWORD1
+StringSumHelper	KEYWORD1
+UDP	KEYWORD1
 
 # Constants
 DEG_TO_RAD	LITERAL1

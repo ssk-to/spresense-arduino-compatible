@@ -1,6 +1,6 @@
 # Class
-AudioClass	KEYWORD2
-Audio	KEYWORD2
+AudioClass	KEYWORD1
+Audio	KEYWORD1
 
 # Constants
 WRITE_FIFO_FRAME_NUM	LITERAL1

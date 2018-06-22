@@ -1,5 +1,5 @@
 # Class
-SDClass	KEYWORD2
+SDClass	KEYWORD1
 
 # Function
 beginUsbMsc	KEYWORD2

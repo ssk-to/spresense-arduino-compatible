@@ -1,6 +1,6 @@
 # Class
-SPISettings	KEYWORD2
-SPIClass	KEYWORD2
+SPISettings	KEYWORD1
+SPIClass	KEYWORD1
 
 # Constants
 SPI	LITERAL1

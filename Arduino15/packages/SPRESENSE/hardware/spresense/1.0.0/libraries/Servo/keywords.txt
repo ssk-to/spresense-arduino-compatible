@@ -1,5 +1,5 @@
 # Class
-Servo	KEYWORD2
+Servo	KEYWORD1
 
 # Constants
 SERVO_NOT_ATTACHED	LITERAL1

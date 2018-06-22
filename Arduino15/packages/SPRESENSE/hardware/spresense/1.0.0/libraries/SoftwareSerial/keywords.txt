@@ -1,5 +1,5 @@
 # Class
-SoftwareSerial	KEYWORD2
+SoftwareSerial	KEYWORD1
 
 # Function
 listen	KEYWORD2
