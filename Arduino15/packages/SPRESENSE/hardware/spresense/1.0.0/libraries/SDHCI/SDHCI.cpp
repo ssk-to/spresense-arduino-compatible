@@ -17,6 +17,14 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+/**
+ * @file SDHCI.cpp
+ * @author Sony Corporation
+ * @brief SPRESENSE Arduino SDHCI library
+ * 
+ * @details The SDHCI library allows for reading from and writing to SD cards
+ */
+
 #include <sdk/config.h>
 
 #include <sys/stat.h>
@@ -43,16 +51,20 @@
 #  define DebugPrintf(fmt, ...) ((void)0)
 #endif
 
-#define STDIO_BUFFER_SIZE     4096
-#define MAX_PATH_LENGTH        128
-static char SD_MOUNT_POINT[] = "/mnt/sd0/";
+#define STDIO_BUFFER_SIZE     4096           /**< STDIO buffer size. */
+#define MAX_PATH_LENGTH        128           /**< Max path lenght. */       
+static char SD_MOUNT_POINT[] = "/mnt/sd0/";  /**< SD mount point. */
 
 namespace SDHCILib {
 
-// Used by `getNextPathComponent`
-#define MAX_COMPONENT_LEN 12 // What is max length?
-#define PATH_COMPONENT_BUFFER_LEN MAX_COMPONENT_LEN+1
-
+/**
+ * @brief Creates the full path name for the specified relative path name.
+ * 
+ * @param [out] buf The buffer for full path name.
+ * @param [in] bufsize Size of buffer for full path name.
+ * @param [in] filepath Relative file path name.
+ * @return full path name
+ */
 static char* fullpathname(char* buf, int bufsize, const char * filepath)
 {
   if ((strlen(filepath) + sizeof(SD_MOUNT_POINT) <= (size_t)bufsize) && (bufsize >= 0)) {
