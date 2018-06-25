@@ -492,7 +492,6 @@ private:
   /* Functions for initialization on begin/end */
   err_t activateAudio(void);
 
-  err_t initAttention(void);
   err_t powerOn(void);
   err_t powerOff(void);
 

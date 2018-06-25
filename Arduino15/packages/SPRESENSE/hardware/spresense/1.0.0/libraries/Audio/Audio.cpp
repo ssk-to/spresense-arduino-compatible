@@ -82,7 +82,16 @@ err_t AudioClass::end(void)
 /****************************************************************************
  * Private Common API for begin/end
  ****************************************************************************/
+extern "C" {
 
+void attentionCallback(unsigned char module_id, unsigned char error_code,unsigned char sub_code)
+{
+  print_dbg("attention!! ecode %d subcode %d\n", error_code, sub_code);
+}
+
+}
+
+/*--------------------------------------------------------------------------*/
 err_t AudioClass::activateAudio(void)
 {
   AudioSubSystemIDs ids;
@@ -97,19 +106,12 @@ err_t AudioClass::activateAudio(void)
   ids.effector    = 0xFF;
   ids.recognizer  = 0xFF;
 
-  AS_CreateAudioManager(ids);
+  AS_CreateAudioManager(ids, attentionCallback);
 
   ret = powerOn();
   if (ret != AUDIOLIB_ECODE_OK)
     {
       print_err("Power On error.\n");
-      return ret;
-    }
-
-  ret = initAttention();
-  if (ret != AUDIOLIB_ECODE_OK)
-    {
-      print_err("Attention initialize error.\n");
       return ret;
     }
 
@@ -160,42 +162,6 @@ err_t AudioClass::powerOff(void)
 
   return AUDIOLIB_ECODE_OK;
 }
-
-
-/*--------------------------------------------------------------------------*/
-extern "C" {
-
-void attentionCallback(unsigned char module_id, unsigned char error_code,unsigned char sub_code)
-{
-  print_dbg("attention!! ecode %d subcode %d\n", error_code, sub_code);
-}
-
-}
-
-/*--------------------------------------------------------------------------*/
-err_t AudioClass::initAttention(void)
-{
-  AudioCommand command;
-  command.header.packet_length = LENGTH_INITATTENTIONS;
-  command.header.command_code  = AUDCMD_INITATTENTIONS;
-  command.header.sub_code      = 0x00;
-  command.init_attentions_param.attention_callback_function = attentionCallback;
-  AS_SendAudioCommand(&command);
-
-  AudioResult result;
-  AS_ReceiveAudioResult(&result);
-
-  if (result.header.result_code != AUDRLT_INITATTENTIONSCMPLT)
-    {
-      print_err("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)\n",
-              command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
-      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
-    }
-
-  return AUDIOLIB_ECODE_OK;
-}
-
-
 
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::setReadyMode(void)
