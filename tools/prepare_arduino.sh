@@ -164,6 +164,18 @@ function install_sdk_from_build()
 	export SDL_KERNEL_CONF=${SDL_KERNEL_CONF}
 	export SDK_CONFIG=`cat ${SCRIPT_DIR}/configs/${VARIANT_NAME}.conf | head -n 1`
 
+	# Add configuration option
+	if [ "${CONFIG_EDIT}" != "" ]; then
+		CONFIG_OPTION=`echo ${CONFIG_EDIT} | cut -d " " -f 1`
+		CONFIG_TARGET=`echo ${CONFIG_EDIT} | cut -d " " -f 2`
+		if [ "`echo ${CONFIG_TARGET} | grep -i kernel`" != "" ]; then
+			export SDL_KERNEL_CONF="${CONFIG_OPTION} ${SDL_KERNEL_CONF}"
+		fi
+		if [ "`echo ${CONFIG_TARGET} | grep -i sdk`" != "" ]; then
+			export SDK_CONFIG="${CONFIG_OPTION} ${SDK_CONFIG}"
+		fi
+	fi
+
 	# Export SDK build
 	${SCRIPT_DIR}/sdk_export.sh ${SPRESENSE_SDK_PATH}
 
@@ -175,7 +187,12 @@ function install_sdk_from_build()
 # -S: Spresense source path "your/path/to/spresense"
 # -g: gcc archive path "your/path/to/gcc.zip"
 # -s: sdk archive path "your/path/to/sdk.zip"
+# -v: board variant (default: spresense)
+# -k: kernel configuration (default: release)
 # -H: target Arduino Host (Windows/Linux32/Linux64/Mac)
+# -M: manual configuration by menuconfig (Kernel/SDK)
+# -G: manual configuration by gconfig (Kernel/SDK)
+# -Q: manual configuration by qconfig (Kernel/SDK)
 # -p: Use private access (Skip GCC installation)
 SPRESENSE_SDK_PATH=""
 GCC_ARCHIVE_PATH=""
@@ -183,8 +200,9 @@ SDK_ARCHIVE_PATH=""
 SDK_VARIANT_NAME="spresense"
 SDL_KERNEL_CONF="release"
 AURDUINO_IDE_HOST=""
+CONFIG_EDIT=""
 PRIVATE_ACCESS=""
-while getopts S:g:s:v:k:H:ph OPT
+while getopts S:g:s:v:k:H:M:G:Q:ph OPT
 do
 	case $OPT in
 		'S' ) SPRESENSE_SDK_PATH=$OPTARG;;
@@ -193,6 +211,9 @@ do
 		'v' ) SDK_VARIANT_NAME=$OPTARG;;
 		'k' ) SDL_KERNEL_CONF=$OPTARG;;
 		'H' ) AURDUINO_IDE_HOST=$OPTARG;;
+		'M' ) CONFIG_EDIT="-m $OPTARG";;
+		'G' ) CONFIG_EDIT="-g $OPTARG";;
+		'Q' ) CONFIG_EDIT="-q $OPTARG";;
 		'p' ) PRIVATE_ACCESS=true;;
 		'h' ) show_help;;
 	esac
