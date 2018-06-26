@@ -58,11 +58,34 @@ spresense-arduinolibs
 
 ### Options
 
-| Option | Argument                   | Note                                |
-|-------:|:---------------------------|:------------------------------------|
-| -H     | Windows or Linux64 or Mac  | Arduino IDE Host OS                 |
-| -S     | path/to/spresense-sdk-path | Local Spresense SDK build root path |
-| -p     | -                          | Private access option               |
+| Option | Argument                          | Note                                           |
+|-------:|:----------------------------------|:-----------------------------------------------|
+| -S     | path/to/spresense-sdk-path        | Local Spresense SDK build root path            |
+| -g     | path/to/GCC-archive-path          | GCC archive path                               |
+| -s     | path/to/SDK-archive-path          | Prebuilt SDK archive path                      |
+| -v     | Board_variant                     | Target board variant (default:spresense)       |
+| -k     | release or debug                  | Target kerneo configuration (default: release) |
+| -H     | Windows or Linux64 or Mac         | Arduino IDE Host OS                            |
+| -M     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by menuconfig             |
+| -G     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by gconfig                |
+| -Q     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by qconfig                |
+| -p     | -                                 | No network access option                       |
+
+### Example
+
+#### Update SDK prebuilt by using default configuration
+
+```
+./tools/prepare_arduino.sh -H Windows -S /home/user1/spresense -k release -v spresense -p
+```
+
+#### Update SDK prebuilt by using default configuration and manual configuration change
+
+```
+./tools/prepare_arduino.sh -H Windows -S /home/user1/spresense -k release -v spresense -M SDK/Kernel -p
+```
+
+* Menu configuration will open twice as 'NuttX Configuration' and 'SDK configuration'
 
 # Tools
 
