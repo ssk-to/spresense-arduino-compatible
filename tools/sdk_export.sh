@@ -17,11 +17,7 @@ echo "VARIANT_NAME=${VARIANT_NAME}"
 NUTTX_EXPORT="sdk-export"
 PACKAGE_NAME="${NUTTX_EXPORT}.zip"
 
-if [ $(uname -o) = "Cygwin" ]; then
-  SDK_DIR=`cd $1 && pwd | cygpath -m -f - $SDK_DIR`
-else
-  SDK_DIR=`cd $1 && pwd`
-fi
+SDK_DIR=`cd $1 && pwd`
 TMP_DIR=`mktemp -d`
 
 # versioning
