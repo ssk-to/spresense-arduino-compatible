@@ -31,18 +31,20 @@ sh sdk/tools/mkversion.sh && mv .version nuttx/.version
 # create sdk-export.zip
 cd $SDK_DIR/sdk
 
-## clean
-echo "Clean SDK objects..."
-make distcleankernel &>/dev/null
-make cleankernel &>/dev/null
-make distclean &>/dev/null
+if [ ! ${IMPORT_ONLY} ]; then
+	## clean
+	echo "Clean SDK objects..."
+	make distcleankernel &>/dev/null
+	make cleankernel &>/dev/null
+	make distclean &>/dev/null
 
-## Configuration
-echo "Configure SDK components..."
-echo "Kernel : ${SDL_KERNEL_CONF}"
-echo "SDK    : ${SDK_CONFIG}"
-./tools/config.py --kernel ${SDL_KERNEL_CONF}
-./tools/config.py ${SDK_CONFIG}
+	## Configuration
+	echo "Configure SDK components..."
+	echo "Kernel : ${SDL_KERNEL_CONF}"
+	echo "SDK    : ${SDK_CONFIG}"
+	./tools/config.py --kernel ${SDL_KERNEL_CONF}
+	./tools/config.py ${SDK_CONFIG}
+fi
 
 ## Build kernel
 echo "Build kernel..."

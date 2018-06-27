@@ -176,6 +176,9 @@ function install_sdk_from_build()
 		fi
 	fi
 
+	# Add import option
+	export IMPORT_ONLY=${IMPORT_ONLY}
+
 	# Export SDK build
 	${SCRIPT_DIR}/sdk_export.sh ${SPRESENSE_SDK_PATH}
 
@@ -201,8 +204,9 @@ SDK_VARIANT_NAME="spresense"
 SDL_KERNEL_CONF="release"
 AURDUINO_IDE_HOST=""
 CONFIG_EDIT=""
+IMPORT_ONLY=""
 PRIVATE_ACCESS=""
-while getopts S:g:s:v:k:H:M:G:Q:ph OPT
+while getopts S:g:s:v:k:H:M:G:Q:iph OPT
 do
 	case $OPT in
 		'S' ) SPRESENSE_SDK_PATH=$OPTARG;;
@@ -214,6 +218,7 @@ do
 		'M' ) CONFIG_EDIT="-m $OPTARG";;
 		'G' ) CONFIG_EDIT="-g $OPTARG";;
 		'Q' ) CONFIG_EDIT="-q $OPTARG";;
+		'i' ) IMPORT_ONLY=true;;
 		'p' ) PRIVATE_ACCESS=true;;
 		'h' ) show_help;;
 	esac
