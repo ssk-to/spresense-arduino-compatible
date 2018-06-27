@@ -69,6 +69,7 @@ spresense-arduinolibs
 | -M     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by menuconfig             |
 | -G     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by gconfig                |
 | -Q     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by qconfig                |
+| -i     | -                                 | Do not change Kernel/SDK configuration         |
 | -p     | -                                 | No network access option                       |
 
 ### Example
