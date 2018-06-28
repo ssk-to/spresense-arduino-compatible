@@ -44,8 +44,6 @@ spresense-arduinolibs
 |   |       `-- gcc-arm-none-eabi    - GCC compiler
 |   |           `-- 5.4.1
 |   `-- package_spresense_index.json - Arduino IDE configuration json file
-|-- sketches                         - Sample Arduino sketches
-|   `-- spresense
 `-- tools                            - Import/Export tools
 ```
 
@@ -54,30 +52,55 @@ spresense-arduinolibs
 
 ### [developer_guide_arduino_ja (日本語)](https://github.com/sonydevworld/spresense-docs/blob/master/developer_guide/arduino/developer_guide_arduino_ja.adoc)
 
-# How to use
-## Import local SDK build
+# How to prepare Arduino environment
+## Pull or Import GCC and Prebuilt SDK
 
 ```
-./tools/prepare_arduino.sh -H <Arduino IDE Host> -S <SDK build root> -p
+./tools/prepare_arduino.sh [OPTIONS...]
 ```
 
 ### Options
 
+#### For using local archive
+
+| Option | Argument                          | Note                                           |
+|-------:|:----------------------------------|:-----------------------------------------------|
+| -g     | path/to/GCC-archive-path          | GCC archive path                               |
+| -s     | path/to/SDK-archive-path          | Prebuilt SDK archive path                      |
+
+#### For using local source code
+
 | Option | Argument                          | Note                                           |
 |-------:|:----------------------------------|:-----------------------------------------------|
 | -S     | path/to/spresense-sdk-path        | Local Spresense SDK build root path            |
-| -g     | path/to/GCC-archive-path          | GCC archive path                               |
-| -s     | path/to/SDK-archive-path          | Prebuilt SDK archive path                      |
 | -v     | Board_variant                     | Target board variant (default:spresense)       |
 | -k     | release or debug                  | Target kerneo configuration (default: release) |
-| -H     | Windows or Linux64 or Mac         | Arduino IDE Host OS                            |
 | -M     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by menuconfig             |
 | -G     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by gconfig                |
 | -Q     | "SDK" or "Kernel" or "SDK/Kernel" | Manual configuration by qconfig                |
-| -i     | -                                 | Do not change Kernel/SDK configuration         |
+| -i     | -                                 | Do not change Kernel/SDK configuration         |	
+
+#### Other option
+
+| Option | Argument                          | Note                                           |
+|-------:|:----------------------------------|:-----------------------------------------------|
+| -H     | Windows or Linux64 or Mac         | Arduino IDE Host OS                            |
 | -p     | -                                 | No network access option                       |
+| -h     | -                                 | Show help                                      |
 
 ### Example
+
+#### Pull GCC and Spresense SDK prebuilt from network
+
+```
+./tools/prepare_arduino.sh
+```
+
+#### Pull GCC and Spresense SDK prebuilt from local archive
+
+```
+./tools/prepare_arduino.sh -s path/to/spresense-sdk.tar.gz -g path/to/gcc-arm-none-eabi-5.4.1-linux.tar.gz
+```
 
 #### Update SDK prebuilt by using default configuration
 
@@ -93,6 +116,3 @@ spresense-arduinolibs
 
 * Menu configuration will open twice as 'NuttX Configuration' and 'SDK configuration'
 
-# Tools
-
-Import/Export, download tools instructions are documented at [tools directory](http://code.sonymobile.net/spritzer-sdk/spresense-arduinolibs/tree/master/tools).
