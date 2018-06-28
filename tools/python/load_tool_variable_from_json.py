@@ -101,9 +101,9 @@ if __name__ == '__main__':
 	if args.host == 'Windows':
 		arduino_host = 'i686-mingw32'
 	elif args.host == 'Linux32':
-		arduino_host = 'i686-linux-gnu'
+		arduino_host = 'i686-pc-linux-gnu'
 	elif args.host == 'Linux64':
-		arduino_host = 'x86_64-linux-gnu'
+		arduino_host = 'x86_64-pc-linux-gnu'
 	elif args.host == 'Mac':
 		arduino_host = 'i386-apple-darwin11'
 	else:
