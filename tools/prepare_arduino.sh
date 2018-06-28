@@ -230,9 +230,16 @@ done
 
 # Option Errror handling
 if [ "${AURDUINO_IDE_HOST}" == "" ]; then
-	echo "ERROR: Arduino IDE Host is invalid. Please use Windows/Linux32/Linux64/Mac"
-	show_help
-	exit
+	UNAME=`uname`
+	if [ "${UNAME}" == "Linux" ]; then
+		AURDUINO_IDE_HOST="Linux64"
+	elif [ "${UNAME}" == "Darwin" ]; then
+		AURDUINO_IDE_HOST="Mac"
+	else
+		AURDUINO_IDE_HOST="Windows"
+	fi
+
+	echo "Target host auto detect... ${AURDUINO_IDE_HOST}"
 fi
 
 # GCC install
