@@ -121,6 +121,9 @@ function install_tool_from_archive()
 
 	TOOL_PATH=${ARDUINO_DIR}/packages/${PACKAGE_NAME}/tools/${TOOL_NAME}
 
+	# Create tool path
+	mkdir -p ${TOOL_PATH}
+
 	echo "Install ${TOOL_NAME} from archive..."
 	debug_print "Install ${TOOL_NAME} to ${TOOL_PATH} from archive ${ARCHIVE_PATH}..."
 	tar xzf ${ARCHIVE_PATH} -C ${TOOL_PATH}
