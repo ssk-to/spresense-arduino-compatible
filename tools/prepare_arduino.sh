@@ -94,11 +94,11 @@ function install_tool_from_http()
 	mkdir -p ${TOOL_PATH}
 
 	debug_print "Download ${TOOL_NAME} into ${TOOL_PATH}"
-	wget ${TOOL_ADDR} -O ${TOOL_PATH}/package.zip
+	wget ${TOOL_ADDR} -O ${TOOL_PATH}/package.tar.gz
 
 	echo "Install ${TOOL_NAME}..."
-	unzip -o ${TOOL_PATH}/package.zip -d ${TOOL_PATH} > /dev/null
-	rm ${TOOL_PATH}/package.zip
+	tar xzf ${TOOL_PATH}/package.tar.gz -C ${TOOL_PATH}
+	rm ${TOOL_PATH}/package.tar.gz
 
 }
 
@@ -123,7 +123,7 @@ function install_tool_from_archive()
 
 	echo "Install ${TOOL_NAME} from archive..."
 	debug_print "Install ${TOOL_NAME} to ${TOOL_PATH} from archive ${ARCHIVE_PATH}..."
-	unzip -o ${ARCHIVE_PATH} -d ${TOOL_PATH} > /dev/null
+	tar xzf ${ARCHIVE_PATH} -C ${TOOL_PATH}
 }
 
 # function   : install_sdk_from_build
@@ -188,8 +188,8 @@ function install_sdk_from_build()
 
 # Option handler
 # -S: Spresense source path "your/path/to/spresense"
-# -g: gcc archive path "your/path/to/gcc.zip"
-# -s: sdk archive path "your/path/to/sdk.zip"
+# -g: gcc archive path "your/path/to/gcc.tar.gz"
+# -s: sdk archive path "your/path/to/sdk.tar.gz"
 # -v: board variant (default: spresense)
 # -k: kernel configuration (default: release)
 # -H: target Arduino Host (Windows/Linux32/Linux64/Mac)
