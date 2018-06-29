@@ -624,7 +624,7 @@ err_t AudioClass::setRecorderMode(uint8_t input_device)
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
     }
 
-  if (init_mic_gain(input_device, 210) != AUDIOLIB_ECODE_OK)
+  if (init_mic_gain(input_device, 0) != AUDIOLIB_ECODE_OK)
     {
       print_err("Mic init error!");
     }
