@@ -31,7 +31,6 @@ if [ ! ${IMPORT_ONLY} ]; then
 	## clean
 	echo "Clean SDK objects..."
 	make distcleankernel &>/dev/null
-	make cleankernel &>/dev/null
 	make distclean &>/dev/null
 
 	## Configuration
@@ -57,12 +56,12 @@ unzip $PACKAGE_NAME -d $TMP_DIR >/dev/null
 rm $PACKAGE_NAME
 
 # create sdk directory
-mkdir -p $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}/${SDL_KERNEL_CONF}
-
-cd $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}/${SDL_KERNEL_CONF}
+mkdir -p $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}
 
 # create arch, include, startup
-mv $TMP_DIR/${NUTTX_EXPORT}/nuttx/* .
+mv $TMP_DIR/${NUTTX_EXPORT}/nuttx $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}/${SDL_KERNEL_CONF}
+cd $TMP_DIR/sdk/${SDK_VERSION}/${VARIANT_NAME}/${SDL_KERNEL_CONF}
+rm -f .config
 
 mkdir -p ./include/apps
 mv $TMP_DIR/${NUTTX_EXPORT}/sdk/modules/include/* ./include/apps
@@ -86,7 +85,8 @@ cp ${FW_LOADER} ${FW_DIR}
 cp ${FW_GNSSFW} ${FW_DIR}
 
 cd $TMP_DIR
-find . -name .gitignore | xargs rm
+find . -name .gitignore | xargs rm &>/dev/null
+find . -name .fakelnk | xargs rm &>/dev/null
 cd sdk
 zip -r sdk-export.zip ${SDK_VERSION}/${VARIANT_NAME} >/dev/null
 mv sdk-export.zip $SDK_DIR
