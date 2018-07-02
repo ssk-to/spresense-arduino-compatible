@@ -39,7 +39,7 @@ TUTRIAL_IMAGE = "image/tutrial_image.png"
 # Description: Show EULA binary Update Window
 class EULAWindow(wx.Frame):
 	def __init__(self, updater):
-		wx.Frame.__init__(self, None, -1, "End User Lisence Agreement", style=wx.STAY_ON_TOP|wx.DEFAULT_FRAME_STYLE)
+		wx.Frame.__init__(self, None, -1, "End User License Agreement", style=wx.STAY_ON_TOP|wx.DEFAULT_FRAME_STYLE)
 		self.updater = updater
 
 		# TODO: Layout will be update with layout manager
