@@ -1,1 +1,1 @@
-sfutools.name=SPRESENSE Firmware Updater
+sfutools.name=Spresense Firmware Updater

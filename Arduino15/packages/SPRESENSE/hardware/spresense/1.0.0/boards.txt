@@ -1,8 +1,8 @@
 menu.Debug=Debug
 menu.UploadSpeed=UploadSpeed
 
-############## SPRESENSE BOARD ##############
-spresense.name=SPRESENSE
+############## Spresense BOARD ##############
+spresense.name=Spresense
 
 spresense.upload.tool=spresense-tools
 spresense.upload.speed=115200
