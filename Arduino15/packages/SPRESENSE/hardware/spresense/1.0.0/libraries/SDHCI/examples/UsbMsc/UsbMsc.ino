@@ -27,7 +27,7 @@ void setup() {
     Serial.println("USB MSC Failure!");
   } else {
     Serial.println("*** USB MSC Prepared! ***");
-    Serial.println("Insert SD ard and Connect USB to PC With the Extension Board.");
+    Serial.println("Insert SD and Connect Extension Board USB to PC.");
   }
 }
 
