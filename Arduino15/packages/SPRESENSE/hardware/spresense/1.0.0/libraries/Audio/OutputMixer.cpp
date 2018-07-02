@@ -1,5 +1,5 @@
 /*
- *  OutputMixer.cpp - SPI implement file for the SPRESENSE SDK
+ *  OutputMixer.cpp - SPI implement file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or

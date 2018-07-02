@@ -1,5 +1,5 @@
 /*
- *  SPI.h - SPRESENSE Arduino SPI library 
+ *  SPI.h - Spresense Arduino SPI library 
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -23,10 +23,10 @@
 /**
  * @file SPI.h
  * @author Sony Corporation
- * @brief SPRESENSE Arduino SPI library 
+ * @brief Spresense Arduino SPI library 
  * 
  * @details It is a library for communicating with SPI devices, with the 
- *          SPRESENSE as the master device. 
+ *          Spresense as the master device. 
  */
 
 /*

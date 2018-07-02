@@ -1,5 +1,5 @@
 /*
- *  GNSS.cpp - GNSS implementation file for the SPRESENSE SDK
+ *  GNSS.cpp - GNSS implementation file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or

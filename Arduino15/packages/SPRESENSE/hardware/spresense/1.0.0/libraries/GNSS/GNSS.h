@@ -1,5 +1,5 @@
 /*
- *  GNSS.h - GNSS include file for the SPRESENSE SDK
+ *  GNSS.h - GNSS include file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -25,8 +25,8 @@
 /**
  * @file GNSS.h
  * @author Sony Corporation
- * @brief SPRESENSE Arduino GNSS library
- * @details It is a library for controlling the GNSS built in SPRESENSE
+ * @brief Spresense Arduino GNSS library
+ * @details It is a library for controlling the GNSS built in Spresense
  *          and acquiring positioning information. This library is available
  *          in the Arduino environment.
  */

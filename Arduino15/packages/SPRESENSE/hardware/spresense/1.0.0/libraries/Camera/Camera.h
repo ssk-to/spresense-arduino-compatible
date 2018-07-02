@@ -1,5 +1,5 @@
 /*
- *  Camera.h - Camera include file for the SPRESENSE SDK
+ *  Camera.h - Camera include file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -18,10 +18,10 @@
  */
 
 /**
- * Camera Library for Arduino IDE on SPRESENSE.
+ * Camera Library for Arduino IDE on Spresense.
  *
- * SPRESENSE上のArduino 向け Camera Library Classです。
- * こちらのライブラリを使用することで、SPRESENSE上での
+ * Spresense上のArduino 向け Camera Library Classです。
+ * こちらのライブラリを使用することで、Spresense上での
  *  - 写真撮影
  * が可能になります。
  *

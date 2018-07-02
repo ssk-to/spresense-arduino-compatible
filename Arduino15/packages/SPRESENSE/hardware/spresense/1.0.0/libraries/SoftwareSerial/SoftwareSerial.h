@@ -1,5 +1,5 @@
 /*
-  SoftwareSerial.h - SoftwareSerial include file for the SPRESENSE SDK
+  SoftwareSerial.h - SoftwareSerial include file for the Spresense SDK
   Copyright (C) 2018 Sony Semiconductor Solutions Corp.
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public

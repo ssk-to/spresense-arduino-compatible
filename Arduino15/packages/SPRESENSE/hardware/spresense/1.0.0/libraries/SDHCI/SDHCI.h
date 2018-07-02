@@ -1,5 +1,5 @@
 /*
- *  SDHCI.h - SPRESENSE Arduino SDHCI library
+ *  SDHCI.h - Spresense Arduino SDHCI library
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or

@@ -1,5 +1,5 @@
 /*
- *  Servo.cpp - Servo Implementation file for the SPRESENSE SDK
+ *  Servo.cpp - Servo Implementation file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or

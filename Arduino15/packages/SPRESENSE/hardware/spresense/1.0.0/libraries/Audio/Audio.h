@@ -1,5 +1,5 @@
 /*
- *  Audio.h - Audio include file for the SPRESENSE SDK
+ *  Audio.h - Audio include file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -18,9 +18,9 @@
  */
 
 /**
- * Audio Library for Arduino IDE on SPRESENSE.
+ * Audio Library for Arduino IDE on Spresense.
  *
- * Audio Library Class for Arduino on SPRESENSE.
+ * Audio Library Class for Arduino on Spresense.
  * By using this library, you can use the follow features on SPRESSENSE.
  * - Music playback
  * - Voice recording

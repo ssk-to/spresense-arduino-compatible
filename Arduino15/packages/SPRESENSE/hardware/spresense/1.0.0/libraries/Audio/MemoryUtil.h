@@ -1,5 +1,5 @@
 /*
- *  MemoryUtil.h - Audio include file for the SPRESENSE SDK
+ *  MemoryUtil.h - Audio include file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or

@@ -17,7 +17,7 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  *  This is a test app for the camera library.
- *  This library can only be used on the SPRESENSE with the FCBGA chip package.
+ *  This library can only be used on the Spresense with the FCBGA chip package.
  */
 
 /*
