@@ -2,9 +2,10 @@
 
 import json
 import os
+import sys
 import time
-import zipfile
 import webbrowser
+import zipfile
 
 import wx
 
@@ -32,12 +33,8 @@ class EULAFileDropHandler(wx.FileDropTarget):
 		self.window.retry()
 		return False
 
-TUTRIAL = """
-1. Click "Go to download page" button
-2. Accept End User License Agreement
-3. Download archive
-4. Drag and drop zip archive here.
-"""
+TUTRIAL_IMAGE = "image/tutrial_image.png"
+
 # Name       : EULAWindow
 # Description: Show EULA binary Update Window
 class EULAWindow(wx.Frame):
@@ -48,31 +45,39 @@ class EULAWindow(wx.Frame):
 		# TODO: Layout will be update with layout manager
 		display_size = wx.GetDisplaySize()
 
-		window_width = 500
-		window_height = 270
+		# Image file path
+		if hasattr(sys, '_MEIPASS'):
+			tutrial_image_file = os.path.join(sys._MEIPASS, TUTRIAL_IMAGE)
+		else:
+			tutrial_image_file = TUTRIAL_IMAGE
+
+		# Load label image
+		image = wx.Image(tutrial_image_file)
+		image_size = image.GetSize()
+
+		window_width = image_size[0]
+		window_height = image_size[1] + 50
 
 		window_pos_x = (display_size[0] - window_width) / 2
 		window_pos_y = (display_size[1] - window_height) / 2
 
 		# parts
-		tutrial_text_box = wx.StaticText(self, -1, TUTRIAL, style=wx.ST_NO_AUTORESIZE|wx.BORDER_SIMPLE)
-		font = wx.Font(15, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-		tutrial_text_box.SetFont(font)
-		tutrial_text_box.SetBackgroundColour('#FFFFFF')
+		image_bitmap = image.ConvertToBitmap()
+		label = wx.StaticBitmap(self, -1, image_bitmap, (0,0))
 
 		web_button = wx.Button(self, -1, "Go to download page")
 
 		# Set Event hander
-		tutrial_text_box.SetDropTarget(EULAFileDropHandler(self, self.updater))
+		label.SetDropTarget(EULAFileDropHandler(self, self.updater))
 		self.Bind(wx.EVT_BUTTON, self.jumpToDOwnloadURL, web_button)
 
 		# Set Layout
 		self.SetSize(window_width, window_height)
-		tutrial_text_box.SetSize(window_width, window_height - 70)
 		web_button.SetSize(window_width, 50)
-		web_button.SetPosition((0, window_height - 60))
+		web_button.SetPosition((0, window_height - 50))
 
 		self.SetPosition((window_pos_x, window_pos_y))
+		self.Fit()
 		self.Show()
 	def retry(self):
 		print("Retry")
