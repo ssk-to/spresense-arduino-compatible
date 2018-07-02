@@ -1,7 +1,7 @@
 {
   "packages": [
     {
-      "maintainer": "SPRESENSE Community",
+      "maintainer": "Spresense Community",
       "help": {
         "online": "http://localhost:8080"
       },
@@ -11,7 +11,7 @@
       "platforms": [
         {
           "category": "SPRESENSE",
-          "name": "SPRESENSE Reference Board",
+          "name": "Spresense Reference Board",
           "url": "http://localhost:8080/spresense.zip",
           "help": {
             "online": "http://localhost:8080/"
@@ -21,7 +21,7 @@
           "archiveFileName": "spresense.zip",
           "boards": [
             {
-              "name": "Generic SPRESENSE Module"
+              "name": "Generic Spresense Module"
             }
           ],
           "toolsDependencies": [
