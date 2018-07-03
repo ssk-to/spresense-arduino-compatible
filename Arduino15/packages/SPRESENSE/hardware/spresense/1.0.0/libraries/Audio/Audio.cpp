@@ -1014,6 +1014,31 @@ err_t AudioClass::readFrames(char* p_buffer, uint32_t buffer_size, uint32_t* rea
   return rst;
 }
 
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::setRenderingClockMode(AsClkMode mode)
+{
+  AudioCommand command;
+
+  command.header.packet_length = LENGTH_SETRENDERINGCLK;
+  command.header.command_code  = AUDCMD_SETRENDERINGCLK;
+  command.header.sub_code      = 0x00;
+  command.set_renderingclk_param.clk_mode = mode;
+
+  AS_SendAudioCommand(&command);
+
+  AudioResult result;
+  AS_ReceiveAudioResult(&result);
+
+  if (result.header.result_code != AUDRLT_SETRENDERINGCLKCMPLT)
+    {
+      print_err("ERROR: Command (0x%x) fails. Result code(0x%x) Module id(0x%x) Error code(0x%x)\n",
+              command.header.command_code, result.header.result_code, result.error_response_param.module_id, result.error_response_param.error_code);
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  return AUDIOLIB_ECODE_OK;
+}
+
 /****************************************************************************
  * Private API on Audio Player
  ****************************************************************************/

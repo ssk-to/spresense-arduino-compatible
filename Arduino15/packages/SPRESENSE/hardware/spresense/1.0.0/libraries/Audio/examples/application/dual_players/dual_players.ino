@@ -38,6 +38,7 @@ void setup()
   puts("initialization Audio Library");
   theAudio->begin();
 
+  theAudio->setRenderingClockMode(AS_CLKMODE_NORMAL);
   theAudio->setPlayerMode(AS_OUT_SP);
   theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3,"/mnt/sd0/BIN",AS_SAMPLINGRATE_AUTO,AS_CHANNEL_STEREO);
   theAudio->initPlayer(AudioClass::Player1, AS_CODECTYPE_MP3,"/mnt/sd0/BIN",AS_SAMPLINGRATE_AUTO,AS_CHANNEL_STEREO);

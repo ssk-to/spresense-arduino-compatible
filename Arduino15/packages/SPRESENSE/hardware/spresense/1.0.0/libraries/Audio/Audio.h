@@ -458,6 +458,26 @@ public:
       uint32_t* read_size    /**< Read size.(byte) */
   );
 
+  /**
+   * Set Rendering clock mode.
+   *
+   * This function sets the internal data rate mode of rendering to
+   * Normal or High Resolution.
+   * 
+   * The internal data rate Normal indicates "fs = 48 kHz" and
+   * High Resolution indicates "fs = 192 kHz".
+   *
+   * Please call the function in Ready Mode.
+   * Ready Mode is either after calling bigin () or
+   * after calling setReadyMode ().
+   *
+   * The default when not calling is Normal.
+   *
+   */
+  err_t setRenderingClockMode(
+      AsClkMode mode /**< Mode of rendering clock. */
+  );
+
 private:
 
   /**
