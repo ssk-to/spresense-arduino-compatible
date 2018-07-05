@@ -7,8 +7,8 @@ spresense.name=Spresense
 spresense.upload.tool=spresense-tools
 spresense.upload.speed=115200
 spresense.upload.resetmethod=ck
-spresense.upload.maximum_size=524288
-#spresense.upload.maximum_data_size=524288
+spresense.upload.maximum_size=786432
+spresense.upload.maximum_data_size=786432
 spresense.upload.wait_for_upload_port=true
 spresense.serial.disableDTR=false
 spresense.serial.disableRTS=true
@@ -22,6 +22,7 @@ spresense.build.core=spresense
 spresense.build.variant=spresense
 spresense.build.debug=
 spresense.build.libpath=
+spresense.build.stack=-Wl,--defsym,__stack=_vectors+{upload.maximum_size}
 
 spresense.menu.Debug.Disabled=Disabled
 spresense.menu.Debug.Disabled.build.debug=

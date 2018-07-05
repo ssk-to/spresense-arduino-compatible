@@ -26,7 +26,7 @@ compiler.c.flags=-c {compiler.warning_flags} -MMD -std=gnu99 -c -fno-builtin -ma
 compiler.S.cmd=arm-none-eabi-gcc
 compiler.S.flags=
 
-compiler.c.elf.flags=-ggdb -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Xlinker --entry=__start -nodefaultlibs -nostartfiles "-T{build.libpath}/build/ramconfig.ld"
+compiler.c.elf.flags=-ggdb -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Xlinker --entry=__start -nodefaultlibs -nostartfiles "{build.stack}" "-T{build.libpath}/build/ramconfig.ld"
 
 compiler.c.elf.cmd=arm-none-eabi-g++
 compiler.c.elf.libs= "{build.libpath}/libs/libapps.a" "{build.libpath}/libs/libnuttx.a" -lgcc
@@ -87,7 +87,7 @@ recipe.objcopy.hex.pattern.windows="{runtime.tools.spresense-tools.path}/mkspk/{
 ## Compute size
 recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.axf"
 recipe.size.regex=^(\.text|\.data|\.init_section|\.ARM.exidx|\.bss)\s+([0-9]+).*
-#recipe.size.regex.data=^(\.text|\.data|\.init_section|\.ARM.exidx|\.bss)\s+([0-9]+).*
+recipe.size.regex.data=^(\.text|\.data|\.init_section|\.ARM.exidx|\.bss)\s+([0-9]+).*
 
 
 # ------------------------------
