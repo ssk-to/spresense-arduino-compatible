@@ -289,7 +289,8 @@ File::File(const char *name, uint8_t mode)
 
   _name = strdup(name);
   _size = stat.st_size;
-  _curpos = ::fseek(_fd, 0, SEEK_CUR);
+  ::fseek(_fd, 0, SEEK_CUR);
+  _curpos = ::ftell(_fd);
 }
 
 File::File(void):
@@ -381,7 +382,7 @@ boolean File::seek(uint32_t pos) {
 
   ofs = ::fseek(_fd, pos, SEEK_SET);
   if (ofs >= 0) {
-    _curpos = ofs;
+    _curpos = ::ftell(_fd);
     return true;
   } else {
     return false;
@@ -391,7 +392,7 @@ boolean File::seek(uint32_t pos) {
 uint32_t File::position() {
   if (!_fd) return 0;
 
-  _curpos = ::fseek(_fd, 0, SEEK_CUR);
+  _curpos = ::ftell(_fd);
 
   return _curpos;
 }
