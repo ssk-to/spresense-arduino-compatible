@@ -29,8 +29,10 @@ File mainFile,subFile;
  *
  *  Set output device to speaker <br>
  *  Open two stream files "Sound0.mp3" and "Sound1.mp3" <br>
+ *  These should be in the root directory of the SD card. <br>
  *  Set main player to decode stereo mp3. Stream sample rate is set to "auto detect" <br>
- *  System directory "/mnt/sd0/BIN" will be searched for MP3 decoder (MP3DEC file)
+ *  System directory "/mnt/sd0/BIN" will be searched for MP3 decoder (MP3DEC file) <br>
+ *  This is the /BIN directory on the SD card. <br>
  *  Volume is set to -8.0 dB
  */
 void setup()
@@ -51,13 +53,29 @@ void setup()
    * Search for MP3 decoder in "/mnt/sd0/BIN" directory
    */
   theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
+  err_t initErr = theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
+
+  /* Verify player initialize */
+  if (initErr != AUDIOLIB_ECODE_OK)
+  {
+    printf("Player0 initialize error\n");
+    exit(1);
+  }
 
   /*
    * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect"
    * Search for MP3 decoder in "/mnt/sd0/BIN" directory
    */
-  theAudio->initPlayer(AudioClass::Player1, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
+  initErr = theAudio->initPlayer(AudioClass::Player1, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
 
+  /* Verify player initialize */
+  if (initErr != AUDIOLIB_ECODE_OK)
+  {
+    printf("Player1 initialize error\n");
+    exit(1);
+  }
+  
+  
   /* Open file placed on SD card */
   mainFile = theSD.open("Sound0.mp3");
 
