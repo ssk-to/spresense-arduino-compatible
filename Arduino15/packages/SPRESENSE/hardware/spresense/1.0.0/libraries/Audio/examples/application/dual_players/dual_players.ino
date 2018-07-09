@@ -9,12 +9,12 @@
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  Lesser General Public License for more details.
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <Audio.h>
@@ -52,11 +52,10 @@ void setup()
    * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect"
    * Search for MP3 decoder in "/mnt/sd0/BIN" directory
    */
-  theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
-  err_t initErr = theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
+  err_t err = theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
 
   /* Verify player initialize */
-  if (initErr != AUDIOLIB_ECODE_OK)
+  if (err != AUDIOLIB_ECODE_OK)
   {
     printf("Player0 initialize error\n");
     exit(1);
@@ -66,10 +65,10 @@ void setup()
    * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect"
    * Search for MP3 decoder in "/mnt/sd0/BIN" directory
    */
-  initErr = theAudio->initPlayer(AudioClass::Player1, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
+  err = theAudio->initPlayer(AudioClass::Player1, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
 
   /* Verify player initialize */
-  if (initErr != AUDIOLIB_ECODE_OK)
+  if (err != AUDIOLIB_ECODE_OK)
   {
     printf("Player1 initialize error\n");
     exit(1);
@@ -100,7 +99,7 @@ void setup()
   printf("Open! %d\n",subFile);
 
   /* Send first frames to be decoded */
-  int err = theAudio->writeFrames(AudioClass::Player0,mainFile);
+  err = theAudio->writeFrames(AudioClass::Player0,mainFile);
   if (err)
     {
       printf("Main player: File Read Error! =%d\n",err);

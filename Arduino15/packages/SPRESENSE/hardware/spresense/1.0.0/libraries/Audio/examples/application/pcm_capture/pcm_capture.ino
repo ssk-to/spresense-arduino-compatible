@@ -9,12 +9,12 @@
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *  Lesser General Public License for more details.
  *
  *  You should have received a copy of the GNU Lesser General Public
  *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+ *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
 #include <Audio.h>
@@ -82,14 +82,18 @@ void loop() {
       exit(1);
     }
 
-  /* show buffer data for analyze */
+  /* The actual signal processing will be coding here.
+     For example, prints capture data. */
   if (read_size != 0)
   {
     printf("Record Data: 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\n", buffer[0], buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7]);
   }
-  volatile int i;
+
+  /* The actual signal processing will be done here.
+     Adjust the waiting time as necessary. */
+
+  volatile int i;  
   for(i=0; i<100000;i++);
-  /* wait for some buffer data to process until new frame read */
 
   cnt++;
 
