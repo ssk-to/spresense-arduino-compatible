@@ -184,6 +184,8 @@ err_t AudioClass::setReadyMode(void)
 
   board_external_amp_mute_control(true);
 
+  destroyStaticPools();
+
   return AUDIOLIB_ECODE_OK;
 }
 /****************************************************************************
