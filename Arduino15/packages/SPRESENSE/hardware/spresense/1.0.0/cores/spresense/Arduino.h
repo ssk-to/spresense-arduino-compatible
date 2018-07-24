@@ -150,6 +150,7 @@ int atexit(void (*func)());
 void setup(void);
 void loop(void);
 long map(long x, long in_min, long in_max, long out_min, long out_max);
+void yield(void);
 
 #ifdef __cplusplus
 } // extern "C"
