@@ -45,6 +45,14 @@
 #define SPI_MODE2 SPIDEV_MODE2  /**< SPI mode 2 */
 #define SPI_MODE3 SPIDEV_MODE3  /**< SPI mode 3 */
 
+#define SPI_CLOCK_DIV2   2      /**< SPI Clock Divider 2 */
+#define SPI_CLOCK_DIV4   4      /**< SPI Clock Divider 4 */
+#define SPI_CLOCK_DIV8   8      /**< SPI Clock Divider 8 */
+#define SPI_CLOCK_DIV16  16     /**< SPI Clock Divider 16 */
+#define SPI_CLOCK_DIV32  32     /**< SPI Clock Divider 32 */
+#define SPI_CLOCK_DIV64  64     /**< SPI Clock Divider 64 */
+#define SPI_CLOCK_DIV128 128    /**< SPI Clock Divider 128 */
+
 /**
  * @enum SpiInterruptMode
  * @brief Spi interrupt mode
