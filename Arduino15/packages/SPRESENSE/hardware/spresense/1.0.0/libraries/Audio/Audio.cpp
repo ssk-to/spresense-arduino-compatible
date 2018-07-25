@@ -315,9 +315,30 @@ err_t AudioClass::setPlayerMode(uint8_t device)
   return AUDIOLIB_ECODE_OK;
 }
 
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type,
+                             uint32_t sampling_rate, uint8_t channel_number)
+{
+  return initPlayer(id, codec_type, "/mnt/sd0/BIN", sampling_rate, AS_BITLENGTH_16, channel_number);
+}
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, const char* codec_path, uint32_t sampling_rate, uint8_t channel_number)
+err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type,
+                             uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number)
+{
+  return initPlayer(id, codec_type, "/mnt/sd0/BIN", sampling_rate, bit_length, channel_number);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, const char* codec_path,
+                             uint32_t sampling_rate, uint8_t channel_number)
+{
+  return initPlayer(id, codec_type, codec_path, sampling_rate, AS_BITLENGTH_16, channel_number);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, const char* codec_path,
+                             uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number)
 {
   if (!check_decode_dsp(codec_type, codec_path))
     {
@@ -332,7 +353,7 @@ err_t AudioClass::initPlayer(PlayerId id, uint8_t codec_type, const char* codec_
 
   command.player.player_id = (id == Player0) ? AS_PLAYER_ID_0 : AS_PLAYER_ID_1;
   command.player.init_param.codec_type    = codec_type;
-  command.player.init_param.bit_length    = AS_BITLENGTH_16;
+  command.player.init_param.bit_length    = bit_length;
   command.player.init_param.channel_number= channel_number;
   command.player.init_param.sampling_rate = sampling_rate;
   snprintf(command.player.init_param.dsp_path, AS_AUDIO_DSP_PATH_LEN, "%s", codec_path);
@@ -635,11 +656,11 @@ err_t AudioClass::setRecorderMode(uint8_t input_device)
 }
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::init_recorder_wav(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number)
+err_t AudioClass::init_recorder_wav(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number)
 {
   command->recorder.init_param.sampling_rate  = sampling_rate;
   command->recorder.init_param.channel_number = channel_number;
-  command->recorder.init_param.bit_length     = AS_BITLENGTH_16;
+  command->recorder.init_param.bit_length     = bit_length;
   command->recorder.init_param.codec_type     = m_codec_type;
   AS_SendAudioCommand(command);
 
@@ -668,11 +689,11 @@ err_t AudioClass::init_recorder_wav(AudioCommand* command, uint32_t sampling_rat
 }
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::init_recorder_mp3(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number)
+err_t AudioClass::init_recorder_mp3(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number)
 {
   command->recorder.init_param.sampling_rate  = sampling_rate;
   command->recorder.init_param.channel_number = channel_number;
-  command->recorder.init_param.bit_length     = AS_BITLENGTH_16;
+  command->recorder.init_param.bit_length     = bit_length;
   command->recorder.init_param.codec_type     = m_codec_type;
   command->recorder.init_param.bitrate        = AS_BITRATE_96000;
   AS_SendAudioCommand(command);
@@ -690,11 +711,11 @@ err_t AudioClass::init_recorder_mp3(AudioCommand* command, uint32_t sampling_rat
 }
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::init_recorder_opus(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number)
+err_t AudioClass::init_recorder_opus(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number)
 {
   command->recorder.init_param.sampling_rate  = sampling_rate;
   command->recorder.init_param.channel_number = channel_number;
-  command->recorder.init_param.bit_length     = AS_BITLENGTH_16;
+  command->recorder.init_param.bit_length     = bit_length;
   command->recorder.init_param.codec_type     = m_codec_type;
   command->recorder.init_param.bitrate        = AS_BITRATE_8000;
   command->recorder.init_param.computational_complexity = AS_INITREC_COMPLEXITY_0;
@@ -713,11 +734,11 @@ err_t AudioClass::init_recorder_opus(AudioCommand* command, uint32_t sampling_ra
 }
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::init_recorder_pcm(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number)
+err_t AudioClass::init_recorder_pcm(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number)
 {
   command->recorder.init_param.sampling_rate  = sampling_rate;
   command->recorder.init_param.channel_number = channel_number;
-  command->recorder.init_param.bit_length     = AS_BITLENGTH_16;
+  command->recorder.init_param.bit_length     = bit_length;
   command->recorder.init_param.codec_type     = m_codec_type;
   AS_SendAudioCommand(command);
 
@@ -734,7 +755,27 @@ err_t AudioClass::init_recorder_pcm(AudioCommand* command, uint32_t sampling_rat
 }
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::initRecorder(uint8_t codec_type, const char *codec_path, uint32_t sampling_rate, uint8_t channel)
+err_t AudioClass::initRecorder(uint8_t codec_type, uint32_t sampling_rate, uint8_t channel)
+{
+  return initRecorder(codec_type, "/mnt/sd0/BIN", sampling_rate, AS_BITLENGTH_16, channel);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::initRecorder(uint8_t codec_type, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel)
+{
+  return initRecorder(codec_type, "/mnt/sd0/BIN", sampling_rate, bit_length, channel);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::initRecorder(uint8_t codec_type, const char *codec_path,
+                               uint32_t sampling_rate, uint8_t channel)
+{
+  return initRecorder(codec_type, codec_path, sampling_rate, AS_BITLENGTH_16, channel);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::initRecorder(uint8_t codec_type, const char *codec_path,
+                               uint32_t sampling_rate, uint8_t bit_length, uint8_t channel)
 {
   
   if (!check_encode_dsp(codec_type, codec_path, sampling_rate))
@@ -755,19 +796,19 @@ err_t AudioClass::initRecorder(uint8_t codec_type, const char *codec_path, uint3
   switch (codec_type)
     {
       case AS_CODECTYPE_WAV:
-        ret = init_recorder_wav(&command, sampling_rate, channel);
+        ret = init_recorder_wav(&command, sampling_rate, bit_length, channel);
         break;
 
       case AS_CODECTYPE_MP3:
-        ret = init_recorder_mp3(&command, sampling_rate, channel);
+        ret = init_recorder_mp3(&command, sampling_rate, bit_length, channel);
         break;
 
       case AS_CODECTYPE_OPUS:
-        ret = init_recorder_opus(&command, sampling_rate, channel);
+        ret = init_recorder_opus(&command, sampling_rate, bit_length, channel);
         break;
 
       case AS_CODECTYPE_PCM:
-        ret = init_recorder_pcm(&command, sampling_rate, channel);
+        ret = init_recorder_pcm(&command, sampling_rate, bit_length, channel);
         break;
 
       default:

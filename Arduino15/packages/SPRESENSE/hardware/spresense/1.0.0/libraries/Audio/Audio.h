@@ -242,12 +242,40 @@ public:
    *   - Number of channels
    * You need to set. 
    *
+   * If you would like to set codec binary path and bit length of audio data,
+   * You are able to set them by other type of this API.
+   * Default values of them are /mnt/sd0/BIN and AS_BITLENGTH_16(16bit).
+   *
    */
+  err_t initPlayer(
+      PlayerId id,    /**< Select Player ID. */
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      uint32_t fs,    /**< Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO or AS_CHANNEL_STEREO */
+  );
+
+  err_t initPlayer(
+      PlayerId id,    /**< Select Player ID. */
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      uint32_t fs,    /**< Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t bitlen, /**< Set bit length. AS_BITLENGTH_16 or AS_BITLENGTH_24 */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO or AS_CHANNEL_STEREO */
+  );
+
   err_t initPlayer(
       PlayerId id,    /**< Select Player ID. */
       uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
       const char *codec_path,  /**< Set DSP Binary path. Maximum length is 24 bytes.*/
       uint32_t fs,    /**< Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO or AS_CHANNEL_STEREO */
+  );
+
+  err_t initPlayer(
+      PlayerId id,    /**< Select Player ID. */
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      const char *codec_path,  /**< Set DSP Binary path. Maximum length is 24 bytes.*/
+      uint32_t fs,    /**< Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t bitlen, /**< Set bit length. AS_BITLENGTH_16 or AS_BITLENGTH_24 */
       uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO or AS_CHANNEL_STEREO */
   );
 
@@ -263,11 +291,36 @@ public:
    *   - Number of channels
    * You need to set. 
    *
+   * If you would like to set codec binary path and bit length of audio data,
+   * You are able to set them by other type of this API.
+   * Default values of them are /mnt/sd0/BIN and AS_BITLENGTH_16(16bit).
+   *
    */
+  err_t initRecorder(
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      uint32_t fs,    /**<Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO, AS_CHANNEL_STEREO, AS_CHANNEL_4CH, or etc...  */
+  );
+
+  err_t initRecorder(
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      uint32_t fs,    /**<Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t bitlen, /**< Set bit length. AS_BITLENGTH_16 or AS_BITLENGTH_24 */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO, AS_CHANNEL_STEREO, AS_CHANNEL_4CH, or etc...  */
+  );
+
   err_t initRecorder(
       uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
       const char *codec_path, /**< Set DSP Binary path. Maximum length is 24 bytes.*/
       uint32_t fs,    /**<Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO, AS_CHANNEL_STEREO, AS_CHANNEL_4CH, or etc...  */
+  );
+
+  err_t initRecorder(
+      uint8_t codec,  /**< Select compression code. AS_CODECTYPE_MP3 or AS_CODECTYPE_WAV */
+      const char *codec_path, /**< Set DSP Binary path. Maximum length is 24 bytes.*/
+      uint32_t fs,    /**<Set sampling rate. AS_SAMPLINGRATE_XXXXX. */
+      uint8_t bitlen, /**< Set bit length. AS_BITLENGTH_16 or AS_BITLENGTH_24 */
       uint8_t channel /**< Set channnel number. AS_CHANNEL_MONO, AS_CHANNEL_STEREO, AS_CHANNEL_4CH, or etc...  */
   );
 
@@ -517,10 +570,10 @@ private:
 
   /* Functions for initialization Encoder */
 
-  err_t init_recorder_wav(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
-  err_t init_recorder_mp3(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
-  err_t init_recorder_opus(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
-  err_t init_recorder_pcm(AudioCommand* command, uint32_t sampling_rate, uint8_t channel_number);
+  err_t init_recorder_wav(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number);
+  err_t init_recorder_mp3(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number);
+  err_t init_recorder_opus(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number);
+  err_t init_recorder_pcm(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number);
 
   /* Functions for initialization on player mode. */
   err_t set_output(int);
