@@ -273,7 +273,7 @@ err_t AudioClass::setPlayerMode(uint8_t device)
     }
   CMN_SimpleFifoClear(&m_player0_simple_fifo_handle);
 
-  if (CMN_SimpleFifoInitialize(&m_player1_simple_fifo_handle, m_player1_simple_fifo_buf, SIMPLE_FIFO_BUF_SIZE, NULL) != 0)
+  if (CMN_SimpleFifoInitialize(&m_player1_simple_fifo_handle, m_player1_simple_fifo_buf, WRITE_BUF_SIZE, NULL) != 0)
     {
       print_err("Fail to initialize simple FIFO.\n");
       return AUDIOLIB_ECODE_SIMPLEFIFO_ERROR;
@@ -562,10 +562,11 @@ err_t AudioClass::writeFrames(PlayerId id, File& myFile)
   int ret = AUDIOLIB_ECODE_OK;
   char *buf = (id == Player0) ? m_es_player0_buf : m_es_player1_buf; 
   CMN_SimpleFifoHandle *handle = (id == Player0) ? &m_player0_simple_fifo_handle : &m_player1_simple_fifo_handle;
+  uint32_t write_size = (id == Player0) ? FIFO_FRAME_SIZE : WRITE_FIFO_FRAME_SIZE;
 
   for (int i = 0; i < WRITE_FRAME_NUM; i++)
     {
-      ret = write_fifo(myFile, buf, handle);
+      ret = write_fifo(myFile, buf, write_size, handle);
       if (ret != AUDIOLIB_ECODE_OK) break;
     }
 
@@ -1127,16 +1128,16 @@ err_t AudioClass::set_output(int device)
 }
 
 /*--------------------------------------------------------------------------*/
-/*err_t AudioClass::write_fifo(int fd, char *buf, CMN_SimpleFifoHandle *handle)
+/*err_t AudioClass::write_fifo(int fd, char *buf, uint32_t write_size, CMN_SimpleFifoHandle *handle)
 {
 
   int vacant_size = CMN_SimpleFifoGetVacantSize(handle);
-  if (vacant_size < FIFO_FRAME_SIZE)
+  if (vacant_size < write_size)
     {
       return AUDIOLIB_ECODE_SIMPLEFIFO_ERROR;
     }
 
-  int ret = fread(fd, buf, FIFO_FRAME_SIZE);
+  int ret = fread(fd, buf, write_size);
 
   if (ret < 0)
     {
@@ -1162,11 +1163,11 @@ err_t AudioClass::set_output(int device)
 }
 */
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::write_fifo(File& myFile, char *p_es_buf, CMN_SimpleFifoHandle *handle)
+err_t AudioClass::write_fifo(File& myFile, char *p_es_buf, uint32_t write_size, CMN_SimpleFifoHandle *handle)
 {
 
   int vacant_size = CMN_SimpleFifoGetVacantSize(handle);
-  if (vacant_size < FIFO_FRAME_SIZE)
+  if (vacant_size < write_size)
     {
       return AUDIOLIB_ECODE_OK;
     }
@@ -1175,7 +1176,7 @@ err_t AudioClass::write_fifo(File& myFile, char *p_es_buf, CMN_SimpleFifoHandle 
 
   if (myFile.available())
     {
-      ret = myFile.read(p_es_buf, FIFO_FRAME_SIZE);
+      ret = myFile.read(p_es_buf, write_size);
     }
   else
     {

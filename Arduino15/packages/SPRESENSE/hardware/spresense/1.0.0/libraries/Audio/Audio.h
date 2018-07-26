@@ -39,11 +39,11 @@
 #include <memutils/simple_fifo/CMN_SimpleFifo.h>
 
 #define WRITE_FIFO_FRAME_NUM  (8)
-#define WRITE_FIFO_FRAME_SIZE (2560)
+#define WRITE_FIFO_FRAME_SIZE (6144)
 #define WRITE_BUF_SIZE   (WRITE_FIFO_FRAME_NUM * WRITE_FIFO_FRAME_SIZE)
 
 #define READ_FIFO_FRAME_NUM   (10)
-#define READ_FIFO_FRAME_SIZE  (3072)
+#define READ_FIFO_FRAME_SIZE  (16384)
 #define READ_BUF_SIZE    (READ_FIFO_FRAME_NUM * READ_FIFO_FRAME_SIZE)
 
 #define FIFO_FRAME_SIZE (\
@@ -543,12 +543,12 @@ private:
   ~AudioClass() {}
 
   char m_es_player0_buf[FIFO_FRAME_SIZE];
-  char m_es_player1_buf[FIFO_FRAME_SIZE];
+  char m_es_player1_buf[WRITE_FIFO_FRAME_SIZE];
 
   CMN_SimpleFifoHandle m_player0_simple_fifo_handle;
   CMN_SimpleFifoHandle m_player1_simple_fifo_handle;
   uint32_t m_player0_simple_fifo_buf[SIMPLE_FIFO_BUF_SIZE/sizeof(uint32_t)];
-  uint32_t m_player1_simple_fifo_buf[SIMPLE_FIFO_BUF_SIZE/sizeof(uint32_t)];
+  uint32_t m_player1_simple_fifo_buf[WRITE_BUF_SIZE/sizeof(uint32_t)];
 
   AsPlayerInputDeviceHdlrForRAM m_player0_input_device_handler;
   AsPlayerInputDeviceHdlrForRAM m_player1_input_device_handler;
@@ -578,8 +578,8 @@ private:
   /* Functions for initialization on player mode. */
   err_t set_output(int);
 
-  err_t write_fifo(int, char*, CMN_SimpleFifoHandle*);
-  err_t write_fifo(File&, char*, CMN_SimpleFifoHandle*);
+  err_t write_fifo(int, char*, uint32_t, CMN_SimpleFifoHandle*);
+  err_t write_fifo(File&, char*, uint32_t, CMN_SimpleFifoHandle*);
 
   /* Functions for initialization on recorder mode. */
   err_t init_mic_gain(int, int);
