@@ -38,11 +38,11 @@
 #include <memutils/simple_fifo/CMN_SimpleFifo.h>
 
 #define WRITE_FIFO_FRAME_NUM  (8)
-#define WRITE_FIFO_FRAME_SIZE (6144)
+#define WRITE_FIFO_FRAME_SIZE (1024*2*3)
 #define WRITE_BUF_SIZE   (WRITE_FIFO_FRAME_NUM * WRITE_FIFO_FRAME_SIZE)
 
 #define READ_FIFO_FRAME_NUM   (10)
-#define READ_FIFO_FRAME_SIZE  (16384)
+#define READ_FIFO_FRAME_SIZE  (1024*2*8)
 #define READ_BUF_SIZE    (READ_FIFO_FRAME_NUM * READ_FIFO_FRAME_SIZE)
 
 #define FIFO_FRAME_SIZE (\
@@ -553,6 +553,25 @@ public:
   err_t writeFrames(
       PlayerId id, /**< Select Player ID. */
       File& myfile /**< Specify an instance of the File class of the audio file. */
+  );
+
+  /**
+   * @brief Write Stream Data from a file to FIFO by some frames.(now 5 frames)
+   *
+   * @details This function writes from the audio file specified by the File class
+   *          to the Stream  data FIFO in the Audio library.
+   *          It writes for several frames data (now five frames).
+   *          It can be called on PlayerMode.
+   * 
+   *          This FIFO is cleared when calling StopPlayer or setReadyMode.
+   * 
+   *          During music playback, please call this function periodically.
+   *          When an error occurs, you should error handling as properly
+   *
+   */
+  err_t writeFrames(
+      PlayerId id, /**< Select Player ID. */
+      int fd  /**< file pointer of the audio file. */
   );
 
   /** APIs for Recorder Mode */

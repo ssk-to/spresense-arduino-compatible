@@ -541,11 +541,11 @@ err_t AudioClass::setLRgain(PlayerId id, unsigned char l_gain, unsigned char r_g
 
 #define WRITE_FRAME_NUM 5 
 /*--------------------------------------------------------------------------*/
-/*err_t AudioClass::writeFrames(PlayerId id, int fd)
+err_t AudioClass::writeFrames(PlayerId id, int fd)
 {
   int ret = AUDIOLIB_ECODE_OK;
   char *buf = (id == Player0) ? m_es_player0_buf : m_es_player1_buf; 
-  CMN_SimpleFifoHandle *handle = (id == Player0) ? m_player0_simple_fifo_handle : m_player1_simple_fifo_handle;
+  CMN_SimpleFifoHandle *handle = (id == Player0) ? &m_player0_simple_fifo_handle : &m_player1_simple_fifo_handle;
 
   for (int i = 0; i < WRITE_FRAME_NUM; i++)
     {
@@ -554,7 +554,7 @@ err_t AudioClass::setLRgain(PlayerId id, unsigned char l_gain, unsigned char r_g
     }
 
     return ret;
-}*/
+}
 
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::writeFrames(PlayerId id, File& myFile)
@@ -797,6 +797,7 @@ err_t AudioClass::initRecorder(uint8_t codec_type, const char *codec_path,
   switch (codec_type)
     {
       case AS_CODECTYPE_WAV:
+        m_codec_type = AS_CODECTYPE_PCM;
         ret = init_recorder_wav(&command, sampling_rate, bit_length, channel);
         break;
 
@@ -1128,7 +1129,7 @@ err_t AudioClass::set_output(int device)
 }
 
 /*--------------------------------------------------------------------------*/
-/*err_t AudioClass::write_fifo(int fd, char *buf, uint32_t write_size, CMN_SimpleFifoHandle *handle)
+err_t AudioClass::write_fifo(int fd, char *buf, uint32_t write_size, CMN_SimpleFifoHandle *handle)
 {
 
   int vacant_size = CMN_SimpleFifoGetVacantSize(handle);
@@ -1137,7 +1138,7 @@ err_t AudioClass::set_output(int device)
       return AUDIOLIB_ECODE_SIMPLEFIFO_ERROR;
     }
 
-  int ret = fread(fd, buf, write_size);
+  int ret = read(fd, buf, write_size);
 
   if (ret < 0)
     {
@@ -1155,13 +1156,13 @@ err_t AudioClass::set_output(int device)
 
    if(ret == 0)
     {
-      fclose(fd);
+      close(fd);
       return AUDIOLIB_ECODE_FILEEND;
     }
 
   return AUDIOLIB_ECODE_OK;
 }
-*/
+
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::write_fifo(File& myFile, char *p_es_buf, uint32_t write_size, CMN_SimpleFifoHandle *handle)
 {
@@ -1299,6 +1300,7 @@ bool AudioClass::check_encode_dsp(uint8_t codec_type, const char *path, uint32_t
         break;
 
       case AS_CODECTYPE_LPCM:
+      case AS_CODECTYPE_WAV:
         if (fs == AS_SAMPLINGRATE_48000)
           {
             return true;
