@@ -546,10 +546,11 @@ err_t AudioClass::writeFrames(PlayerId id, int fd)
   int ret = AUDIOLIB_ECODE_OK;
   char *buf = (id == Player0) ? m_es_player0_buf : m_es_player1_buf; 
   CMN_SimpleFifoHandle *handle = (id == Player0) ? &m_player0_simple_fifo_handle : &m_player1_simple_fifo_handle;
+  uint32_t write_size = (id == Player0) ? FIFO_FRAME_SIZE : WRITE_FIFO_FRAME_SIZE;
 
   for (int i = 0; i < WRITE_FRAME_NUM; i++)
     {
-        ret = write_fifo(fd, buf, handle);
+        ret = write_fifo(fd, buf, write_size, handle);
       if(ret != AUDIOLIB_ECODE_OK) break;
     }
 
