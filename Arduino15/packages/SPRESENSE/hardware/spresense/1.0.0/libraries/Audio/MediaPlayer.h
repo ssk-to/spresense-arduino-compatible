@@ -22,7 +22,7 @@
 
 #include <SDHCI.h>
 
-#ifdef __cplusplus
+// #ifdef __cplusplus
 
 #include <audio/audio_high_level_api.h>
 #include <memutils/simple_fifo/CMN_SimpleFifo.h>
@@ -128,6 +128,6 @@ private:
   bool check_decode_dsp(uint8_t codec_type, const char *path);
 };
 
-#endif // __cplusplus
+// #endif // __cplusplus
 #endif // MediaPlayer_h
 

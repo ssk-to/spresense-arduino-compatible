@@ -22,7 +22,7 @@
 
 /**
  * @file SPI.h
- * @author Sony Corporation
+ * @author Sony Semiconductor Solutions Corporation
  * @brief Spresense Arduino SPI library 
  * 
  * @details It is a library for communicating with SPI devices, with the 
@@ -33,7 +33,7 @@
   This header file maybe inclued in plain C file.
   To avoid compiling error all C++ stuff should be ignored
  */
-#ifdef __cplusplus
+// #ifdef __cplusplus
 
 #include <sdk/config.h>
 #include <nuttx/config.h>
@@ -271,5 +271,5 @@ extern SPIClass SPI5;
 #endif
 
 
-#endif // __cplusplus
+// #endif // __cplusplus
 #endif // Spi_h

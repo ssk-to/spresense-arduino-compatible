@@ -20,7 +20,7 @@
 #ifndef MemoryUtis_h
 #define MemoryUtis_h
 
-#ifdef __cplusplus
+// #ifdef __cplusplus
 
 #define _POSIX
 #define USE_MEMMGR_FENCE
@@ -42,6 +42,6 @@ int initMemoryPools(void);
 int createStaticPools(uint8_t layout_no);
 int destroyStaticPools(void);
 
-#endif /* __cplusplus */
+// #endif /* __cplusplus */
 #endif /* MemoryUtis_h */
 

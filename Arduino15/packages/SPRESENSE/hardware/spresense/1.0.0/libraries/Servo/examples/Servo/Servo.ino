@@ -19,7 +19,7 @@
 
 /**
  * @file Servo.ino
- * @author Sony Corporation
+ * @author Sony Semiconductor Solutions Corporation
  * @brief %Servo sample application.
  */
 
