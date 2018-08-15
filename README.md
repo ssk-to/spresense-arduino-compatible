@@ -1,4 +1,4 @@
-# Welcome to Spresense Arduino compatible project
+# Welcome to Spresense libs for Arduino compatible project
 
 Clone this repository and update submodules.
 
@@ -17,9 +17,7 @@ $ git submodule foreach git checkout master
 # Submodules
 
 ```
-- spresense-core-lib     - Spresense Arduino core library sources
 - spresense-prebuilt-sdk - Spresense SDK header and libraries
-- spresense-tools        - Spresense Arduino flash tools
 - spresense-sketches     - Spresense Arduino sample sketches
 - gcc-arm-none-eabi      - Gcc compile tool
 ```
@@ -27,7 +25,7 @@ $ git submodule foreach git checkout master
 # Directory structure
 
 ```
-spresense-arduinolibs
+spresense-arduino-compatible
 |-- Arduino15
 |   |-- packages/SPRESENSE           - Spresense packages
 |   |   |-- hardware
@@ -39,7 +37,7 @@ spresense-arduinolibs
 |   |   `-- tools                    - Necessary tool chain and prebuilt binaries
 |   |       |-- spresense-tools      - Spresense tools
 |   |       |   `-- 1.0.0
-|   |       |-- spresense-sdk        - Spresense SDK prebuild binaries
+|   |       |-- spresense-sdk        - Spresense SDK prebuilt binaries
 |   |       |   `-- 1.0.0
 |   |       `-- gcc-arm-none-eabi    - GCC compiler
 |   |           `-- 5.4.1
