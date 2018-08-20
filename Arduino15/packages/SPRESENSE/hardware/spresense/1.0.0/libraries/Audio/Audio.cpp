@@ -84,9 +84,9 @@ err_t AudioClass::end(void)
  ****************************************************************************/
 extern "C" {
 
-void attentionCallback(unsigned char module_id, unsigned char error_code,unsigned char sub_code)
+void attentionCallback(const ErrorAttentionParam *attparam)
 {
-  print_dbg("attention!! ecode %d subcode %d\n", error_code, sub_code);
+  print_dbg("attention!! ecode %d subcode %d\n", attparam->error_code, attparam->error_att_sub_code);
 }
 
 }
