@@ -43,7 +43,7 @@ void setup()
   theAudio->initRecorder(AS_CODECTYPE_WAV,"/mnt/sd0/BIN",AS_SAMPLINGRATE_48000,AS_CHANNEL_STEREO);
   puts("Init Recorder!");
 
-  myFile = theSD.open("Sou4.wav", FILE_WRITE);
+  myFile = theSD.open("Sound.wav", FILE_WRITE);
   puts("Open!");
 
   theAudio->writeWavHeader(myFile);
