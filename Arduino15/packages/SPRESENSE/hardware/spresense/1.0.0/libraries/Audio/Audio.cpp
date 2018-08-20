@@ -560,8 +560,8 @@ err_t AudioClass::setVolume(int master_db)
   command.header.command_code  = AUDCMD_SETVOLUME;
   command.header.sub_code      = 0;
 
-  command.set_volume_param.input1_db = AS_VOLUME_HOLD;
-  command.set_volume_param.input2_db = AS_VOLUME_HOLD;
+  command.set_volume_param.input1_db = 0; /* 0dB */
+  command.set_volume_param.input2_db = 0; /* 0dB */
   command.set_volume_param.master_db = master_db;
 
   AS_SendAudioCommand(&command);

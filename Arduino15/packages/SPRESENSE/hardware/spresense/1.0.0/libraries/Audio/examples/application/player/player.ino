@@ -82,8 +82,8 @@ void setup()
 
   puts("Play!");
 
-  /* Main volume set to -16.0 dB, Main player and sub player set to 0 dB */
-  theAudio->setVolume(-160, 0, 0);
+  /* Main volume set to -16.0 dB */
+  theAudio->setVolume(-160);
   theAudio->startPlayer(AudioClass::Player0);
 }
 
