@@ -46,7 +46,7 @@ void setup()
 
   /* Set output device to speaker */
   theAudio->setRenderingClockMode(AS_CLKMODE_NORMAL);
-  theAudio->setPlayerMode(AS_OUT_SP);
+  theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP);
 
   /*
    * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect"
