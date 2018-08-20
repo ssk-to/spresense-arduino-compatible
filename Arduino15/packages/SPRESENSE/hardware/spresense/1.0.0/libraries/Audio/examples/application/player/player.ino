@@ -50,14 +50,14 @@ void setup()
    * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect"
    * Search for MP3 decoder in "/mnt/sd0/BIN" directory
    */
-    err_t err = theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
+  err_t err = theAudio->initPlayer(AudioClass::Player0, AS_CODECTYPE_MP3, "/mnt/sd0/BIN", AS_SAMPLINGRATE_AUTO, AS_CHANNEL_STEREO);
 
   /* Verify player initialize */
   if (err != AUDIOLIB_ECODE_OK)
-  {
-    printf("Player0 initialize error\n");
-    exit(1);
-  }
+    {
+      printf("Player0 initialize error\n");
+      exit(1);
+    }
 
   /* Open file placed on SD card */
   myFile = theSD.open("Sound.mp3");
@@ -71,7 +71,7 @@ void setup()
   printf("Open! %d\n",myFile);
 
   /* Send first frames to be decoded */
-  int err = theAudio->writeFrames(AudioClass::Player0, myFile);
+  err = theAudio->writeFrames(AudioClass::Player0, myFile);
 
   if (err != AUDIOLIB_ECODE_OK)
     {

@@ -688,6 +688,14 @@ private:
   /* Private Functions */
 
   /* Functions for initialization on begin/end */
+  err_t begin_manager(void);
+  err_t begin_player(void);
+  err_t begin_recorder(void);
+
+  err_t end_manager(void);
+  err_t end_player(void);
+  err_t end_recorder(void);
+
   err_t activateAudio(void);
 
   err_t powerOn(void);

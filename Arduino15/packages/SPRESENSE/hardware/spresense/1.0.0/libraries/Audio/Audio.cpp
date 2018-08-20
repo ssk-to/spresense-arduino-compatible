@@ -54,6 +54,57 @@ err_t AudioClass::begin(void)
 {
   int ret;
 
+  ret = begin_manager();
+  if (ret != AUDIOLIB_ECODE_OK)
+    {
+      print_err("Audio activation error.\n");
+      return ret;
+    }
+
+  ret = begin_player();
+  if (ret != AUDIOLIB_ECODE_OK)
+    {
+      print_err("Player creation error.\n");
+      return ret;
+    }
+
+  ret = begin_recorder();
+  if (ret != AUDIOLIB_ECODE_OK)
+    {
+      print_err("Recorder creation error.\n");
+      return ret;
+    }
+
+  return ret;
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::end(void)
+{
+  end_player();
+  end_recorder();
+  end_manager();
+
+  return AUDIOLIB_ECODE_OK;
+}
+
+/****************************************************************************
+ * Private Common API for begin/end
+ ****************************************************************************/
+extern "C" {
+
+void attentionCallback(const ErrorAttentionParam *attparam)
+{
+  print_dbg("attention!! ecode %d subcode %d\n", attparam->error_code, attparam->error_att_sub_code);
+}
+
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::begin_manager(void)
+{
+  int ret;
+
   ret = initMemoryPools();
   if (ret != AUDIOLIB_ECODE_OK)
     {
@@ -65,30 +116,139 @@ err_t AudioClass::begin(void)
   if (ret != AUDIOLIB_ECODE_OK)
     {
       print_err("Audio activation error.\n");
-  return ret;
+      return ret;
     }
 
   return ret;
 }
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::end(void)
+err_t AudioClass::begin_player(void)
 {
-  /*Do not implimentation yet.*/
-  int ret = 0;
-  return ret;
+  AsCreatePlayerParam_t player_create_param;
+  player_create_param.msgq_id.player = MSGQ_AUD_PLY;
+  player_create_param.msgq_id.mng    = MSGQ_AUD_MGR;
+  player_create_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
+  player_create_param.msgq_id.dsp    = MSGQ_AUD_DSP;
+  player_create_param.pool_id.es     = DEC_ES_MAIN_BUF_POOL;
+  player_create_param.pool_id.pcm    = REND_PCM_BUF_POOL;
+  player_create_param.pool_id.dsp    = DEC_APU_CMD_POOL;
+
+  int act_rst = AS_CreatePlayer(AS_PLAYER_ID_0, &player_create_param);
+  if (!act_rst)
+    {
+      print_err("AS_CreatePlayer failed. system memory insufficient!\n");
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  player_create_param.msgq_id.player = MSGQ_AUD_SUB_PLY;
+  player_create_param.msgq_id.mng    = MSGQ_AUD_MGR;
+  player_create_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
+  player_create_param.msgq_id.dsp    = MSGQ_AUD_DSP;
+  player_create_param.pool_id.es     = DEC_ES_SUB_BUF_POOL;
+  player_create_param.pool_id.pcm    = REND_PCM_SUB_BUF_POOL;
+  player_create_param.pool_id.dsp    = DEC_APU_CMD_POOL;
+
+  act_rst = AS_CreatePlayer(AS_PLAYER_ID_1, &player_create_param);
+  if (!act_rst)
+    {
+      print_err("AS_CreatePlayer failed. system memory insufficient!\n");
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  AsCreateOutputMixParam_t output_mix_create_param;
+
+  output_mix_create_param.msgq_id.mixer = MSGQ_AUD_OUTPUT_MIX;
+  output_mix_create_param.msgq_id.render_path0_filter_dsp = MSGQ_AUD_PFDSP0;
+  output_mix_create_param.msgq_id.render_path1_filter_dsp = MSGQ_AUD_PFDSP1;
+  output_mix_create_param.pool_id.render_path0_filter_pcm = PF0_PCM_BUF_POOL;
+  output_mix_create_param.pool_id.render_path1_filter_pcm = PF1_PCM_BUF_POOL;
+  output_mix_create_param.pool_id.render_path0_filter_dsp = PF0_APU_CMD_POOL;
+  output_mix_create_param.pool_id.render_path1_filter_dsp = PF1_APU_CMD_POOL;
+
+  act_rst = AS_CreateOutputMixer(&output_mix_create_param);
+  if (!act_rst)
+    {
+      print_err("AS_CreateOutputMix failed. system memory insufficient!\n");
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  AsCreateRendererParam_t renderer_act_param;
+  renderer_act_param.msgq_id.dev0_req  = MSGQ_AUD_RND_PLY;
+  renderer_act_param.msgq_id.dev0_sync = MSGQ_AUD_RND_PLY_SYNC;
+  renderer_act_param.msgq_id.dev1_req   = MSGQ_AUD_RND_SUB;
+  renderer_act_param.msgq_id.dev1_sync  = MSGQ_AUD_RND_SUB_SYNC;
+
+  act_rst = AS_CreateRenderer(&renderer_act_param);
+  if (!act_rst)
+    {
+      print_err("AS_CreateRenderer failed. system memory insufficient!\n");
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  print_dbg("cmplt Activation\n");
+
+  return AUDIOLIB_ECODE_OK;
 }
 
-/****************************************************************************
- * Private Common API for begin/end
- ****************************************************************************/
-extern "C" {
-
-void attentionCallback(unsigned char module_id, unsigned char error_code,unsigned char sub_code)
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::begin_recorder(void)
 {
-  print_dbg("attention!! ecode %d subcode %d\n", error_code, sub_code);
+  AsCreateRecorderParam_t recorder_act_param;
+  recorder_act_param.msgq_id.recorder      = MSGQ_AUD_RECORDER;
+  recorder_act_param.msgq_id.mng           = MSGQ_AUD_MGR;
+  recorder_act_param.msgq_id.dsp           = MSGQ_AUD_DSP;
+  recorder_act_param.pool_id.input         = MIC_IN_BUF_POOL;
+  recorder_act_param.pool_id.output        = OUTPUT_BUF_POOL;
+  recorder_act_param.pool_id.dsp           = ENC_APU_CMD_POOL;
+
+  if (!AS_CreateMediaRecorder(&recorder_act_param))
+    {
+      print_err("AS_CreateMediaRecorder failed. system memory insufficient!\n");
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  AsCreateCaptureParam_t capture_act_param;
+  capture_act_param.msgq_id.dev0_req  = MSGQ_AUD_CAP;
+  capture_act_param.msgq_id.dev0_sync = MSGQ_AUD_CAP_SYNC;
+  capture_act_param.msgq_id.dev1_req  = 0xFF;
+  capture_act_param.msgq_id.dev1_sync = 0xFF;
+
+  if (!AS_CreateCapture(&capture_act_param))
+    {
+      print_err("AS_CreateCapture failed. system memory insufficient!\n");
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  return AUDIOLIB_ECODE_OK;
 }
 
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::end_manager(void)
+{
+  AS_DeleteAudioManager();
+
+  return AUDIOLIB_ECODE_OK;
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::end_player(void)
+{
+  AS_DeletePlayer(AS_PLAYER_ID_0);
+  AS_DeletePlayer(AS_PLAYER_ID_1);
+  AS_DeleteOutputMix();
+  AS_DeleteRenderer();
+
+  return AUDIOLIB_ECODE_OK;
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::end_recorder(void)
+{
+  AS_DeleteMediaRecorder();
+  AS_DeleteCapture();
+
+  return AUDIOLIB_ECODE_OK;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -198,73 +358,9 @@ err_t AudioClass::setPlayerMode(uint8_t device)
   assert(layout_no < NUM_MEM_LAYOUTS);
   createStaticPools(layout_no);
 
-  AsCreatePlayerParam_t player_create_param;
-  player_create_param.msgq_id.player = MSGQ_AUD_PLY;
-  player_create_param.msgq_id.mng    = MSGQ_AUD_MGR;
-  player_create_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
-  player_create_param.msgq_id.dsp    = MSGQ_AUD_DSP;
-  player_create_param.pool_id.es     = DEC_ES_MAIN_BUF_POOL;
-  player_create_param.pool_id.pcm    = REND_PCM_BUF_POOL;
-  player_create_param.pool_id.dsp    = DEC_APU_CMD_POOL;
-
-  int act_rst = AS_CreatePlayer(AS_PLAYER_ID_0, &player_create_param);
-  if (!act_rst)
-    {
-      print_err("AS_CreatePlayer failed. system memory insufficient!\n");
-      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
-    }
-
-  player_create_param.msgq_id.player = MSGQ_AUD_SUB_PLY;
-  player_create_param.msgq_id.mng    = MSGQ_AUD_MGR;
-  player_create_param.msgq_id.mixer  = MSGQ_AUD_OUTPUT_MIX;
-  player_create_param.msgq_id.dsp    = MSGQ_AUD_DSP;
-  player_create_param.pool_id.es     = DEC_ES_SUB_BUF_POOL;
-  player_create_param.pool_id.pcm    = REND_PCM_SUB_BUF_POOL;
-  player_create_param.pool_id.dsp    = DEC_APU_CMD_POOL;
-
-  act_rst = AS_CreatePlayer(AS_PLAYER_ID_1, &player_create_param);
-  if (!act_rst)
-    {
-      print_err("AS_CreatePlayer failed. system memory insufficient!\n");
-      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
-    }
-
-  AsCreateOutputMixParam_t output_mix_create_param;
-
-  output_mix_create_param.msgq_id.mixer = MSGQ_AUD_OUTPUT_MIX;
-  output_mix_create_param.msgq_id.render_path0_filter_dsp = MSGQ_AUD_PFDSP0;
-  output_mix_create_param.msgq_id.render_path1_filter_dsp = MSGQ_AUD_PFDSP1;
-  output_mix_create_param.pool_id.render_path0_filter_pcm = PF0_PCM_BUF_POOL;
-  output_mix_create_param.pool_id.render_path1_filter_pcm = PF1_PCM_BUF_POOL;
-  output_mix_create_param.pool_id.render_path0_filter_dsp = PF0_APU_CMD_POOL;
-  output_mix_create_param.pool_id.render_path1_filter_dsp = PF1_APU_CMD_POOL;
-
-  act_rst = AS_CreateOutputMixer(&output_mix_create_param);
-  if (!act_rst)
-    {
-      print_err("AS_CreateOutputMix failed. system memory insufficient!\n");
-      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
-    }
-
-  print_dbg("cmplt Activation\n");
-
   AudioClass::set_output(device);
 
-  AsCreateRendererParam_t renderer_act_param;
-  renderer_act_param.msgq_id.dev0_req  = MSGQ_AUD_RND_PLY;
-  renderer_act_param.msgq_id.dev0_sync = MSGQ_AUD_RND_PLY_SYNC;
-  renderer_act_param.msgq_id.dev1_req   = MSGQ_AUD_RND_SUB;
-  renderer_act_param.msgq_id.dev1_sync  = MSGQ_AUD_RND_SUB_SYNC;
-
-  act_rst = AS_CreateRenderer(&renderer_act_param);
-  if (!act_rst)
-    {
-      print_err("AS_CreateRenderer failed. system memory insufficient!\n");
-      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
-    }
-
   print_dbg("set output cmplt\n");
-
 
   if (CMN_SimpleFifoInitialize(&m_player0_simple_fifo_handle, m_player0_simple_fifo_buf, SIMPLE_FIFO_BUF_SIZE, NULL) != 0)
     {
@@ -588,32 +684,6 @@ err_t AudioClass::setRecorderMode(uint8_t input_device)
 
   assert(layout_no < NUM_MEM_LAYOUTS);
   createStaticPools(layout_no);
-
-  AsCreateRecorderParam_t recorder_act_param;
-  recorder_act_param.msgq_id.recorder      = MSGQ_AUD_RECORDER;
-  recorder_act_param.msgq_id.mng           = MSGQ_AUD_MGR;
-  recorder_act_param.msgq_id.dsp           = MSGQ_AUD_DSP;
-  recorder_act_param.pool_id.input         = MIC_IN_BUF_POOL;
-  recorder_act_param.pool_id.output        = OUTPUT_BUF_POOL;
-  recorder_act_param.pool_id.dsp           = ENC_APU_CMD_POOL;
-
-  if (!AS_CreateMediaRecorder(&recorder_act_param))
-    {
-      print_err("AS_CreateMediaRecorder failed. system memory insufficient!\n");
-      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
-    }
-
-  AsCreateCaptureParam_t capture_act_param;
-  capture_act_param.msgq_id.dev0_req  = MSGQ_AUD_CAP;
-  capture_act_param.msgq_id.dev0_sync = MSGQ_AUD_CAP_SYNC;
-  capture_act_param.msgq_id.dev1_req  = 0xFF;
-  capture_act_param.msgq_id.dev1_sync = 0xFF;
-
-  if (!AS_CreateCapture(&capture_act_param))
-    {
-      print_err("AS_CreateCapture failed. system memory insufficient!\n");
-      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
-    }
 
   if (CMN_SimpleFifoInitialize(&m_recorder_simple_fifo_handle, m_recorder_simple_fifo_buf, SIMPLE_FIFO_BUF_SIZE, NULL) != 0)
     {
@@ -1133,7 +1203,7 @@ err_t AudioClass::set_output(int device)
 err_t AudioClass::write_fifo(int fd, char *buf, uint32_t write_size, CMN_SimpleFifoHandle *handle)
 {
 
-  int vacant_size = CMN_SimpleFifoGetVacantSize(handle);
+  size_t vacant_size = CMN_SimpleFifoGetVacantSize(handle);
   if (vacant_size < write_size)
     {
       return AUDIOLIB_ECODE_SIMPLEFIFO_ERROR;
@@ -1168,7 +1238,7 @@ err_t AudioClass::write_fifo(int fd, char *buf, uint32_t write_size, CMN_SimpleF
 err_t AudioClass::write_fifo(File& myFile, char *p_es_buf, uint32_t write_size, CMN_SimpleFifoHandle *handle)
 {
 
-  int vacant_size = CMN_SimpleFifoGetVacantSize(handle);
+  size_t vacant_size = CMN_SimpleFifoGetVacantSize(handle);
   if (vacant_size < write_size)
     {
       return AUDIOLIB_ECODE_OK;
