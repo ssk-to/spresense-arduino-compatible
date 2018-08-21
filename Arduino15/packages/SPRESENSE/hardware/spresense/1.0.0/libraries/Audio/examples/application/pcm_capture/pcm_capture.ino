@@ -72,7 +72,7 @@ void loop() {
     }
 
   /* Read frames to record in buffer */
-  int err = theAudio->readFrames(buffer, buffer_size, &read_size);
+  err_t err = theAudio->readFrames(buffer, buffer_size, &read_size);
 
   if (err != AUDIOLIB_ECODE_OK && err != AUDIOLIB_ECODE_INSUFFICIENT_BUFFER_AREA)
     {

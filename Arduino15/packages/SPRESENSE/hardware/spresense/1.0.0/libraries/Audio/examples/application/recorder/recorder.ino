@@ -82,7 +82,7 @@ void loop() {
     }
 
   /* Read frames to record in file */
-  int err = theAudio->readFrames(myFile);
+  err_t err = theAudio->readFrames(myFile);
 
   if (err != AUDIOLIB_ECODE_OK)
     {
