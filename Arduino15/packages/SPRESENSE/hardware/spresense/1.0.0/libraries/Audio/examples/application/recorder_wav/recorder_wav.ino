@@ -69,7 +69,7 @@ void loop() {
       exit(1);
     }
 
-  int err = theAudio->readFrames(myFile);
+  err_t err = theAudio->readFrames(myFile);
 
   if (err != AUDIOLIB_ECODE_OK)
     {

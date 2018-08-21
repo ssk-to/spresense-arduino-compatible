@@ -104,7 +104,7 @@ void playerMode(char *fname)
 bool playStream()
 {
   /* Send new frames to decode in a loop until file ends */
-  int err = theAudio->writeFrames(AudioClass::Player0, myFile);
+  err_t err = theAudio->writeFrames(AudioClass::Player0, myFile);
 
   /*  Tell when player file ends */
   if (err == AUDIOLIB_ECODE_FILEEND)
