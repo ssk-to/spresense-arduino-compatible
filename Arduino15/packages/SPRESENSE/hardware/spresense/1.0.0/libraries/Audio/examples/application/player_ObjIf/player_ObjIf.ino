@@ -171,8 +171,8 @@ void setup()
 
   puts("Play!");
 
-  /* Main volume set to -16.0 dB */
-  theMixer->setVolume(-160);
+  /* Main volume set to -16.0 dB, Main player and sub player set to 0 dB */
+  theMixer->setVolume(-160, 0, 0);
 
   // Start Player
   thePlayer->start(MediaPlayer::Player0, mediaplayer_decode_callback);
