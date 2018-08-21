@@ -560,8 +560,8 @@ err_t AudioClass::setVolume(int master_db)
   command.header.command_code  = AUDCMD_SETVOLUME;
   command.header.sub_code      = 0;
 
-  command.set_volume_param.input1_db = AS_VOLUME_HOLD;
-  command.set_volume_param.input2_db = AS_VOLUME_HOLD;
+  command.set_volume_param.input1_db = 0; /* 0dB */
+  command.set_volume_param.input2_db = 0; /* 0dB */
   command.set_volume_param.master_db = master_db;
 
   AS_SendAudioCommand(&command);
@@ -1181,6 +1181,18 @@ err_t AudioClass::set_output(int device)
   command.header.command_code  = AUDCMD_INITOUTPUTSELECT;
   command.header.sub_code      = 0;
 
+  /* Tentative processing until sdk side is modified.
+   * Device type is unified by modifying sdk.
+   */
+
+  if (device == AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT)
+    {
+      device = AS_OUT_I2S;
+    }
+  else
+    {
+      device = AS_OUT_SP;
+    }
   command.init_output_select_param.output_device_sel = device;
 
   AS_SendAudioCommand(&command);
