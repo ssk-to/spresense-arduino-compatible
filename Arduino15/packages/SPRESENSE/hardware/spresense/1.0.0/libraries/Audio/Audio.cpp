@@ -95,7 +95,7 @@ extern "C" {
 
 void attentionCallback(const ErrorAttentionParam *attparam)
 {
-  print_dbg("attention!! Level 0x%x Attention code 0x%x\n", attparam->error_code, attparam->error_att_sub_code);
+  print_dbg("Attention!! Level 0x%x Code 0x%x\n", attparam->error_code, attparam->error_att_sub_code);
 }
 
 }
