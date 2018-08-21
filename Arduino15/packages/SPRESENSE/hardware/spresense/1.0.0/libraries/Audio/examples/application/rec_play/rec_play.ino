@@ -1,5 +1,5 @@
 /*
- *  player.ino - Simple sound player example application
+ *  rec_play.ino - Record and playback audio example application
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -35,13 +35,10 @@ AudioClass *theAudio;
 File myFile;
 
 /**
- * @brief Setup audio player to play mp3 file
+ * @brief Set up audio library to record and play
  *
- * Set output device to speaker <br>
- * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect" <br>
- * System directory "/mnt/sd0/BIN" will be searched for MP3 decoder (MP3DEC file)
- * Open "Sound.mp3" file <br>
- * Set master volume to -16.0 dB
+ * Get instance of audio library and begin.
+ * Set rendering clock to NORMAL(48kHz).
  */
 void setup()
 {
@@ -56,9 +53,16 @@ void setup()
   theAudio->setRenderingClockMode(AS_CLKMODE_NORMAL);
 }
 
+/**
+ * @brief Audio player set up and start
+ *
+ * Set audio player to play mp3/Stereo audio.
+ * Audio data is read from SD card.
+ *
+ */
 void playerMode(char *fname)
 {
-  theAudio->setPlayerMode(AS_OUT_SP);
+  theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP);
 
   /*
    * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect"
@@ -101,10 +105,13 @@ void playerMode(char *fname)
   theAudio->startPlayer(AudioClass::Player0);
 }
 
+/**
+ * @brief Supply audio data to the buffer
+ */
 bool playStream()
 {
   /* Send new frames to decode in a loop until file ends */
-  int err = theAudio->writeFrames(AudioClass::Player0, myFile);
+  err_t err = theAudio->writeFrames(AudioClass::Player0, myFile);
 
   /*  Tell when player file ends */
   if (err == AUDIOLIB_ECODE_FILEEND)
@@ -133,6 +140,13 @@ stop_player:
   return true;
 }
 
+/**
+ * @brief Audio recorder set up and start
+ *
+ * Set audio recorder to record mp3/Stereo audio.
+ * Audio data is written to SD card.
+ *
+ */
 void recorderMode(char *fname)
 {
   /* Select input device as analog microphone */
@@ -159,6 +173,9 @@ void recorderMode(char *fname)
   theAudio->startRecorder();
 }
 
+/**
+ * @brief Read audio data from the buffer
+ */
 bool recordStream()
 {
   static int cnt = 0;
