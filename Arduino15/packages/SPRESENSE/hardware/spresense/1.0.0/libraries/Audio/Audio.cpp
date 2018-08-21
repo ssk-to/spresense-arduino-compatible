@@ -95,7 +95,7 @@ extern "C" {
 
 void attentionCallback(const ErrorAttentionParam *attparam)
 {
-  print_dbg("attention!! ecode %d subcode %d\n", attparam->error_code, attparam->error_att_sub_code);
+  print_dbg("Attention!! Level 0x%x Code 0x%x\n", attparam->error_code, attparam->error_att_sub_code);
 }
 
 }
@@ -525,6 +525,12 @@ err_t AudioClass::setBeep(char en, short vol, short freq)
 /*--------------------------------------------------------------------------*/
 err_t AudioClass::stopPlayer(PlayerId id)
 {
+  return stopPlayer(id, AS_STOPPLAYER_ESEND);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::stopPlayer(PlayerId id, uint8_t mode)
+{
   AudioCommand command;
 
   command.header.packet_length = LENGTH_STOP_PLAYER;
@@ -532,7 +538,7 @@ err_t AudioClass::stopPlayer(PlayerId id)
   command.header.sub_code      = 0x00;
 
   command.player.player_id = (id == Player0) ? AS_PLAYER_ID_0 : AS_PLAYER_ID_1;
-  command.player.stop_param.stop_mode = AS_STOPPLAYER_NORMAL;
+  command.player.stop_param.stop_mode = mode;
   AS_SendAudioCommand(&command);
 
   AudioResult result;

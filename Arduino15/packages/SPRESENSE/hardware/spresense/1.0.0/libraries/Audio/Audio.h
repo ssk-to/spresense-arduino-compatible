@@ -473,9 +473,18 @@ public:
    *          The next API will not be accepted until the audio output
    *          stops completely. (it takes about 100 ms).
    *
+   *          You can set stop mode too. If you would like to stop player immediately,
+   *          set mode to AS_STOPPLAYER_NORMAL. If you don't set mode, player stops
+   *          after all of audio data in buffer is going out.
+   *
    */
   err_t stopPlayer(
       PlayerId id /**< Select Player ID. */
+  );
+
+  err_t stopPlayer(
+      PlayerId id, /**< Select Player ID. */
+      uint8_t mode /**< Stop mode. AS_STOPPLAYER_NOMAL, AS_STOPPLAYER_ESEND */
   );
 
   /**
