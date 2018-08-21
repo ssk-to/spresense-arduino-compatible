@@ -208,10 +208,18 @@ public:
    *
    *          In this function, setting HW necessary for sound recording, and setting ES buffer configuration etc.
    *
+   *          This function can select either input interface MIC or I2S as an argument.
+   *          When I2S is selected, it becomes input of 2 channels of L/R.
+   *          The type of MIC is determined by configuration of sdk. The default is an analog microphone.
+   *          The value of CXD56_AUDIO_MIC_CHANNEL_SEL can be used to select the analog microphone
+   *          or digital microphone and assign the microphone channel.
+   *          Refer to the document for the setting value.
+   *          If you change the settings, import sdk again.
+   * 
    */
   err_t setRecorderMode(
-      uint8_t device /**<  Select input device. AS_SETRECDR_STS_INPUTDEVICE_MIC_A or
-                           AS_SETRECDR_STS_INPUTDEVICE_MIC_D or AS_SETRECDR_STS_INPUTDEVICE_I2S_IN. */
+      uint8_t device /**<  Select input device. AS_SETRECDR_STS_INPUTDEVICE_MIC or
+                           AS_SETRECDR_STS_INPUTDEVICE_I2S. */
   );
 
   /**

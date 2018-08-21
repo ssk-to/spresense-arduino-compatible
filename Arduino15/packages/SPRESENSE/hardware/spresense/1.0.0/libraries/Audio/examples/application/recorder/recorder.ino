@@ -27,7 +27,7 @@ File myFile;
 /**
  * @brief Setup recording of mp3 stream to file
  *
- * Select input device as analog microphone, AMIC <br>
+ * Select input device as microphone <br>
  * Initialize filetype to stereo mp3 with 48 Kb/s sampling rate <br>
  * Open "Sound.mp3" file in write mode
  */
@@ -39,8 +39,8 @@ void setup()
 
   puts("initialization Audio Library");
 
-  /* Select input device as analog microphone */
-  theAudio->setRecorderMode(AS_SETRECDR_STS_INPUTDEVICE_MIC_A);
+  /* Select input device as microphone */
+  theAudio->setRecorderMode(AS_SETRECDR_STS_INPUTDEVICE_MIC);
 
   /*
    * Initialize filetype to stereo mp3 with 48 Kb/s sampling rate
