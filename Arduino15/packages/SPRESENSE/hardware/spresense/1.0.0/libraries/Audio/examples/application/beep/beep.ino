@@ -41,14 +41,20 @@ private:
 
   int pos;
 
-  Note data[11] =
+  Note data[17] =
   {
     {262,500},
     {294,500},
     {330,500},
     {349,500},
-    {392,1000},
+    {392,500},
+    {440,500},
+    {494,500},
+    {523,1000},
 
+    {523,500},
+    {494,500},
+    {440,500},
     {392,500},
     {349,500},
     {330,500},
@@ -93,7 +99,6 @@ void setup()
   puts("initialization Audio Library");
 
   theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP);
-  theAudio->setVolume(-160);
 
   theScore.init();
   
@@ -109,7 +114,7 @@ void loop()
     exit(1);
   }
 
-  theAudio->setBeep(1,0,theNote.fs);
+  theAudio->setBeep(1,-40,theNote.fs);
   usleep(theNote.time * 1000);
   theAudio->setBeep(0,0,0);
   usleep(100000);
