@@ -93,7 +93,6 @@ void setup()
   puts("initialization Audio Library");
 
   theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP);
-  theAudio->setVolume(-160);
 
   theScore.init();
   
@@ -109,7 +108,7 @@ void loop()
     exit(1);
   }
 
-  theAudio->setBeep(1,0,theNote.fs);
+  theAudio->setBeep(1,-40,theNote.fs);
   usleep(theNote.time * 1000);
   theAudio->setBeep(0,0,0);
   usleep(100000);
