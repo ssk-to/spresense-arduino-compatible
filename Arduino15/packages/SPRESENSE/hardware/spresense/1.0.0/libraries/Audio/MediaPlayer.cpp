@@ -353,6 +353,49 @@ err_t MediaPlayer::write_fifo(File& myFile, char *p_es_buf, CMN_SimpleFifoHandle
 }
 
 /*--------------------------------------------------------------------------*/
+err_t MediaPlayer::writeFrames(PlayerId id, uint8_t *data, uint32_t size)
+{
+  int ret = MEDIAPLAYER_ECODE_OK;
+  char *buf = (id == Player0) ? m_es_player0_buf : m_es_player1_buf; 
+
+  CMN_SimpleFifoHandle *handle =
+    (id == Player0) ?
+      &m_player0_simple_fifo_handle : &m_player1_simple_fifo_handle;
+
+  ret = write_fifo(data, size, buf, handle);
+
+  return ret;
+}
+
+/*--------------------------------------------------------------------------*/
+err_t MediaPlayer::write_fifo(uint8_t *data, uint32_t size, char *p_es_buf, CMN_SimpleFifoHandle *handle)
+{
+  uint32_t vacant_size = CMN_SimpleFifoGetVacantSize(handle);
+
+  if (vacant_size < size)
+    {
+      return MEDIAPLAYER_ECODE_OK;
+    }
+
+  if (!data || !size)
+    {
+      return MEDIAPLAYER_ECODE_COMMAND_ERROR;
+    }
+  else
+    {
+      memcpy(p_es_buf, data, size);
+    }
+
+  if (CMN_SimpleFifoOffer(handle, (const void*)(p_es_buf), size) == 0)
+    {
+      print_err("Simple FIFO is full!\n");
+      return MEDIAPLAYER_ECODE_SIMPLEFIFO_ERROR;
+    }
+
+  return MEDIAPLAYER_ECODE_OK;
+}
+
+/*--------------------------------------------------------------------------*/
 bool MediaPlayer::check_decode_dsp(uint8_t codec_type, const char *path)
 {
   char fullpath[32];
