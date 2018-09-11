@@ -39,6 +39,10 @@ int WriteBinary(const char* pBuff, const char* pName, unsigned long write_size, 
   unsigned long write_result = 0;
   File myFile;
 
+  if (theSD.exists("/") == false) {
+    return 0;
+  }
+
   if (write_size != 0)
   {
     /* Open file. */
@@ -95,6 +99,9 @@ int ReadChar(char* pBuff, int BufferSize, const char* pName, int flag)
   File myFile;
 
   /* Open file. */
+  if (theSD.exists(pName) == false) {
+    return 0;
+  }
   myFile = theSD.open(pName, flag);
   if (myFile == NULL)
   {
@@ -135,17 +142,5 @@ int Remove(const char* pName)
 
 boolean IsFileExist(const char* pName)
 {
-  boolean ret = false;
-
-  /* Open file. */
-  File myFile = theSD.open(pName, FILE_READ);
-  if (myFile != NULL)
-  {
-    ret = true;
-
-    /* Close file. */
-    myFile.close();
-  }
-
-  return ret;
+  return theSD.exists(pName);
 }
