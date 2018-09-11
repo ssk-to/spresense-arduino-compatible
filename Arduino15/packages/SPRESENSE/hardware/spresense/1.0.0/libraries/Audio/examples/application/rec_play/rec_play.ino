@@ -126,6 +126,11 @@ bool playStream()
       goto stop_player;
     }
 
+  /* This sleep is adjusted by the time to read the audio stream file.
+     Please adjust in according with the processing contents
+     being processed at the same time by Application.
+  */
+  
   usleep(40000);
   
   /* Don't go further and continue play */
@@ -197,7 +202,11 @@ bool recordStream()
       goto stop_recorder;
     }
 
-  usleep(1);
+  /* This sleep is adjusted by the time to write the audio stream file.
+     Please adjust in according with the processing contents
+     being processed at the same time by Application.
+  */
+  usleep(10000);
   cnt++;
 
   /* return still recording */
