@@ -25,41 +25,47 @@
 #include <Camera.h>
 #include <arch/board/board.h>
 
+#define FILENAME_LEN (14)
 SDClass theSD;
+CamImage capture_data;
+uint32_t capture_cnt = 0;
+char filename[FILENAME_LEN] = {0};
 
-CameraClass theCamera;
+/**
+ * @brief Callback from Camera library
+ */
+
+void CamCB(CamImage img)
+{
+  uint8_t *buf;
+  size_t img_size;
+
+  capture_data = img;
+  buf = capture_data.getImgBuff();
+  img_size = capture_data.getImgSize();
+
+  /* Save to SD card */
+  sprintf(filename, "VIDEO%03d.YUV", capture_cnt);
+  File myFile = theSD.open(filename, FILE_WRITE);
+  myFile.write(buf, img_size);
+  myFile.close();
+  
+  capture_cnt++;
+}
 
 /**
  * @brief Initialize camera
  */
 void setup() {
   puts("Prepare camera");
-  theCamera.begin();
-  theCamera.initialize();
+  theCamera.begin(CAM_IMGSIZE_QVGA_H, CAM_IMGSIZE_QVGA_V, CAM_VIDEO_FPS_60);
+  puts("Start streaming");
+  theCamera.startStreaming(true, CamCB);
 }
 
 /**
- * @brief Save picture to file in one minute interval
+ * @brief No procedure
  */
 void loop() {
-  static int  cnt = 0;
-  static char filename[14] = {0};
-
-  if (cnt > 999)
-    {
-      printf("Saved %d JPEG pictures\n", cnt);
-      printf("Camera exit\n");
-      exit(1);
-    }
-
-  sprintf(filename, "camera%03d.jpg", cnt);
-  File myFile = theSD.open(filename, FILE_WRITE);
-
-  printf("Requesting JPEG capture and save picture to SD card. Filename: %s\n", filename);
-  theCamera.read(myFile);
-
-  cnt++;
-
-  /* One minute interval. */
-  sleep(60);
+  usleep(1);
 }
