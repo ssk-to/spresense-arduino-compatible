@@ -25,41 +25,53 @@
 #include <Camera.h>
 #include <arch/board/board.h>
 
-SDClass theSD;
+#define BAUDRATE     (115200)
+#define FILENAME_LEN (14)
 
-CameraClass theCamera;
+SDClass theSD;
+uint32_t capture_cnt = 0;
+char filename[FILENAME_LEN] = {0};
+
+/**
+ * @brief Callback from Camera library
+ */
+
+void CamCB(CamImage img)
+{
+  uint8_t *buf;
+  size_t img_size;
+
+  buf = img.getImgBuff();
+  img_size = img.getImgSize();
+
+  /* Save to SD card */
+  sprintf(filename, "VIDEO%03d.YUV", capture_cnt);
+  File myFile = theSD.open(filename, FILE_WRITE);
+  myFile.write(buf, img_size);
+  myFile.close();
+  
+  capture_cnt++;
+}
 
 /**
  * @brief Initialize camera
  */
 void setup() {
-  puts("Prepare camera");
-  theCamera.begin();
-  theCamera.initialize();
+  /* Open serial communications and wait for port to open */
+  Serial.begin(BAUDRATE);
+  while (!Serial) {
+    ; /* wait for serial port to connect. Needed for native USB port only */
+  }
+
+  Serial.print("Prepare camera\n");
+  theCamera.begin(CAM_IMGSIZE_QVGA_H, CAM_IMGSIZE_QVGA_V, CAM_VIDEO_FPS_60);
+  Serial.print("Start streaming");
+  theCamera.startStreaming(true, CamCB);
 }
 
 /**
- * @brief Save picture to file in one minute interval
+ * @brief No procedure
  */
 void loop() {
-  static int  cnt = 0;
-  static char filename[14] = {0};
-
-  if (cnt > 999)
-    {
-      printf("Saved %d JPEG pictures\n", cnt);
-      printf("Camera exit\n");
-      exit(1);
-    }
-
-  sprintf(filename, "camera%03d.jpg", cnt);
-  File myFile = theSD.open(filename, FILE_WRITE);
-
-  printf("Requesting JPEG capture and save picture to SD card. Filename: %s\n", filename);
-  theCamera.read(myFile);
-
-  cnt++;
-
-  /* One minute interval. */
-  sleep(60);
+  usleep(1);
 }
