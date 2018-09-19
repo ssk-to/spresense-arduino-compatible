@@ -29,7 +29,6 @@
 #define FILENAME_LEN (14)
 
 SDClass theSD;
-CamImage capture_data;
 uint32_t capture_cnt = 0;
 char filename[FILENAME_LEN] = {0};
 
@@ -42,9 +41,8 @@ void CamCB(CamImage img)
   uint8_t *buf;
   size_t img_size;
 
-  capture_data = img;
-  buf = capture_data.getImgBuff();
-  img_size = capture_data.getImgSize();
+  buf = img.getImgBuff();
+  img_size = img.getImgSize();
 
   /* Save to SD card */
   sprintf(filename, "VIDEO%03d.YUV", capture_cnt);
