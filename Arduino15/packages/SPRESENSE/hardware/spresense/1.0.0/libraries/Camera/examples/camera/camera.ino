@@ -25,7 +25,9 @@
 #include <Camera.h>
 #include <arch/board/board.h>
 
+#define BAUDRATE     (115200)
 #define FILENAME_LEN (14)
+
 SDClass theSD;
 CamImage capture_data;
 uint32_t capture_cnt = 0;
@@ -57,9 +59,15 @@ void CamCB(CamImage img)
  * @brief Initialize camera
  */
 void setup() {
-  puts("Prepare camera");
+  /* Open serial communications and wait for port to open */
+  Serial.begin(BAUDRATE);
+  while (!Serial) {
+    ; /* wait for serial port to connect. Needed for native USB port only */
+  }
+
+  Serial.print("Prepare camera\n");
   theCamera.begin(CAM_IMGSIZE_QVGA_H, CAM_IMGSIZE_QVGA_V, CAM_VIDEO_FPS_60);
-  puts("Start streaming");
+  Serial.print("Start streaming");
   theCamera.startStreaming(true, CamCB);
 }
 
