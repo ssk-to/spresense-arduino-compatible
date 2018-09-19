@@ -262,7 +262,7 @@ CamErr CameraClass::set_frame_parameters( enum v4l2_buf_type type, int video_wid
   // Set Format.
   fmt.type                = type;
   fmt.fmt.pix.width       = video_width;
-  fmt.fmt.pix.height      = video_width;
+  fmt.fmt.pix.height      = video_height;
   fmt.fmt.pix.field       = V4L2_FIELD_ANY;
   fmt.fmt.pix.pixelformat = video_fmt;
   if( ioctl(video_fd, VIDIOC_S_FMT, (unsigned long)&fmt) < 0 ){
