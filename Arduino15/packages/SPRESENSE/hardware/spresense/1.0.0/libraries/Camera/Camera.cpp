@@ -1,5 +1,5 @@
 /*
- *  CamImage.cpp - CamImage implementation file for the Spresense SDK
+ *  Camera.cpp - Camera implementation file for the Spresense SDK
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -18,10 +18,10 @@
  */
 
 /**
- * @file CamImage.cpp
+ * @file Camera.cpp
  * @author Sony Semiconductor Solutions Corporation
  * @brief Camera Library for Arduino IDE on Spresense.
- * @details Image Classes for SPRESENSE Camera library.
+ * @details Camera Classes for SPRESENSE Camera library.
  */
 
 #include <string.h>
