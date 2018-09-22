@@ -412,9 +412,7 @@ private:
   sem_t video_cb_access_sem;
   camera_cb_t video_cb;
 
-  sem_t still_cb_access_sem;
   int still_status;
-  camera_cb_t still_cb;
 
   CameraClass(const char *path);
 
@@ -433,18 +431,13 @@ private:
   void lock_video_cb()  { sem_wait(&video_cb_access_sem); };
   void unlock_video_cb(){ sem_post(&video_cb_access_sem); };
 
-  void lock_still_cb()  { sem_wait(&still_cb_access_sem); };
-  void unlock_still_cb(){ sem_post(&still_cb_access_sem); };
-  int get_still_status();
-  void set_still_status(int status);
-
   pthread_t dq_tid;
   pthread_attr_t dq_tattr;
   static void frame_handle_thread(void *);
   static const int CAM_DQ_THREAD_STACK_SIZE = 2048;
   static const int CAM_DQ_THREAD_STACK_PRIO = 100;
 
-  int ioctl_dequeue_stream_buf( struct v4l2_buffer *buf);
+  int ioctl_dequeue_stream_buf(struct v4l2_buffer *buf, uint16_t type);
   CamImage *search_vimg(int index);
   void release_buf(ImgBuff *buf);
 
@@ -588,12 +581,12 @@ public:
 
   /**
    * @brief Take picture.
-   * @details [en] Take picture. The taken picture can be gotten by callback function argument. <BR>
-   *          [ja] 写真撮影。撮影された写真は登録したコールバック関数の引数として取得が出来る。
-   * @return [en] Error code defined as #CamErr. <BR>
-   *         [ja] #CamErr で定義されているエラーコード
+   * @details [en] Take picture with picture parameters which is set on #setStillPictureImageFormat() . <BR>
+   *          [ja] 写真撮影。 #setStillPictureImageFormat() で設定した写真フォーマットに従って、写真を撮る。
+   * @return [en] Taken picture. If any error occured, the result value has empty object. <BR>
+   *         [ja] 撮影された写真イメージ。もし何らかのエラーが発生した場合、空のCamImageオブジェクトが返される。
    */
-  CamErr takePicture( camera_cb_t cb /**< [en] Callback function to get taken picture. <BR> [ja] 撮影された写真を取得するためのコールバック関数 */);
+  CamImage takePicture();
 
   /**
    * @brief De-initialize Spresense Camera
