@@ -262,12 +262,20 @@ File::File(const char *name, uint8_t mode)
   char *fpname = fullpathname(fpbuf, MAX_PATH_LENGTH, name);
   String fmode = "";
   String fplus = "";
+  int retry = 0;
 
   if (!fpname)
     return;
 
   /* Wait for the SD card to be mounted */
-  while (::stat(SD_MOUNT_POINT, &stat) < 0);
+  while (::stat(SD_MOUNT_POINT, &stat) < 0) {
+    retry++;
+    if (retry >= 20) {
+      retry = 0;
+      printf("Insert SD card!\n");
+    }
+    usleep(100 * 1000); // 100 msec
+  }
 
   stat_ret = ::stat(fpname, &stat);
 
