@@ -326,13 +326,17 @@ File::File(const char *name, uint8_t mode)
     fmode += fplus;
 
     _fd = ::fopen(fpname, fmode.c_str());
-    setvbuf(_fd, NULL, _IOLBF, STDIO_BUFFER_SIZE);
+    if (_fd != NULL) {
+      setvbuf(_fd, NULL, _IOLBF, STDIO_BUFFER_SIZE);
+    }
   }
 
   _name = strdup(name);
-  _size = stat.st_size;
-  ::fseek(_fd, 0, SEEK_CUR);
-  _curpos = ::ftell(_fd);
+  if (_fd != NULL) {
+    _size = stat.st_size;
+    ::fseek(_fd, 0, SEEK_CUR);
+    _curpos = ::ftell(_fd);
+  }
 }
 
 File::File(void):

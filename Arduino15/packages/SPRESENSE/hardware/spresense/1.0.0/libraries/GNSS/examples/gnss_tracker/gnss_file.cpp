@@ -31,6 +31,9 @@ SDClass theSD;  /**< SDClass object */
 boolean BeginSDCard(void)
 {
   APP_PRINT_I("BeginSDCard() USE_SDHCI");
+  if (!theSD.begin()) {
+    return false;
+  }
   return true;
 }
 
