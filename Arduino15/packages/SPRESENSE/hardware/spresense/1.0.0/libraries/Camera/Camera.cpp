@@ -209,11 +209,9 @@ CameraClass::CameraClass(const char *path)
   still_img = NULL;
   loop_dqbuf_en = false;
   video_cb = NULL;
-  still_cb = NULL;
   dq_tid = -1;
   still_status = STILL_STATUS_NO_INIT;
   sem_init(&video_cb_access_sem, 0, 1);
-  sem_init(&still_cb_access_sem, 0, 1);
 }
 
 
@@ -670,24 +668,6 @@ CamErr CameraClass::setColorEffect(CAM_COLOR_FX effect  )
               (uint32_t)effect );
 }
 
-int CameraClass::get_still_status()
-{
-  int ret;
-
-  lock_still_cb();
-  ret = still_status;
-  unlock_still_cb();
-
-  return ret;
-}
-
-void CameraClass::set_still_status(int status)
-{
-  lock_still_cb();
-  still_status = status;
-  unlock_still_cb();
-}
-
 
 //===============================================================
 // Public : Still Picture Format.
@@ -695,7 +675,7 @@ CamErr CameraClass::setStillPictiureImageFormat( int img_width, int img_height, 
 {
   CamErr err = CAM_ERR_SUCCESS;
 
-  if( is_device_ready() && get_still_status() != STILL_STATUS_TAKING ){
+  if( is_device_ready() && still_status != STILL_STATUS_TAKING ){
     if( check_video_fmtparam( img_width, img_height, CAM_VIDEO_FPS_NONE, img_fmt ) ){
 
       err = set_frame_parameters(V4L2_BUF_TYPE_STILL_CAPTURE, img_width, img_height, 1, img_fmt);
@@ -706,7 +686,7 @@ CamErr CameraClass::setStillPictiureImageFormat( int img_width, int img_height, 
 
           err = enqueue_video_buff(still_img);
 
-          set_still_status(STILL_STATUS_QUEUED);
+          still_status = STILL_STATUS_QUEUED;
         }
       }
     }else{
@@ -721,33 +701,21 @@ CamErr CameraClass::setStillPictiureImageFormat( int img_width, int img_height, 
 
 //===============================================================
 // Public : Take a Picture.
-CamErr CameraClass::takePicture( camera_cb_t cb )
+CamImage CameraClass::takePicture( )
 {
-  CamErr err = CAM_ERR_SUCCESS;
-  camera_cb_t old_cb;
-
+  struct v4l2_buffer buf;
   long unsigned int take_num = 1;
-  if( is_device_ready() && get_still_status() == STILL_STATUS_QUEUED ){
-    lock_still_cb();
-    old_cb = still_cb;
-    still_cb = cb;
-    unlock_still_cb();
 
-    if( ioctl(video_fd, VIDIOC_TAKEPICT_START, take_num) < 0 ){
-      err = CAM_ERR_ILLIGAL_DEVERR;
-
-      lock_still_cb();
-      still_cb = old_cb;
-      unlock_still_cb();
-    }else{
-      set_still_status(STILL_STATUS_TAKING);
+  if( is_device_ready() && still_status == STILL_STATUS_QUEUED ){
+    if( ioctl(video_fd, VIDIOC_TAKEPICT_START, take_num) == 0 ){
+      if(ioctl_dequeue_stream_buf(&buf, V4L2_BUF_TYPE_STILL_CAPTURE) == 0 ){
+        still_img->setActualSize((size_t)buf.bytesused);
+        return *still_img;
+      }
     }
-
-  }else{
-    err = CAM_ERR_NOT_INITIALIZED;
   }
 
-  return err;
+  return CamImage();  // Return empty CamImage because of any error occured.
 }
 
 
@@ -759,8 +727,11 @@ void CameraClass::end()
   }
 }
 
-int CameraClass::ioctl_dequeue_stream_buf( struct v4l2_buffer *buf)
+int CameraClass::ioctl_dequeue_stream_buf(struct v4l2_buffer *buf, uint16_t type)
 {
+  memset(buf, 0, sizeof(v4l2_buffer_t));
+  buf->type = type;
+  buf->memory = V4L2_MEMORY_USERPTR;
   return ioctl(video_fd, VIDIOC_DQBUF, (unsigned long)buf);
 }
 
@@ -786,14 +757,7 @@ void CameraClass::frame_handle_thread(void *arg)
   CameraClass *cam = (CameraClass *)arg;
 
   while(cam->loop_dqbuf_en){
-    // TODO poll cam->video_fd to wait Still and Video captured image.
-    // And wait to finish define I/F to find which stream is available.
-
-    memset(&buf, 0, sizeof(v4l2_buffer_t));
-    buf.type = V4L2_BUF_TYPE_VIDEO_CAPTURE; // TODO
-    buf.memory = V4L2_MEMORY_USERPTR;
-
-    if( cam->ioctl_dequeue_stream_buf(&buf) == 0 ){
+    if(cam->ioctl_dequeue_stream_buf(&buf, V4L2_BUF_TYPE_VIDEO_CAPTURE) == 0 ){
 
       cam->lock_video_cb();
 
