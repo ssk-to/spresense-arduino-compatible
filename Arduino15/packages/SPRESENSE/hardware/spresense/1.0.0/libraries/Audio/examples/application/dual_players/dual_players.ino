@@ -163,6 +163,10 @@ void loop()
       goto stop_player;
     }
 
+  /* This sleep is adjusted by the time to read the audio stream file.
+     Please adjust in according with the processing contents
+     being processed at the same time by Application.
+  */
   usleep(40000);
   cnt++;
   /* Don't go further and continue play */
