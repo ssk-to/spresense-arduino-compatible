@@ -27,6 +27,7 @@ File myFile;
 /**
  * @brief Setup audio player to play mp3 file
  *
+ * Set clock mode to normal <br>
  * Set output device to speaker <br>
  * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect" <br>
  * System directory "/mnt/sd0/BIN" will be searched for MP3 decoder (MP3DEC file)
@@ -42,8 +43,18 @@ void setup()
 
   puts("initialization Audio Library");
 
-  /* Set output device to speaker */
+  /* Set clock mode.
+   * If the sampling rate of contents is within 48 kHz, specify "AS_CLKMODE_NORMAL" as an argument
+   * If the sampling rate of contents is over 48 kHz, specify "AS_CLKMODE_HIRES" as an argument
+   */
+  
   theAudio->setRenderingClockMode(AS_CLKMODE_NORMAL);
+
+  /* Set output device.
+   * To output to speaker, specify "AS_SETPLAYER_OUTPUTDEVICE_SPHP" as an argument
+   * To output to I2S, specify "AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT" as an argument
+   */
+ 
   theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP);
 
   /*
