@@ -408,6 +408,9 @@ bool MediaRecorder::check_encode_dsp(uint8_t codec_type, const char *path, uint3
 {
   char fullpath[32];
   cxd56_audio_clkmode_t clk = CXD56_AUDIO_CLKMODE_NORMAL;
+  struct stat buf;
+  int retry;
+  int ret = 0;
   
   switch (codec_type)
     {
@@ -432,6 +435,24 @@ bool MediaRecorder::check_encode_dsp(uint8_t codec_type, const char *path, uint3
 
       default:
         break;
+    }
+
+  if (0 == strncmp("/mnt/sd0", path, 8))
+    {
+      /* In case that SD card isn't inserted, it times out at max 2 sec */
+      for (retry = 0; retry < 20; retry++) {
+        ret = stat("/mnt/sd0", &buf);
+        if (ret == 0)
+          {
+            break;
+          }
+        usleep(100 * 1000); // 100 msec
+      }
+      if (ret)
+        {
+          print_err("SD card is not present.\n");
+          return false;
+        }
     }
 
   FILE *fp = fopen(fullpath, "r");
