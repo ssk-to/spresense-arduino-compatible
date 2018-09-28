@@ -43,18 +43,13 @@ void setup()
 
   puts("initialization Audio Library");
 
-  /* Set clock mode.
-   * If the sampling rate of contents is within 48 kHz, specify "AS_CLKMODE_NORMAL" as an argument
-   * If the sampling rate of contents is over 48 kHz, specify "AS_CLKMODE_HIRES" as an argument
-   */
-  
+  /* Set clock mode to normal */
   theAudio->setRenderingClockMode(AS_CLKMODE_NORMAL);
 
-  /* Set output device.
-   * To output to speaker, specify "AS_SETPLAYER_OUTPUTDEVICE_SPHP" as an argument
-   * To output to I2S, specify "AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT" as an argument
+  /* Set output device to speaker.
+   * If you want to change the output device to I2S,
+   * specify "AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT" as an argument.
    */
- 
   theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP);
 
   /*
