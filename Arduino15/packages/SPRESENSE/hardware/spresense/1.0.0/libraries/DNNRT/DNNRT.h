@@ -39,13 +39,13 @@ class DNNVariable; // forward reference
 class DNNRT {
 
 public:
-  DNNRT();
-  ~DNNRT();
+  DNNRT() {};
+  ~DNNRT() {};
 
   /**
    * Initialize runtime object from .nnb file
    *  
-   * User must be generate network data file (.nnb) by NNabla before run this library.
+   * User must be generate a network data file (.nnb) by NNabla before run this library.
    *  
    * About NNabla:
    *  https://nnabla.readthedocs.io/en/latest/python/index.html
@@ -62,12 +62,12 @@ public:
   /**
    * Set input data at index
    */
-  int inputVarialbe(DNNVariable var, unsigned int index);
+  int inputVariable(DNNVariable var, unsigned int index);
 
   /**
    * Get output data at index
    */
-  DNNVariable outputVariable(unsigned int index);
+  DNNVariable& outputVariable(unsigned int index);
 
   /**
    * Execute forward propagation
@@ -97,7 +97,7 @@ public:
   /**
    * Get number of network outputs
    */
-  int numOfoutput();
+  int numOfOutput();
 
   /**
    * Size of output data at index
@@ -115,19 +115,39 @@ public:
   int outputShapeSize(unsigned int index, unsigned int shapeindex);
 
 private:
-  dnn_runtime_t _rt;   /**< DNN runtime context */
+  dnn_runtime_t *_rt;            // DNN runtime context
+  nn_network_t  *_network;       // Network data from .nnb file
+
+  void         **_input;         // Input data array
+  int            _nr_inputs;     // Number of input data
+  DNNVariable   *_output;        // Output data array
+  int            _nr_outputs;    // Number of output data
 };
 
 class DNNVariable {
-  /// Series of data for use input to DNN and output from DNN.
 
 public:
-  virtual void *data(ssize_t index);
+  friend class DNNRT;
 
-  // T.B.D: Methods for accessing NN variable
+  DNNVariable();
+  DNNVariable(unsigned int size);
+  ~DNNVariable();
+
+  unsigned int size() {
+    return _size;
+  }
+
+  const float& operator[](unsigned int index) const {
+    return _data[index];
+  }
+
+  void *data() {
+    return _data;
+  }
 
 private:
-  nn_variable_t _variable;
+  float *_data;
+  unsigned int _size;
 };
 
 #endif
