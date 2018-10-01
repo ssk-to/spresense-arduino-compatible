@@ -21,6 +21,7 @@
 #define Dnnrt_h
 
 #include <Arduino.h>
+#include <SDHCI.h> // tentative
 
 #include <dnnrt/runtime.h>
 
@@ -45,72 +46,113 @@ public:
   /**
    * Initialize runtime object from .nnb file
    *  
-   * User must be generate a network data file (.nnb) by NNabla before run this library.
+   * User must be generate a network model data file (.nnb) by NNabla before
+   * run this library.
    *  
    * About NNabla:
    *  https://nnabla.readthedocs.io/en/latest/python/index.html
    * About NNB file:
    *  https://nnabla.readthedocs.io/en/latest/python/file_format_converter/file_format_converter.html
+   *
+   * @param nnbfile nnb network model database file
+   * @return 0 on success, otherwise error.
    */  
-  int begin(File &nnbfile);
+  int begin(SDHCILib::File &nnbfile);
 
   /**
    * Finalize runtime object
+   *
+   * @return 0 on success, otherwise error.
    */
   int end();
 
   /**
    * Set input data at index
+   *
+   * @param var[in]   Input data to the network
+   * @param index[in] Index of input data
+   * @return 0 on success, otherwise error.
+   * @note Number of input data is depends on the network model.
    */
   int inputVariable(DNNVariable var, unsigned int index);
 
   /**
    * Get output data at index
+   *
+   * @param index[in] Index of output data
+   * @return Output variable data. the shape of output data is depends on the
+   *         network model.
    */
   DNNVariable& outputVariable(unsigned int index);
 
   /**
    * Execute forward propagation
+   *
+   * @return 0 on success, otherwise error.
    */
-  int forward(void);
+  int forward();
 
   /**
    * Get number of network inputs
+   *
+   * @return Number of input data
    */
   int numOfInput();
 
   /**
    * Size of input data at index
+   *
+   * @param index[in] Index of input data
+   * @return Number of input data elements
    */
   int inputSize(unsigned int index);
 
   /**
    * Get dimension of input data at index
+   *
+   * @param index[in] Index of input data
+   * @return Number of input data dimension
    */
   int inputDimension(unsigned int index);
 
   /**
    * Shape size at shape index
+   *
+   * @param index[in] Index of input data
+   * @param shapeindex[in] Index of shape
+   * @return Shape size
    */
   int inputShapeSize(unsigned int index, unsigned int shapeindex);
 
   /**
    * Get number of network outputs
+   *
+   * @return Number of output data
    */
   int numOfOutput();
 
   /**
    * Size of output data at index
+   *
+   * @param index[in] Index of output data
+   * @return Number of output data elements
    */
   int outputSize(unsigned int index);
 
   /**
    * Get dimension of output data at index
+   *
+   * @param index[in] Index of output data
+   * @return Number of dimension
    */
   int outputDimension(unsigned int index);
 
   /**
    * Shape size at output shape index
+   *
+   * @param index[in] Index of output data
+   * @param shapeindex[in] Index of output data
+   * @return Shape size
    */
   int outputShapeSize(unsigned int index, unsigned int shapeindex);
 
@@ -125,10 +167,9 @@ private:
 };
 
 class DNNVariable {
-
-public:
   friend class DNNRT;
 
+public:
   DNNVariable();
   DNNVariable(unsigned int size);
   ~DNNVariable();
