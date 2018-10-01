@@ -1,32 +1,51 @@
+#include <NetPBM.h>
 #include <DNNRT.h>
+#include <SDHCI.h>
 
 DNNRT dnnrt;
 
 void setup() {
-  File nnb("network.nnb");       // Read network from SD card
-  dnnrt.begin(nnb);              // Initialize DNN runtime with network (.nnb) file
 
-  File input("9.pgm");          // Read image for input
+  File nnbfile("lenet-5/data/lenet-5.nnb");
+  dnnrt.begin(nnbfile);
 
-  dnnrt.inputVariable(input, 0); // Set image to runtime
-  dnnrt.forward();               // Forward propagation
+  File pgmfile("lenet-5/data/1.pgm");
+  NetPBM pgm(pgmfile);
 
-  DNNVariable output = dnnrt.outputVariable(0); // Take results
+  unsigned short width, height;
+  pgm.size(&width, &height);
 
-  // Search and show recognized result
-  // MNIST network outputs float array of 10, each elements represents 0 to 9.
+  DNNVariable input(width * height);
+  float *buf = input.data();
 
-  for (int i = 0; i < output.size(); i++) {
+  // Normalize pixel data into between 0.0 and 1.0.
+  // PGM file is gray scale pixel map, so divide by 255.
+  // This normalization depends on the network.
 
-    if (float(output[i]) > 0.8) {
-      Serial.print("Image is number ");
+  for (int x = 0; x < height; x++) {
+    for (int y = 0; y < width; y++) {
+      *buf = float(pgm.getpixel(x, y)) / 255.0;
+      buf++;
+    }
+  }
+
+  dnnrt.inputVariable(input, 0);
+  dnnrt.forward();
+  DNNVariable output = dnnrt.outputVariable(0);
+
+  for (unsigned int i = 0; i < output.size(); i++) {
+    if (output[i] > 0.8) {
+      Serial.print("Recognize ");
       Serial.print(i);
       Serial.println();
       break;
     }
   }
+
+  dnnrt.end();
 }
 
 void loop() {
+  // put your main code here, to run repeatedly:
 
 }
