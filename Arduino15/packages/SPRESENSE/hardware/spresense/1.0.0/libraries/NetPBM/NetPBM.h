@@ -1,9 +1,9 @@
 
-class File; // forward reference
+#include <SDHCI.h> // tentative, import SDHCILib::File class
 
 class NetPBM {
 public:
-  NetPBM(File& file);
+  NetPBM(SDHCILib::File& file);
   ~NetPBM();
 
   size_t size();

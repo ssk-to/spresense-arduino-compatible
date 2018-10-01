@@ -105,7 +105,7 @@ DNNRT::end()
 int
 DNNRT::inputVariable(DNNVariable var, unsigned int index)
 {
-  if (index >= _nr_inputs)
+  if (index >= (unsigned int)_nr_inputs)
     {
       return -1;
     }
