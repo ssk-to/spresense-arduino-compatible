@@ -35,10 +35,11 @@
 
 #include <dnnrt/runtime.h>
 
-#include "DNNRT.h"
+#include <Arduino.h>
+#include <DNNRT.h>
 
 int
-DNNRT::begin(File &nnbfile)
+DNNRT::begin(File& nnbfile)
 {
   int ret;
   size_t size;
@@ -49,22 +50,24 @@ DNNRT::begin(File &nnbfile)
       return ret;
     }
 
+  // Read whole data from network file
+
   size = nnbfile.size();
-  _network = new nn_network_t;
+  _network = (nn_network_t *)malloc(size);
   ret = nnbfile.read(_network, size);
   if (ret < 0)
     {
-      delete _network;
+      free(_network);
       _network = NULL;
       return -1;
     }
 
-  _rt = new dnn_runtime_t;
+  _rt = (dnn_runtime_t *)malloc(sizeof(dnn_runtime_t));
   ret = dnn_runtime_initialize(_rt, _network);
   if (ret < 0)
     {
-      delete _network;
-      delete _rt;
+      free(_network);
+      free(_rt);
 
       _network = NULL;
       _rt = NULL;
@@ -75,11 +78,12 @@ DNNRT::begin(File &nnbfile)
   // Allocate input data array from network data
 
   _nr_inputs = dnn_runtime_input_num(_rt);
-  _input = new void *[_nr_inputs];
+  _input = (void **)malloc(sizeof(void *) * _nr_inputs);
 
   // Allocate output data variables from network data
 
   _nr_outputs = dnn_runtime_output_num(_rt);
+  _output = (DNNVariable *)malloc(sizeof(DNNVariable) * _nr_outputs);
 
   return 0;
 }
@@ -90,10 +94,10 @@ DNNRT::end()
   dnn_runtime_finalize(_rt);
   dnn_finalize();
 
-  delete _network;
-  delete _rt;
-  delete[] _input;
-  delete[] _output;
+  free(_network);
+  free(_rt);
+  free(_input);
+  free(_output);
 
   return 0;
 }
@@ -120,7 +124,19 @@ DNNRT::outputVariable(unsigned int index)
 int
 DNNRT::forward(void)
 {
-  return dnn_runtime_forward(_rt, (const void **)_input, _nr_inputs);
+  int ret = dnn_runtime_forward(_rt, (const void **)_input, _nr_inputs);
+  if (ret < 0)
+    {
+      return ret;
+    }
+
+  for (int i = 0; i < _nr_outputs; i++)
+    {
+      _output[i]._data = (float *)dnn_runtime_output_buffer(_rt, i);
+      _output[i]._size = dnn_runtime_output_size(_rt, i);
+    }
+
+  return ret;
 }
 
 int
@@ -183,17 +199,22 @@ DNNRT::outputShapeSize(unsigned int index, unsigned int dindex)
 // DNNVariable
 ////////////////////////////////////////////////////////////////////////////
 
-DNNVariable::DNNVariable() : _data(0), _size(0)
+DNNVariable::DNNVariable() :
+  _data(0),
+  _size(0)
 {
 }
 
-DNNVariable::DNNVariable(unsigned int size) : _data(0), _size(size)
+DNNVariable::DNNVariable(unsigned int size)
 {
-  _data = new float[size];
+  _data = (float *)malloc(size * sizeof(float));
+  _size = size;
 }
 
 DNNVariable::~DNNVariable()
 {
   if (_data)
-    delete _data;
+    {
+      free(_data);
+    }
 }

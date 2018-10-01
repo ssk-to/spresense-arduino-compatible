@@ -141,7 +141,7 @@ public:
     return _data[index];
   }
 
-  void *data() {
+  float *data() {
     return _data;
   }
 
