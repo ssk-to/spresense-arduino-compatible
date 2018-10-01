@@ -46,6 +46,7 @@ ImgBuff::ImgBuff(enum v4l2_buf_type type, int w, int h, CAM_IMAGE_PIX_FMT fmt, C
     cam_ref = cam;
     width = w;
     height = h;
+    pix_fmt = fmt;
   }
 }
 
