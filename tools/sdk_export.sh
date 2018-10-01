@@ -22,7 +22,7 @@ TMP_DIR=`mktemp -d`
 
 # versioning
 cd $SDK_DIR
-sh sdk/tools/mkversion.sh && mv .version nuttx/.version
+bash sdk/tools/mkversion.sh
 
 # create sdk-export.zip
 cd $SDK_DIR/sdk
