@@ -75,14 +75,25 @@ DNNRT::begin(File& nnbfile)
       return -2;
     }
 
-  // Allocate input data array from network data
+  // Get number of input/output data defined by network model.
 
   _nr_inputs = dnn_runtime_input_num(_rt);
-  _input = (void **)malloc(sizeof(void *) * _nr_inputs);
-
-  // Allocate output data variables from network data
-
   _nr_outputs = dnn_runtime_output_num(_rt);
+
+  if (_nr_inputs <= 0 || _nr_outputs <= 0)
+    {
+      free(_network);
+      free(_rt);
+
+      _network = NULL;
+      _rt = NULL;
+
+      return -3;
+    }
+
+  // Allocate input and output data array from network model
+
+  _input = (void **)malloc(sizeof(void *) * _nr_inputs);
   _output = (DNNVariable *)malloc(sizeof(DNNVariable) * _nr_outputs);
 
   return 0;
@@ -94,10 +105,22 @@ DNNRT::end()
   dnn_runtime_finalize(_rt);
   dnn_finalize();
 
-  free(_network);
-  free(_rt);
-  free(_input);
-  free(_output);
+  if (_network)
+    {
+      free(_network);
+    }
+  if (_rt)
+    {
+      free(_rt);
+    }
+  if (_input)
+    {
+      free(_input);
+    }
+  if (_output)
+    {
+      free(_output);
+    }
 
   return 0;
 }
