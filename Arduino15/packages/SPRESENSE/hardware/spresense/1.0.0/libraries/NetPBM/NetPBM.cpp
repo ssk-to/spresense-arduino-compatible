@@ -19,7 +19,7 @@ NetPBM::NetPBM(File& file) :
 
   _filebuf = (unsigned char *)malloc(size);
   file.read(_filebuf, size);
-  _filebuf[size] = '\0';
+  _filebuf[size - 1] = '\0';
 
   int ret = this->parse();
   if (ret < 0)
