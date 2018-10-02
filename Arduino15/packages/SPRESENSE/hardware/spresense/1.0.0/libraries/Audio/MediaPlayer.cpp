@@ -346,6 +346,9 @@ err_t MediaPlayer::write_fifo(File& myFile, char *p_es_buf, CMN_SimpleFifoHandle
 bool MediaPlayer::check_decode_dsp(uint8_t codec_type, const char *path)
 {
   char fullpath[32];
+  struct stat buf;
+  int retry;
+  int ret = 0;
   
   switch (codec_type)
     {
@@ -369,6 +372,24 @@ bool MediaPlayer::check_decode_dsp(uint8_t codec_type, const char *path)
 
       default:
         break;
+    }
+
+  if (0 == strncmp("/mnt/sd0", path, 8))
+    {
+      /* In case that SD card isn't inserted, it times out at max 2 sec */
+      for (retry = 0; retry < 20; retry++) {
+        ret = stat("/mnt/sd0", &buf);
+        if (ret == 0)
+          {
+            break;
+          }
+        usleep(100 * 1000); // 100 msec
+      }
+      if (ret)
+        {
+          print_err("SD card is not present.\n");
+          return false;
+        }
     }
 
   FILE *fp = fopen(fullpath, "r");
