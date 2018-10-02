@@ -1,5 +1,5 @@
 /*
- *  mnist.ino - hand written number recognition sample application
+ *  number_recognition.ino - hand written number recognition sample application
  *  Copyright 2018 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -18,9 +18,14 @@
  */
 
 /**
- * @file mnist.ino
+ * @file number_recognition.ino
  * @author Sony Semiconductor Solutions Corporation
- * @brief %DNNRT sample application.
+ * @brief DNNRT sample application.
+ *
+ * This sample uses the network model file (.nnb) and recognize image
+ * in pgm (portable greyscale map) file. Both of requred files should be
+ * placed at the SD card. And adjust file path (nnbfile and pgmfile) if
+ * needed.
  */
 
 #include <SDHCI.h>
@@ -36,10 +41,18 @@ void setup() {
     ; // wait for serial port to connect. Needed for native USB port only
   }
 
-  File nnbfile("lenet-5/data/lenet-5.nnb");
-  dnnrt.begin(nnbfile);
+  File nnbfile("network.nnb");
+  int ret = dnnrt.begin(nnbfile);
+  if (ret < 0) {
+    Serial.print("Runtime initialization failure. ");
+    Serial.print(ret);
+    Serial.println();
+    return;
+  }
 
-  File pgmfile("lenet-5/data/1.pgm");
+  // Image size for this network model is 28 x 28.
+
+  File pgmfile("number4.pgm");
   NetPBM pgm(pgmfile);
 
   unsigned short width, height;
@@ -50,7 +63,7 @@ void setup() {
 
   // Normalize pixel data into between 0.0 and 1.0.
   // PGM file is gray scale pixel map, so divide by 255.
-  // This normalization depends on the network.
+  // This normalization depends on the network model.
 
   for (int x = 0; x < height; x++) {
     for (int y = 0; y < width; y++) {
