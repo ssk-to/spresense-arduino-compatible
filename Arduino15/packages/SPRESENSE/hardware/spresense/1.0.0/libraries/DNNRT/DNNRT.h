@@ -189,6 +189,7 @@ public:
 private:
   float *_data;
   unsigned int _size;
+  bool _allocated;
 };
 
 #endif

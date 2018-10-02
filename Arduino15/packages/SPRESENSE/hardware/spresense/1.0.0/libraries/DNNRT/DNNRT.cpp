@@ -224,7 +224,8 @@ DNNRT::outputShapeSize(unsigned int index, unsigned int dindex)
 
 DNNVariable::DNNVariable() :
   _data(0),
-  _size(0)
+  _size(0),
+  _allocated(false)
 {
 }
 
@@ -232,11 +233,18 @@ DNNVariable::DNNVariable(unsigned int size)
 {
   _data = (float *)malloc(size * sizeof(float));
   _size = size;
+  _allocated = true;
 }
 
 DNNVariable::~DNNVariable()
 {
-  if (_data)
+  /*
+   * Free memory for allocated by constructor.
+   * When use this object as output, DNNRT class set _data member
+   * directory, so not free them.
+   */
+
+  if (_allocated)
     {
       free(_data);
     }
