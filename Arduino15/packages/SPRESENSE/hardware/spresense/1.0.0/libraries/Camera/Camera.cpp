@@ -128,7 +128,7 @@ size_t ImgBuff::calc_img_size(int w, int h, CAM_IMAGE_PIX_FMT fmt)
 void ImgBuff::update_actual_size(size_t sz)
 {
   if( sz >= buf_size ) sz = buf_size;
-  actual_size = buf_size;
+  actual_size = sz;
 }
 
 
@@ -704,14 +704,21 @@ CamErr CameraClass::setStillPictiureImageFormat( int img_width, int img_height, 
 // Public : Take a Picture.
 CamImage CameraClass::takePicture( )
 {
+  int ret;
+
   struct v4l2_buffer buf;
   long unsigned int take_num = 1;
 
   if( is_device_ready() && still_status == STILL_STATUS_QUEUED ){
     if( ioctl(video_fd, VIDIOC_TAKEPICT_START, take_num) == 0 ){
-      if(ioctl_dequeue_stream_buf(&buf, V4L2_BUF_TYPE_STILL_CAPTURE) == 0 ){
-        still_img->setActualSize((size_t)buf.bytesused);
-        return *still_img;
+      ret = ioctl_dequeue_stream_buf(&buf, V4L2_BUF_TYPE_STILL_CAPTURE);
+      if( ioctl(video_fd, VIDIOC_TAKEPICT_STOP, false) == 0 ){
+        if ( enqueue_video_buff(still_img) == CAM_ERR_SUCCESS ){
+          if(ret == 0 ){
+            still_img->setActualSize((size_t)buf.bytesused);
+            return *still_img;
+          }
+        }
       }
     }
   }
