@@ -407,7 +407,7 @@ void File::flush() {
     fflush(_fd);
 }
 
-int File::read(void *buf, uint16_t nbyte) {
+int File::read(void *buf, size_t nbyte) {
   int ret;
 
   if (_fd) {
