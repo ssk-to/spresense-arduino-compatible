@@ -249,3 +249,26 @@ DNNVariable::~DNNVariable()
       free(_data);
     }
 }
+
+int
+DNNVariable::maxIndex()
+{
+  float max = __FLT_MIN__;
+  int index;
+
+  if (_data == NULL)
+    {
+      return -1;
+    }
+
+  index = -1;
+  for (int i = 0; i < (int)_size; i++)
+    {
+      if (max < _data[i])
+        {
+          max = _data[i];
+          index = i;
+        }
+    }
+  return index;
+}
