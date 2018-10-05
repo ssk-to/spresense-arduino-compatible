@@ -42,6 +42,10 @@ void setup() {
   }
 
   File nnbfile("network.nnb");
+  if (!nnbfile) {
+    Serial.print("nnb not found");
+    return;
+  }
   int ret = dnnrt.begin(nnbfile);
   if (ret < 0) {
     Serial.print("Runtime initialization failure. ");
@@ -60,15 +64,18 @@ void setup() {
 
   DNNVariable input(width * height);
   float *buf = input.data();
+  int i = 0;
 
-  // Normalize pixel data into between 0.0 and 1.0.
-  // PGM file is gray scale pixel map, so divide by 255.
-  // This normalization depends on the network model.
+  /*
+   * Normalize pixel data into between 0.0 and 1.0.
+   * PGM file is gray scale pixel map, so divide by 255.
+   * This normalization depends on the network model.
+   */
 
   for (int x = 0; x < height; x++) {
     for (int y = 0; y < width; y++) {
-      *buf = float(pgm.getpixel(x, y)) / 255.0;
-      buf++;
+      buf[i] = float(pgm.getpixel(x, y)) / 255.0;
+      i++;
     }
   }
 
@@ -76,14 +83,19 @@ void setup() {
   dnnrt.forward();
   DNNVariable output = dnnrt.outputVariable(0);
 
-  for (unsigned int i = 0; i < output.size(); i++) {
-    if (output[i] > 0.8) {
-      Serial.print("Recognize ");
-      Serial.print(i);
-      Serial.println();
-      break;
-    }
-  }
+  /*
+   * Get index for maximum value.
+   * In this example network model, this index represents a number,
+   * so you can determine recognized number from this index.
+   */
+
+  int index = output.maxIndex();
+  Serial.print("Image is ");
+  Serial.print(index);
+  Serial.println();
+  Serial.print("value ");
+  Serial.print(output[index]);
+  Serial.println();
 
   dnnrt.end();
 }
