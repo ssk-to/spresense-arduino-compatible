@@ -124,7 +124,7 @@ public:
   * @param [in] nbyte The number of elements in buf.
   * @return The total number of bytes successfully read, or -1 if none is available 
   */
-  int read(void *buf, uint16_t nbyte);
+  int read(void *buf, size_t nbyte);
 
  /**
   * @brief Seek to a new position in the file.
