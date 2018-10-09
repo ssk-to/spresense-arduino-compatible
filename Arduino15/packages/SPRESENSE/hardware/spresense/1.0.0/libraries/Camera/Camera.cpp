@@ -137,7 +137,8 @@ size_t ImgBuff::calc_img_size(int w, int h, CAM_IMAGE_PIX_FMT fmt)
             break;
           case CAM_IMAGE_PIX_FMT_JPG:
             // In SPRESENSE SDK, JPEG compression quality=80 by default.
-            // In such setting, the maximum actual measured size of JPEG image            //  is about width * height * 2 / 9.
+            // In such setting, the maximum actual measured size of JPEG image
+            //  is about width * height * 2 / 9.
             // Therefore, devide by JPG_COMPRESS_RATIO = 7 with margin.
             ret = (size_t)(w * h * 2 / JPG_COMPRESS_RATIO);
             break;
