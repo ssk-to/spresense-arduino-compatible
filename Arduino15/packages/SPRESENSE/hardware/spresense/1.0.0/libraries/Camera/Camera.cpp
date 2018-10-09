@@ -121,6 +121,8 @@ void ImgBuff::delete_inst(ImgBuff *buf)
     }
 }
 
+#define JPG_COMPRESS_RATIO  (7)
+
 size_t ImgBuff::calc_img_size(int w, int h, CAM_IMAGE_PIX_FMT fmt)
 {
   size_t ret = -1;
@@ -136,7 +138,7 @@ size_t ImgBuff::calc_img_size(int w, int h, CAM_IMAGE_PIX_FMT fmt)
           case CAM_IMAGE_PIX_FMT_JPG:
             // JPG file's size is not fixed.
             // Max size is uncomplessed size.
-            ret = w * h * 2;
+            ret = (size_t)(w * h * 2 / JPG_COMPRESS_RATIO);
             break;
           default:
             break;
