@@ -174,6 +174,11 @@ public:
   DNNVariable(unsigned int size);
   ~DNNVariable();
 
+  /**
+   * Return size of data array in elements
+   *
+   * @return Data array size
+   */
   unsigned int size() {
     return _size;
   }
@@ -182,9 +187,24 @@ public:
     return _data[index];
   }
 
+  /**
+   * Return data array pointer
+   *
+   * This function uses create input data from any target data
+   * (image, sensing data, etc...)
+   *
+   * @return Pointer to data array in float
+   */
   float *data() {
     return _data;
   }
+
+  /**
+   * Return array index to the elements in maximum value
+   *
+   * @return Array index
+   */
+  int maxIndex();
 
 private:
   float *_data;
