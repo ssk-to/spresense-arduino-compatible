@@ -64,16 +64,17 @@ err_t MediaPlayer::create(PlayerId id)
   player_create_param.pool_id.es     = (id == Player0) ? DEC_ES_MAIN_BUF_POOL : DEC_ES_SUB_BUF_POOL;
   player_create_param.pool_id.pcm    = (id == Player0) ? REND_PCM_BUF_POOL : REND_PCM_SUB_BUF_POOL;
   player_create_param.pool_id.dsp    = DEC_APU_CMD_POOL;
+  player_create_param.pool_id.src_work = SRC_WORK_MAIN_BUF_POOL;
 
   bool result;
 
   if (id == Player0)
     {
-      result = AS_CreatePlayer(AS_PLAYER_ID_0, &player_create_param);
+      result = AS_CreatePlayerMulti(AS_PLAYER_ID_0, &player_create_param);
     }
   else
     {
-      result = AS_CreatePlayer(AS_PLAYER_ID_1, &player_create_param);
+      result = AS_CreatePlayerMulti(AS_PLAYER_ID_1, &player_create_param);
     }
 
   if (!result)
