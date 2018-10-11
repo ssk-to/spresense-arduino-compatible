@@ -573,7 +573,7 @@ public:
    * @return [en] Error code defined as #CamErr. <BR>
    *         [ja] #CamErr で定義されているエラーコード
    */
-  CamErr setStillPictiureImageFormat(
+  CamErr setStillPictureImageFormat(
     int img_width,                                    /**< [en] Image width of Still picture.(px)   <BR> [ja] 静止画写真の横サイズ (単位ピクセル) */
     int img_height,                                   /**< [en] Image height of Still picture.(px)  <BR> [ja] 静止画写真の縦サイズ (単位ピクセル) */
     CAM_IMAGE_PIX_FMT img_fmt = CAM_IMAGE_PIX_FMT_JPG /**< [en] Image pixcel format. (Default JPEG) <BR> [ja] 静止画ピクセルフォーマット (デフォルト JPEG) */

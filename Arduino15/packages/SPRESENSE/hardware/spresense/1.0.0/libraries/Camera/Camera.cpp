@@ -665,7 +665,7 @@ CamErr CameraClass::setAutoISOSensitive(bool enable)
 }
 
 // Public : Set ISO Sensitivity value in manual.
-CamErr CameraClass::setISOSensitivity(int iso_sense )
+CamErr CameraClass::setISOSensitivity(int iso_sense)
 {
   return set_ext_ctrls(V4L2_CTRL_CLASS_CAMERA,
                        V4L2_CID_ISO_SENSITIVITY,
@@ -681,7 +681,7 @@ CamErr CameraClass::setAutoWhiteBalanceMode(CAM_WHITE_BALANCE wb)
 }
 
 // Public : Scene Mode.
-CamErr CameraClass::setSceneMode(CAM_SCENE_MODE mode )
+CamErr CameraClass::setSceneMode(CAM_SCENE_MODE mode)
 {
   return set_ext_ctrls(V4L2_CTRL_CLASS_CAMERA,
                        V4L2_CID_SCENE_MODE,
@@ -689,7 +689,7 @@ CamErr CameraClass::setSceneMode(CAM_SCENE_MODE mode )
 }
 
 // Public : Color Effect
-CamErr CameraClass::setColorEffect(CAM_COLOR_FX effect  )
+CamErr CameraClass::setColorEffect(CAM_COLOR_FX effect)
 {
   return set_ext_ctrls(V4L2_CTRL_CLASS_USER,
                        V4L2_CID_COLORFX,
@@ -697,7 +697,7 @@ CamErr CameraClass::setColorEffect(CAM_COLOR_FX effect  )
 }
 
 // Public : Still Picture Format.
-CamErr CameraClass::setStillPictiureImageFormat( int img_width, int img_height, CAM_IMAGE_PIX_FMT img_fmt )
+CamErr CameraClass::setStillPictureImageFormat(int img_width, int img_height, CAM_IMAGE_PIX_FMT img_fmt)
 {
   CamErr err = CAM_ERR_SUCCESS;
 
