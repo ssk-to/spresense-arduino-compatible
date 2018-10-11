@@ -37,6 +37,7 @@
 
 #include <semaphore.h>
 #include <pthread.h>
+#include <mqueue.h>
 
 #include <video/video.h>
 
@@ -52,6 +53,7 @@ enum CAM_IMAGE_PIX_FMT {
   CAM_IMAGE_PIX_FMT_RGB565 = V4L2_PIX_FMT_RGB565, /**< RGB565 format */
   CAM_IMAGE_PIX_FMT_YUV422 = V4L2_PIX_FMT_UYVY,   /**< YUV422 packed. */
   CAM_IMAGE_PIX_FMT_JPG    = V4L2_PIX_FMT_JPEG,   /**< JPEG format */
+  CAM_IMAGE_PIX_FMT_GRAY,                         /**< Gray-scale */
   CAM_IMAGE_PIX_FMT_NONE,                         /**< No defined format */
 };
 
@@ -71,6 +73,7 @@ enum CamErr {
   CAM_ERR_CANT_CREATE_THREAD = -6,
   CAM_ERR_INVALID_PARAM = -7,   /**< [en] Invalid parameter is detected. <BR> [jp] 不正なパラメータを検出しました */
   CAM_ERR_NO_MEMORY = -8,       /**< [en] No memory on the device.       <BR> [jp] メモリが足りません */
+  CAM_ERR_USR_INUSED = -9,      /**< [en] Buffer is using by user.       <BR> [jp] メモリが足りません */
 };
 
 
@@ -219,6 +222,7 @@ class ImgBuff {
   int width;
   int height;
   int idx;
+  bool is_queue;
   enum v4l2_buf_type buf_type;
 
   CAM_IMAGE_PIX_FMT pix_fmt;
@@ -238,6 +242,9 @@ class ImgBuff {
 
   void lock()  { if(buff!=NULL) sem_wait(&my_sem); };
   void unlock(){ if(buff!=NULL) sem_post(&my_sem); };
+
+  void queued(bool q){ lock(); is_queue = q; unlock(); };
+  bool is_queued(void){ bool ret; lock(); ret = is_queue; unlock(); return ret; };
 
   void incRef();
   bool decRef();
@@ -392,6 +399,7 @@ private:
 };
 
 
+
 /**
  * @class CameraClass
  * @brief [en] The class to control Spresense Camera. <BR>
@@ -412,8 +420,6 @@ private:
   sem_t video_cb_access_sem;
   camera_cb_t video_cb;
 
-  int still_status;
-
   CameraClass(const char *path);
 
   bool check_video_fmtparam(int w, int h, CAM_VIDEO_FPS fps, CAM_IMAGE_PIX_FMT fmt);
@@ -431,11 +437,18 @@ private:
   void lock_video_cb()  { sem_wait(&video_cb_access_sem); };
   void unlock_video_cb(){ sem_post(&video_cb_access_sem); };
 
-  pthread_t dq_tid;
-  pthread_attr_t dq_tattr;
+  pthread_t frame_tid;
   static void frame_handle_thread(void *);
-  static const int CAM_DQ_THREAD_STACK_SIZE = 2048;
-  static const int CAM_DQ_THREAD_STACK_PRIO = 100;
+  static const int CAM_FRAME_THREAD_STACK_SIZE = 2048;
+  static const int CAM_FRAME_THREAD_STACK_PRIO = 101;
+
+  mqd_t frame_exchange_mq;
+  static const int CAM_FRAME_MQ_SIZE = 1;
+
+  pthread_t dq_tid;
+  static void dqbuf_thread(void *);
+  static const int CAM_DQ_THREAD_STACK_SIZE = 1024;
+  static const int CAM_DQ_THREAD_STACK_PRIO = 102;
 
   int ioctl_dequeue_stream_buf(struct v4l2_buffer *buf, uint16_t type);
   CamImage *search_vimg(int index);

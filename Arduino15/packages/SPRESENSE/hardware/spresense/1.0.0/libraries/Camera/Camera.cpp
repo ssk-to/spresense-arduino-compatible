@@ -29,19 +29,20 @@
 #include <sched.h>
 
 #include <Camera.h>
+#include <image/libimg.h>
 
 /****************************************************************************
  * ImgBuff implementation.
  ****************************************************************************/
 ImgBuff::ImgBuff()
-  : ref_count(0), buff(NULL), width(0), height(0), idx(-1),
+  : ref_count(0), buff(NULL), width(0), height(0), idx(-1), is_queue(false),
     buf_type(V4L2_BUF_TYPE_VIDEO_CAPTURE), cam_ref(NULL)
 {
 }
 
 ImgBuff::ImgBuff(enum v4l2_buf_type type,
                  int w, int h, CAM_IMAGE_PIX_FMT fmt, CameraClass *cam)
-  : ref_count(0), buff(NULL), width(0), height(0), idx(-1),
+  : ref_count(0), buff(NULL), width(0), height(0), idx(-1), is_queue(false),
     buf_type(type), pix_fmt(CAM_IMAGE_PIX_FMT_NONE),
     buf_size(0), actual_size(0), cam_ref(NULL)
 {
@@ -178,9 +179,37 @@ CamImage &CamImage::operator=(const CamImage &obj)
   return (*this);
 }
 
-CamErr CamImage::convertPixFormat(CAM_IMAGE_PIX_FMT fmt)
+CamErr CamImage::convertPixFormat(CAM_IMAGE_PIX_FMT to_fmt)
 {
-  // TODO
+  CAM_IMAGE_PIX_FMT from_fmt = getPixFormat();
+  int               width    = getWidth();
+  int               height   = getHeight();
+  uint8_t           *buff    = getImgBuff();
+
+  switch (from_fmt)
+    {
+      case CAM_IMAGE_PIX_FMT_YUV422:
+        switch (to_fmt)
+          {
+            case CAM_IMAGE_PIX_FMT_RGB565:
+              libimg_convert_yuv2rgb(buff, width, height);
+              break;
+
+            case CAM_IMAGE_PIX_FMT_GRAY:
+              libimg_convert_yuv2gray(buff, buff, width, height);
+              setActualSize(width * height);
+              break;
+
+            default:
+              return CAM_ERR_INVALID_PARAM;
+          }
+
+        break;
+
+      default:
+        return CAM_ERR_INVALID_PARAM;
+    }
+
   return CAM_ERR_SUCCESS;
 }
 
@@ -207,6 +236,15 @@ CamImage::~CamImage()
  ****************************************************************************/
 
 #define VIDEO_DEV_FILE_NAME "/dev/video"
+
+#define DELETE_CAMIMAGE(param_img) do {   \
+  if((param_img)){                        \
+    delete (param_img)->img_buff;         \
+    (param_img)->img_buff = NULL;         \
+    delete (param_img);                   \
+    (param_img) = NULL;                   \
+  }                                       \
+}while(0)
 
 // Private : Camera singleton instance.
 CameraClass *CameraClass::instance = NULL;
@@ -237,7 +275,6 @@ CameraClass::CameraClass(const char *path)
   loop_dqbuf_en = false;
   video_cb = NULL;
   dq_tid = -1;
-  still_status = STILL_STATUS_NO_INIT;
   sem_init(&video_cb_access_sem, 0, 1);
 }
 
@@ -311,7 +348,7 @@ CamErr CameraClass::create_videobuff(int w, int h, int buff_num, CAM_IMAGE_PIX_F
           while (i > 0)
             {
               i--;
-              delete video_imgs[i];
+              DELETE_CAMIMAGE(video_imgs[i]);
             }
           delete video_imgs;
           return CAM_ERR_NO_MEMORY;
@@ -324,13 +361,22 @@ CamErr CameraClass::create_videobuff(int w, int h, int buff_num, CAM_IMAGE_PIX_F
   return CAM_ERR_SUCCESS;
 }
 
+#define STILL_BUFF_IDX  (1000)
+
 // Private : Create Still picture buffers.
 CamErr CameraClass::create_stillbuff(int w, int h, CAM_IMAGE_PIX_FMT fmt)
 {
   if (still_img != NULL)
     {
-      // TODO How to dequeue the enqueued buffer.
-      delete still_img;
+      if (still_img->img_buff->is_queued())
+        {
+          ioctl(video_fd, VIDIOC_CANCEL_DQBUF, still_img->getType());
+          DELETE_CAMIMAGE(still_img);
+        }
+      else
+        {
+          return CAM_ERR_USR_INUSED;
+        }
     }
 
   still_img = new CamImage(V4L2_BUF_TYPE_STILL_CAPTURE, w, h, fmt, this);
@@ -340,7 +386,7 @@ CamErr CameraClass::create_stillbuff(int w, int h, CAM_IMAGE_PIX_FMT fmt)
       return CAM_ERR_NO_MEMORY;
     }
 
-  still_img->setIdx(0);
+  still_img->setIdx(STILL_BUFF_IDX);
 
   return CAM_ERR_SUCCESS;
 }
@@ -353,7 +399,7 @@ void CameraClass::delete_videobuff()
       {
         if (video_imgs[i])
           {
-            delete video_imgs[i];
+            DELETE_CAMIMAGE(video_imgs[i]);
           }
       }
     delete video_imgs;
@@ -399,6 +445,8 @@ CamErr CameraClass::enqueue_video_buff(CamImage * img)
       // TODO
       return CAM_ERR_ILLIGAL_DEVERR;
     }
+
+  img->img_buff->queued(true);
 
   return CAM_ERR_SUCCESS;
 }
@@ -459,25 +507,59 @@ CamErr CameraClass::set_video_frame_rate(CAM_VIDEO_FPS fps)
   return CAM_ERR_SUCCESS;
 }
 
+#define CAM_FRAME_MQ_NAME "thecamera_mq"
+
 CamErr CameraClass::create_dq_thread()
 {
   CamErr err = CAM_ERR_SUCCESS;
 
   struct sched_param param;
+  pthread_attr_t tattr;
+  struct mq_attr mq_attr;
 
-  pthread_attr_init(&dq_tattr);
-  dq_tattr.stacksize = CAM_DQ_THREAD_STACK_SIZE;
-  param.sched_priority = CAM_DQ_THREAD_STACK_PRIO;
-  pthread_attr_setschedparam(&dq_tattr, &param);
+  mq_attr.mq_maxmsg  = CAM_FRAME_MQ_SIZE;
+  mq_attr.mq_msgsize = sizeof(CamImage *);
+  mq_attr.mq_flags   = 0;
+
+  // Message queue for exchange frame buffer between dqbuf_thread and frame_handling_thread.
+  frame_exchange_mq = mq_open(CAM_FRAME_MQ_NAME, (O_RDWR | O_CREAT), 0666, &mq_attr);
+  if(frame_exchange_mq < 0)
+    {
+      return CAM_ERR_ILLIGAL_DEVERR;
+    }
+
+  // thread for callback to user operation.
+  pthread_attr_init(&tattr);
+  tattr.stacksize = CAM_FRAME_THREAD_STACK_SIZE;
+  param.sched_priority = CAM_FRAME_THREAD_STACK_PRIO;
+  pthread_attr_setschedparam(&tattr, &param);
 
   loop_dqbuf_en = true;
   if (pthread_create(
         &dq_tid,
-        &dq_tattr,
+        &tattr,
         (pthread_startroutine_t)CameraClass::frame_handle_thread,
         (void *)this))
     {
       loop_dqbuf_en = false;
+      mq_close(frame_exchange_mq);
+      return CAM_ERR_CANT_CREATE_THREAD;
+    }
+
+  // thread for dqbuf from video driver.
+  pthread_attr_init(&tattr);
+  tattr.stacksize = CAM_DQ_THREAD_STACK_SIZE;
+  param.sched_priority = CAM_DQ_THREAD_STACK_PRIO;
+  pthread_attr_setschedparam(&tattr, &param);
+
+  if (pthread_create(
+        &dq_tid,
+        &tattr,
+        (pthread_startroutine_t)CameraClass::dqbuf_thread,
+        (void *)this))
+    {
+      loop_dqbuf_en = false;
+      mq_close(frame_exchange_mq);
       err = CAM_ERR_CANT_CREATE_THREAD;
     }
 
@@ -566,6 +648,8 @@ CamErr CameraClass::begin( int video_width, int video_height, CAM_VIDEO_FPS fps,
     {
       goto label_err_with_memaligned;
     }
+
+  init_libimg();
 
   return ret; // Success begin.
 
@@ -697,34 +781,36 @@ CamErr CameraClass::setColorEffect(CAM_COLOR_FX effect)
 }
 
 // Public : Still Picture Format.
-CamErr CameraClass::setStillPictureImageFormat(int img_width, int img_height, CAM_IMAGE_PIX_FMT img_fmt)
+CamErr CameraClass::setStillPictureImageFormat( int img_width, int img_height, CAM_IMAGE_PIX_FMT img_fmt )
 {
   CamErr err = CAM_ERR_SUCCESS;
 
-  if (is_device_ready() && (still_status != STILL_STATUS_TAKING))
+  if (is_device_ready())
     {
       if (check_video_fmtparam(img_width,
                                img_height,
                                CAM_VIDEO_FPS_NONE,
                                img_fmt))
         {
-          err = set_frame_parameters(V4L2_BUF_TYPE_STILL_CAPTURE,
-                                     img_width, img_height, 1, img_fmt);
+          err = create_stillbuff(img_width, img_height, img_fmt);
           if (err == CAM_ERR_SUCCESS)
             {
-              err = create_stillbuff(img_width, img_height, img_fmt);
+              err = set_frame_parameters(V4L2_BUF_TYPE_STILL_CAPTURE,
+                                         img_width, img_height, 1, img_fmt);
               if (err == CAM_ERR_SUCCESS)
                 {
-                  err = enqueue_video_buff(still_img);
-
-                  still_status = STILL_STATUS_QUEUED;
+                  enqueue_video_buff(still_img);
+                }
+              else
+                {
+                  DELETE_CAMIMAGE(still_img);
                 }
             }
-      }
-    else
-      {
-        err = CAM_ERR_INVALID_PARAM;
-      }
+        }
+      else
+        {
+          err = CAM_ERR_INVALID_PARAM;
+        }
     }
   else
     {
@@ -737,21 +823,19 @@ CamErr CameraClass::setStillPictureImageFormat(int img_width, int img_height, CA
 // Public : Take a Picture.
 CamImage CameraClass::takePicture( )
 {
-  int ret;
-
   struct v4l2_buffer buf;
   long unsigned int take_num = 1;
 
-  if (is_device_ready() && (still_status == STILL_STATUS_QUEUED))
+  if (is_device_ready())
     {
-      if (ioctl(video_fd, VIDIOC_TAKEPICT_START, take_num) == 0)
+      if(still_img && still_img->img_buff->is_queued())
         {
-          ret = ioctl_dequeue_stream_buf(&buf, V4L2_BUF_TYPE_STILL_CAPTURE);
-          if (ioctl(video_fd, VIDIOC_TAKEPICT_STOP, false) == 0)
+          if (ioctl(video_fd, VIDIOC_TAKEPICT_START, take_num) == 0)
             {
-              if (enqueue_video_buff(still_img) == CAM_ERR_SUCCESS)
+              if (ioctl_dequeue_stream_buf(&buf, V4L2_BUF_TYPE_STILL_CAPTURE) == 0)
                 {
-                  if (ret == 0)
+                  still_img->img_buff->queued(false);
+                  if (ioctl(video_fd, VIDIOC_TAKEPICT_STOP, false) == 0)
                     {
                       still_img->setActualSize((size_t)buf.bytesused);
                       return *still_img;
@@ -797,8 +881,8 @@ CamImage *CameraClass::search_vimg(int index)
   return img;
 }
 
-// Private Static : Frame buffer handling thread.
-void CameraClass::frame_handle_thread(void *arg)
+// Private Static : dqbuf buffer handling thread.
+void CameraClass::dqbuf_thread(void *arg)
 {
   struct v4l2_buffer buf;
   CameraClass *cam = (CameraClass *)arg;
@@ -808,31 +892,65 @@ void CameraClass::frame_handle_thread(void *arg)
       if (cam->ioctl_dequeue_stream_buf(&buf, V4L2_BUF_TYPE_VIDEO_CAPTURE)
            == 0)
         {
-          cam->lock_video_cb();
-
-          if (cam->video_cb != NULL)
+          CamImage *img = cam->search_vimg(buf.index);
+          img->img_buff->queued(false);
+          if (img != NULL)
             {
-              CamImage *img = cam->search_vimg(buf.index);
-              if (img != NULL)
+              img->setActualSize((size_t)buf.bytesused);
+              if(mq_send(cam->frame_exchange_mq, (const char *)&img, sizeof(CamImage *), 0)
+                  < 0)
                 {
-                  img->setActualSize((size_t)buf.bytesused);
+                  // in error case, the buf returns camera queue.
+                  cam->enqueue_video_buff(img);
+                }
+            }
+        }
+    }
+}
+
+// Private Static : dqbuf buffer handling thread.
+void CameraClass::frame_handle_thread(void *arg)
+{
+  CameraClass *cam = (CameraClass *)arg;
+  CamImage *img = NULL;
+
+  while (cam->loop_dqbuf_en)
+    {
+      if(mq_receive(cam->frame_exchange_mq, (char *)&img, sizeof(CamImage *), 0)
+           >= 0)
+        {
+          if(img)
+            {
+              cam->lock_video_cb();
+              if (cam->video_cb != NULL)
+                {
                   cam->video_cb(*img);
                 }
-             }
-
-          cam->unlock_video_cb();
+              else
+                {
+                  // No one handles this. Back to queue then.
+                  cam->enqueue_video_buff(img);
+                }
+              cam->unlock_video_cb();
+            }
         }
-      usleep(1); /* Sleep for task dispatch */
     }
-
 }
+
 
 // Private Static : 
 void CameraClass::release_buf(ImgBuff *buf)
 {
+  int idx = buf->idx;
+  if (still_img && still_img->isIdx(idx))
+    {
+      enqueue_video_buff(still_img);
+      return;
+    }
+
   for (int i=0; i < video_buf_num; i++)
     {
-      if (video_imgs[i]->isIdx(buf->idx))
+      if (video_imgs[i]->isIdx(idx))
         {
           enqueue_video_buff(video_imgs[i]);
           break;
