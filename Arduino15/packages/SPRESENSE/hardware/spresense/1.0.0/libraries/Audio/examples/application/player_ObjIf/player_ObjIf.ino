@@ -144,6 +144,10 @@ void setup()
 
   usleep(100 * 1000);
 
+  /* Set rendering clock */
+
+  theMixer->setRenderingClkMode(OUTPUTMIXER_RNDCLK_NORMAL);
+
   /*
    * Initialize main player to decode stereo mp3 stream with 48 kb/s sample rate
    * Search for MP3 codec in "/mnt/sd0/BIN" directory

@@ -73,6 +73,10 @@ void setup()
 
   usleep(100 * 1000);
 
+  /* Set capture clock */
+
+  theRecorder->setCapturingClkMode(MEDIARECORDER_CAPCLK_NORMAL);
+
   /*
    * Initialize recorder to decode stereo wav stream with 48kHz sample rate
    * Search for SRC filter in "/mnt/sd0/BIN" directory
