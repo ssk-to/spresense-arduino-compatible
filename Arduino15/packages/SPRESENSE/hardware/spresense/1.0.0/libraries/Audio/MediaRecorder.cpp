@@ -523,3 +523,26 @@ bool MediaRecorder::deactivateBaseband(void)
   return true;
 }
 
+/*--------------------------------------------------------------------------*/
+bool MediaRecorder::setCapturingClkMode(uint8_t clk_mode)
+{
+  CXD56_AUDIO_ECODE error_code = CXD56_AUDIO_ECODE_OK;
+
+  cxd56_audio_clkmode_t mode;
+
+  mode = (clk_mode == MEDIARECORDER_CAPCLK_NORMAL)
+           ? CXD56_AUDIO_CLKMODE_NORMAL : CXD56_AUDIO_CLKMODE_HIRES;
+
+  error_code = cxd56_audio_set_clkmode(mode);
+
+  if (error_code != CXD56_AUDIO_ECODE_OK)
+    {
+      print_err("cxd56_audio_set_clkmode() error! [%d]\n", error_code);
+      return false;
+    }
+
+  return true;
+}
+
+
+
