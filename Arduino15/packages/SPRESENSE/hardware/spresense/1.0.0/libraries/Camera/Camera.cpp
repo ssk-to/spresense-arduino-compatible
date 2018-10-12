@@ -29,7 +29,7 @@
 #include <sched.h>
 
 #include <Camera.h>
-#include <image/libimg.h>
+#include <imageproc/imageproc.h>
 
 /****************************************************************************
  * ImgBuff implementation.
@@ -192,11 +192,11 @@ CamErr CamImage::convertPixFormat(CAM_IMAGE_PIX_FMT to_fmt)
         switch (to_fmt)
           {
             case CAM_IMAGE_PIX_FMT_RGB565:
-              libimg_convert_yuv2rgb(buff, width, height);
+              imageproc_convert_yuv2rgb(buff, width, height);
               break;
 
             case CAM_IMAGE_PIX_FMT_GRAY:
-              libimg_convert_yuv2gray(buff, buff, width, height);
+              imageproc_convert_yuv2gray(buff, buff, width, height);
               setActualSize(width * height);
               break;
 
@@ -649,7 +649,7 @@ CamErr CameraClass::begin( int video_width, int video_height, CAM_VIDEO_FPS fps,
       goto label_err_with_memaligned;
     }
 
-  init_libimg();
+  imageproc_initialize();
 
   return ret; // Success begin.
 
