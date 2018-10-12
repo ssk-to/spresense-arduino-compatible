@@ -368,23 +368,6 @@ public:
    */
   CamErr convertPixFormat(CAM_IMAGE_PIX_FMT to_fmt /**< [en] Pixcel format which is convert to. <BR> [ja] 変換するピクセルフォーマット */);
 
-
-  /**
-   * @brief Resize Image.
-   * @details [en] Resize the image. Internaly, new CamImage instance is created.
-   *               If any error occured such as zero size case, it returns empty CamImage instance. <BR>
-   *          [ja] 画像のリサイズを行う。内部で新たにCamImageインスタンスが生成される。
-   *               指定されたサイズがゼロの場合など、何らかのエラーが起きた場合、空の
-   *               CamImageインスタンスを返す。
-   * @return [en] Instance of CamImage with new Image size. <BR>
-   *         [jp] 新たな画像サイズのCamImageインスタンス
-   */
-  CamImage resizeImage(
-    int width, /**< [en] Width to resize  <BR> [ja] リサイズする画像の横サイズ */
-    int height /**< [en] Height to resize <BR> [ja] リサイズする画像の縦サイズ */
-  );
-
-
   /**
    * @brief Destructor of CamImage.
    * @details [en] Destroy CamImage <BR>
@@ -521,15 +504,6 @@ public:
   CamErr setAutoWhiteBalance(bool enable /**< [en] Start or Stop Auto White Balance. (true : start, false : stop) <BR> [ja] 自動ホワイトバランス調整の開始/停止 (true : 開始、false : 停止) */);
 
   /**
-   * @brief Control Auto Exposure
-   * @details [en] Start / Stop Auto Exposure <BR>
-   *          [ja] 自動露光調整の開始/停止の制御を行う
-   * @return [en] Error code defined as #CamErr. <BR>
-   *         [ja] #CamErr で定義されているエラーコード
-   */
-  CamErr setAutoExposure(bool enable /**< [en] Start or Stop Auto Exposure. (true : start, false : stop) <BR> [ja] 自動露光調整の開始/停止 (true : 開始、false : 停止) */);
-
-  /**
    * @brief Control Auto ISO Sensitivity
    * @details [en] Start / Stop Auto ISO Sensitivity <BR>
    *          [ja] 自動ISO感度調整の開始/停止の制御を行う
@@ -559,16 +533,6 @@ public:
    *         [ja] #CamErr で定義されているエラーコード
    */
   CamErr setAutoWhiteBalanceMode(CAM_WHITE_BALANCE wb /**< [en] White Balance mode. Choose one from #CAM_WHITE_BALANCE <BR> [ja] ホワイトバランスモード設定。 #CAM_WHITE_BALANCE より設定値を選択する */);
-
-  /**
-   * @brief Set Scene Mode.
-   * @details [en] Set Scene Mode. <BR>
-   *          [ja] シーンモードの設定。
-   * @return [en] Error code defined as #CamErr. <BR>
-   *         [ja] #CamErr で定義されているエラーコード
-   */
-  CamErr setSceneMode(CAM_SCENE_MODE mode /**< [en] Scene mode parameter. Choose one from #CAM_SCENE_MODE <BR> [ja] シーンモード設定値。 #CAM_SCENE_MODE から選択する */);
-
 
   /**
    * @brief Set Color Effect.
