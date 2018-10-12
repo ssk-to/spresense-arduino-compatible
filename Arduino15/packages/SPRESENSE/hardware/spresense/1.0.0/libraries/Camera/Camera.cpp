@@ -567,7 +567,7 @@ CamErr CameraClass::create_dq_thread()
 }
 
 // Public : Start to use the Camera.
-CamErr CameraClass::begin( int video_width, int video_height, CAM_VIDEO_FPS fps, int buff_num, CAM_IMAGE_PIX_FMT video_fmt )
+CamErr CameraClass::begin(int buff_num, CAM_VIDEO_FPS fps, int video_width, int video_height, CAM_IMAGE_PIX_FMT video_fmt )
 {
   CamErr ret = CAM_ERR_SUCCESS;
 
