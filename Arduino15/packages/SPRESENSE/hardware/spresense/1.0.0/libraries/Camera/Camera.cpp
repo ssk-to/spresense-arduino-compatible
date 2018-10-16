@@ -213,6 +213,11 @@ CamErr CamImage::convertPixFormat(CAM_IMAGE_PIX_FMT to_fmt)
   return CAM_ERR_SUCCESS;
 }
 
+bool CamImage::isAvailable(void)
+{
+   return (img_buff != NULL && img_buff->actual_size > 0);
+}
+
 
 CamImage::CamImage(enum v4l2_buf_type type,
                    int w, int h, CAM_IMAGE_PIX_FMT fmt, CameraClass *cam)
@@ -284,6 +289,7 @@ CameraClass::~CameraClass()
   video_uninitialize();
   CameraClass::instance = NULL;
 }
+
 
 // Private : Validate video frame parameters.
 bool CameraClass::check_video_fmtparam(int w, int h, CAM_VIDEO_FPS fps, CAM_IMAGE_PIX_FMT fmt)

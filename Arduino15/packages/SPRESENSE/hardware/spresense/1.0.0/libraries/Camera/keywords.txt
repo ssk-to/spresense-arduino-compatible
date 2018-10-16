@@ -9,6 +9,7 @@ getHeight                  KEYWORD2
 getImgBuff                 KEYWORD2
 getImgSize                 KEYWORD2
 getPixFormat               KEYWORD2
+isAvailable                KEYWORD2
 convertPixFormat           KEYWORD2
 
 begin                      KEYWORD2

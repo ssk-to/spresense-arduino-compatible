@@ -101,10 +101,10 @@ enum CAM_WHITE_BALANCE {
 #define CAM_IMGSIZE_QVGA_V    VIDEO_VSIZE_QVGA      /**< QVGA    vertical   size */
 #define CAM_IMGSIZE_VGA_H     VIDEO_HSIZE_VGA       /**< VGA     horizontal size */
 #define CAM_IMGSIZE_VGA_V     VIDEO_VSIZE_VGA       /**< VGA     vertical   size */
-#define CAM_IMGSIZE_QUADVGA_H VIDEO_HSIZE_QUADVGA   /**< QUADVGA horizontal size */
-#define CAM_IMGSIZE_QUADVGA_V VIDEO_VSIZE_QUADVGA   /**< QUADVGA vertical   size */
 #define CAM_IMGSIZE_HD_H      VIDEO_HSIZE_HD        /**< HD      horizontal size */
 #define CAM_IMGSIZE_HD_V      VIDEO_VSIZE_HD        /**< HD      vertical   size */
+#define CAM_IMGSIZE_QUADVGA_H VIDEO_HSIZE_QUADVGA   /**< QUADVGA horizontal size */
+#define CAM_IMGSIZE_QUADVGA_V VIDEO_VSIZE_QUADVGA   /**< QUADVGA vertical   size */
 #define CAM_IMGSIZE_FULLHD_H  VIDEO_HSIZE_FULLHD    /**< FULLHD  horizontal size */
 #define CAM_IMGSIZE_FULLHD_V  VIDEO_VSIZE_FULLHD    /**< FULLHD  vertical   size */
 #define CAM_IMGSIZE_5M_H      VIDEO_HSIZE_5M        /**< 5M      horizontal size */
@@ -384,6 +384,15 @@ public:
     int height /**< [en] Height to resize <BR> [ja] リサイズする画像の縦サイズ */
   );
 #endif
+
+  /**
+   * @brief Check valid image data.
+   * @details [en] Confirm availability of this image instance.<BR>
+   *          [ja] 利用可能な画像データかどうかをチェックする。
+   * @return [en] true if the instance has correct image.<BR>
+   *         [ja] 利用可能な画像データであればtrueが返る。
+   */
+  bool isAvailable(void);
 
   /**
    * @brief Destructor of CamImage.
