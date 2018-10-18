@@ -830,7 +830,7 @@ CamErr CameraClass::setStillPictureImageFormat( int img_width, int img_height, C
 CamImage CameraClass::takePicture( )
 {
   struct v4l2_buffer buf;
-  long unsigned int take_num = 1;
+  long unsigned int take_num = 0; /* Currently, not support positive value. */
 
   if (is_device_ready())
     {
