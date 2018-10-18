@@ -71,15 +71,15 @@ void setup()
 
   puts("initialization MediaRecorder");
 
+  /* Set capture clock */
+
+  theRecorder->setCapturingClkMode(MEDIARECORDER_CAPCLK_NORMAL);
+
   /* Activate Objects. Set output device to Speakers/Headphones */
 
   theRecorder->activate(AS_SETRECDR_STS_INPUTDEVICE_MIC, mediarecorder_done_callback);
 
   usleep(100 * 1000);
-
-  /* Set capture clock */
-
-  theRecorder->setCapturingClkMode(MEDIARECORDER_CAPCLK_NORMAL);
 
   /*
    * Initialize main player to decode stereo mp3 stream with 48 kb/s sample rate

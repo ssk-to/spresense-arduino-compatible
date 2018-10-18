@@ -137,16 +137,16 @@ void setup()
 
   theMixer->create();
 
+  /* Set rendering clock */
+
+  theMixer->setRenderingClkMode(OUTPUTMIXER_RNDCLK_NORMAL);
+
   /* Activate Objects. Set output device to Speakers/Headphones */
   thePlayer->activate(MediaPlayer::Player0, AS_SETPLAYER_OUTPUTDEVICE_SPHP, mediaplayer_done_callback);
 
   theMixer->activate(OutputMixer0, outputmixer_done_callback);
 
   usleep(100 * 1000);
-
-  /* Set rendering clock */
-
-  theMixer->setRenderingClkMode(OUTPUTMIXER_RNDCLK_NORMAL);
 
   /*
    * Initialize main player to decode stereo mp3 stream with 48 kb/s sample rate
