@@ -155,7 +155,7 @@ err_t AudioClass::end(void)
  ****************************************************************************/
 extern "C" {
 
-void attentionCallback(const ErrorAttentionParam *attparam)
+static void attentionCallback(const ErrorAttentionParam *attparam)
 {
   print_err("Attention!! Level 0x%x Code 0x%x\n", attparam->error_code, attparam->error_att_sub_code);
 }
@@ -197,7 +197,7 @@ err_t AudioClass::begin_player(void)
   player_create_param.pool_id.dsp      = DEC_APU_CMD_POOL;
   player_create_param.pool_id.src_work = SRC_WORK_MAIN_BUF_POOL;
 
-  int act_rst = AS_CreatePlayerMulti(AS_PLAYER_ID_0, &player_create_param);
+  int act_rst = AS_CreatePlayerMulti(AS_PLAYER_ID_0, &player_create_param, NULL);
   if (!act_rst)
     {
       print_err("AS_CreatePlayer failed. system memory insufficient!\n");
@@ -213,7 +213,7 @@ err_t AudioClass::begin_player(void)
   player_create_param.pool_id.dsp      = DEC_APU_CMD_POOL;
   player_create_param.pool_id.src_work = SRC_WORK_SUB_BUF_POOL;
 
-  act_rst = AS_CreatePlayerMulti(AS_PLAYER_ID_1, &player_create_param);
+  act_rst = AS_CreatePlayerMulti(AS_PLAYER_ID_1, &player_create_param, NULL);
   if (!act_rst)
     {
       print_err("AS_CreatePlayer failed. system memory insufficient!\n");
@@ -230,7 +230,7 @@ err_t AudioClass::begin_player(void)
   output_mix_create_param.pool_id.render_path0_filter_dsp = PF0_APU_CMD_POOL;
   output_mix_create_param.pool_id.render_path1_filter_dsp = PF1_APU_CMD_POOL;
 
-  act_rst = AS_CreateOutputMixer(&output_mix_create_param);
+  act_rst = AS_CreateOutputMixer(&output_mix_create_param, NULL);
   if (!act_rst)
     {
       print_err("AS_CreateOutputMix failed. system memory insufficient!\n");
@@ -266,7 +266,7 @@ err_t AudioClass::begin_recorder(void)
   recorder_act_param.pool_id.output        = OUTPUT_BUF_POOL;
   recorder_act_param.pool_id.dsp           = ENC_APU_CMD_POOL;
 
-  if (!AS_CreateMediaRecorder(&recorder_act_param))
+  if (!AS_CreateMediaRecorder(&recorder_act_param, NULL))
     {
       print_err("AS_CreateMediaRecorder failed. system memory insufficient!\n");
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;

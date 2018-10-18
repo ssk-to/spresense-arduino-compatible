@@ -32,6 +32,15 @@
 #include "memutil/mem_layout.h"
 #include "memutil/memory_layout.h"
 
+extern "C" {
+
+static void attentionCallback(const ErrorAttentionParam *attparam)
+{
+  print_err("Attention!! Level 0x%x Code 0x%x\n", attparam->error_code, attparam->error_att_sub_code);
+}
+
+}
+
 /****************************************************************************
  * Public API on OutputMixer Class
  ****************************************************************************/
@@ -49,7 +58,7 @@ err_t OutputMixer::create(void)
   output_mix_create_param.pool_id.render_path0_filter_dsp = PF0_APU_CMD_POOL;
   output_mix_create_param.pool_id.render_path1_filter_dsp = PF1_APU_CMD_POOL;
 
-  bool result = AS_CreateOutputMixer(&output_mix_create_param);
+  bool result = AS_CreateOutputMixer(&output_mix_create_param, attentionCallback);
 
   if (!result)
     {
