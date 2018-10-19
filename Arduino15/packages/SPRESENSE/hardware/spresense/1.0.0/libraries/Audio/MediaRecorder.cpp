@@ -38,6 +38,15 @@ void  output_device_callback(uint32_t size)
     /* do nothing */
 }
 
+extern "C" {
+
+static void attentionCallback(const ErrorAttentionParam *attparam)
+{
+  print_err("Attention!! Level 0x%x Code 0x%x\n", attparam->error_code, attparam->error_att_sub_code);
+}
+
+}
+
 /****************************************************************************
  * Public API on MediaRecorder Class
  ****************************************************************************/
@@ -62,7 +71,7 @@ err_t MediaRecorder::begin(void)
   recorder_create_param.pool_id.output   = OUTPUT_BUF_POOL;
   recorder_create_param.pool_id.dsp      = ENC_APU_CMD_POOL;
 
-  result = AS_CreateMediaRecorder(&recorder_create_param);
+  result = AS_CreateMediaRecorder(&recorder_create_param, attentionCallback);
   if (!result)
     {
       print_err("Error: AS_CreateMediaRecorder() failure!\n");

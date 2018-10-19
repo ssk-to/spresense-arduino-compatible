@@ -37,6 +37,15 @@ void  input_device_callback(uint32_t size)
     /* do nothing */
 }
 
+extern "C" {
+
+static void attentionCallback(const ErrorAttentionParam *attparam)
+{
+  print_err("Attention!! Level 0x%x Code 0x%x\n", attparam->error_code, attparam->error_att_sub_code);
+}
+
+}
+
 /****************************************************************************
  * Public API on MediaPlayer Class
  ****************************************************************************/
@@ -70,11 +79,11 @@ err_t MediaPlayer::create(PlayerId id)
 
   if (id == Player0)
     {
-      result = AS_CreatePlayerMulti(AS_PLAYER_ID_0, &player_create_param);
+      result = AS_CreatePlayerMulti(AS_PLAYER_ID_0, &player_create_param, attentionCallback);
     }
   else
     {
-      result = AS_CreatePlayerMulti(AS_PLAYER_ID_1, &player_create_param);
+      result = AS_CreatePlayerMulti(AS_PLAYER_ID_1, &player_create_param, attentionCallback);
     }
 
   if (!result)
