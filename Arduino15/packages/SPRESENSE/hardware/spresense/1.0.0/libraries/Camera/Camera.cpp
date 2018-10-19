@@ -27,6 +27,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <sched.h>
+#include <errno.h>
 
 #include <Camera.h>
 #include <imageproc/imageproc.h>
@@ -290,6 +291,27 @@ CameraClass::~CameraClass()
   CameraClass::instance = NULL;
 }
 
+// Private : Convert errno to camera error code.
+CamErr CameraClass::convert_errno2camerr(int err)
+{
+  switch (err)
+    {
+      case ENODEV:
+        return CAM_ERR_NO_DEVICE;
+
+      case EPERM:
+        return CAM_ERR_NOT_PERMITTED;
+
+      case EINVAL:
+        return CAM_ERR_INVALID_PARAM;
+
+      case ENOMEM:
+        return CAM_ERR_NO_MEMORY;
+
+      default:
+        return CAM_ERR_ILLIGAL_DEVERR;
+    }
+}
 
 // Private : Validate video frame parameters.
 bool CameraClass::check_video_fmtparam(int w, int h, CAM_VIDEO_FPS fps, CAM_IMAGE_PIX_FMT fmt)
@@ -319,7 +341,7 @@ CamErr CameraClass::set_frame_parameters( enum v4l2_buf_type type, int video_wid
   req.mode = V4L2_BUF_MODE_RING; /* Freeze as ring mode. */
   if (ioctl(video_fd, VIDIOC_REQBUFS, (unsigned long)&req) < 0)
     {
-      return CAM_ERR_ILLIGAL_DEVERR;
+      return convert_errno2camerr(errno);
     }
 
   // Set Format.
@@ -330,7 +352,7 @@ CamErr CameraClass::set_frame_parameters( enum v4l2_buf_type type, int video_wid
   fmt.fmt.pix.pixelformat = video_fmt;
   if (ioctl(video_fd, VIDIOC_S_FMT, (unsigned long)&fmt) < 0)
     {
-      return CAM_ERR_ILLIGAL_DEVERR;
+      return convert_errno2camerr(errno);
     }
   
   return CAM_ERR_SUCCESS;
@@ -449,7 +471,7 @@ CamErr CameraClass::enqueue_video_buff(CamImage * img)
       // No dequeue successed buffers.
       // because devie file "close" will clean up everthing.
       // TODO
-      return CAM_ERR_ILLIGAL_DEVERR;
+      return convert_errno2camerr(errno);
     }
 
   img->img_buff->queued(true);
@@ -507,7 +529,7 @@ CamErr CameraClass::set_video_frame_rate(CAM_VIDEO_FPS fps)
 
   if (ioctl(video_fd, VIDIOC_S_PARM, (unsigned long)&param) < 0)
     {
-      return CAM_ERR_ILLIGAL_DEVERR;
+      return convert_errno2camerr(errno);
     }
 
   return CAM_ERR_SUCCESS;
@@ -686,7 +708,7 @@ CamErr CameraClass::startStreaming(bool enable, camera_cb_t cb)
 
       if (ioctl(video_fd, req, (unsigned long)&type) < 0)
         {
-          err =  CAM_ERR_ILLIGAL_DEVERR;
+          err =  convert_errno2camerr(errno);
           lock_video_cb();
           video_cb = old_cb;
           unlock_video_cb();
@@ -719,7 +741,7 @@ CamErr CameraClass::set_ext_ctrls(uint16_t ctl_cls,
 
       if (ioctl(video_fd, VIDIOC_S_EXT_CTRLS, (unsigned long)&param) < 0)
         {
-          return CAM_ERR_NO_DEVICE;
+          return convert_errno2camerr(errno);
         }
       return CAM_ERR_SUCCESS;
     }
