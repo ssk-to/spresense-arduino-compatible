@@ -276,6 +276,7 @@ private:
   bool isIdx(int i){ return (img_buff != NULL) ? (img_buff->idx == i) : false; }
   int getIdx(){ return (img_buff != NULL) ? img_buff->idx : -1; }
   int getType(){ return (img_buff != NULL) ? img_buff->buf_type : -1; }
+  bool is_valid(){ return (img_buff != NULL); };
 
 public:
   /**
