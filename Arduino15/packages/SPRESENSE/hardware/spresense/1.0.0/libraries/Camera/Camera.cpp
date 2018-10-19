@@ -365,22 +365,34 @@ CamErr CameraClass::create_videobuff(int w, int h, int buff_num, CAM_IMAGE_PIX_F
 
   video_imgs = (CamImage **)malloc(sizeof(CamImage *) * buff_num);
   if (video_imgs == NULL)
-    return CAM_ERR_NO_MEMORY;
+    {
+      return CAM_ERR_NO_MEMORY;
+    }
 
-  video_buf_num = buff_num;
-  
   for (i = 0; i < buff_num; i++)
     {
       video_imgs[i]
        = new CamImage(V4L2_BUF_TYPE_VIDEO_CAPTURE, w, h, fmt, this);
       if ((video_imgs[i] == NULL) || !video_imgs[i]->is_valid())
         {
-          delete_videobuff();
+          if (video_imgs[i] != NULL)
+            {
+              delete video_imgs[i];
+            }
+
+          while (i > 0)
+            {
+              i--;
+              DELETE_CAMIMAGE(video_imgs[i]);
+            }
+          delete video_imgs;
           return CAM_ERR_NO_MEMORY;
         }
 
       video_imgs[i]->setIdx(i);
     }
+
+  video_buf_num = buff_num;
 
   return CAM_ERR_SUCCESS;
 }
