@@ -84,6 +84,8 @@ mkdir -p ${FW_DIR}
 cp ${FW_LOADER} ${FW_DIR}
 cp ${FW_GNSSFW} ${FW_DIR}
 
+cp ${SDK_DIR}/LICENSE ./
+
 cd $TMP_DIR
 find . -name .gitignore | xargs rm &>/dev/null
 find . -name .fakelnk | xargs rm &>/dev/null
