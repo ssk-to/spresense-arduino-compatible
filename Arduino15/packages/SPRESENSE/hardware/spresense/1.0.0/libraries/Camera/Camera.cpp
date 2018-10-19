@@ -364,32 +364,23 @@ CamErr CameraClass::create_videobuff(int w, int h, int buff_num, CAM_IMAGE_PIX_F
   int i;
 
   video_imgs = (CamImage **)malloc(sizeof(CamImage *) * buff_num);
-  if( video_imgs == NULL )
+  if (video_imgs == NULL)
     return CAM_ERR_NO_MEMORY;
+
+  video_buf_num = buff_num;
   
-  for(i=0; i<buff_num; i++)
+  for (i = 0; i < buff_num; i++)
     {
       video_imgs[i]
        = new CamImage(V4L2_BUF_TYPE_VIDEO_CAPTURE, w, h, fmt, this);
       if ((video_imgs[i] == NULL) || !video_imgs[i]->is_valid())
         {
-          if (video_imgs[i] != NULL)
-            {
-              delete video_imgs[i]; 
-            }
-
-          while (i > 0)
-            {
-              i--;
-              DELETE_CAMIMAGE(video_imgs[i]);
-            }
-          delete video_imgs;
+          delete_videobuff();
           return CAM_ERR_NO_MEMORY;
         }
+
       video_imgs[i]->setIdx(i);
     }
-
-  video_buf_num = buff_num;
 
   return CAM_ERR_SUCCESS;
 }
@@ -414,14 +405,18 @@ CamErr CameraClass::create_stillbuff(int w, int h, CAM_IMAGE_PIX_FMT fmt)
 
   still_img = new CamImage(V4L2_BUF_TYPE_STILL_CAPTURE, w, h, fmt, this);
 
-  if ((still_img == NULL) || !still_img->is_valid())
+  if (still_img == NULL)
     {
-      if (still_img != NULL)
+      return CAM_ERR_NO_MEMORY;
+    }
+  else
+    {
+      if (!still_img->is_valid())
         {
           delete still_img;
           still_img = NULL;
+          return CAM_ERR_NO_MEMORY;
         }
-      return CAM_ERR_NO_MEMORY;
     }
 
   still_img->setIdx(STILL_BUFF_IDX);
@@ -432,7 +427,7 @@ CamErr CameraClass::create_stillbuff(int w, int h, CAM_IMAGE_PIX_FMT fmt)
 // Private : Delete Video buffers.
 void CameraClass::delete_videobuff()
 {
-  if( video_imgs ){
+  if (video_imgs){
     for (int i = 0; i < video_buf_num; i++)
       {
         if (video_imgs[i])
