@@ -64,17 +64,17 @@ enum CAM_IMAGE_PIX_FMT {
  *        [ja] Cameraのエラーコード
  */
 enum CamErr {
-  CAM_ERR_SUCCESS = 0,          /**< [en] Operation succeeded.           <BR> [jp] 正常終了しました */
-  CAM_ERR_NO_DEVICE = -1,       /**< [en] No Video Device on this board. <BR> [jp] Videoデバイスがありません */
-  CAM_ERR_ILLIGAL_DEVERR = -2,  /**< [en] No Video Device on this board. <BR> [jp] Videoデバイスがありません */
-  CAM_ERR_ALREADY_INITIALIZED = -3,
-  CAM_ERR_NOT_INITIALIZED = -4,
-  CAM_ERR_NOT_STILL_INITIALIZED = -5,
-  CAM_ERR_CANT_CREATE_THREAD = -6,
-  CAM_ERR_INVALID_PARAM = -7,   /**< [en] Invalid parameter is detected. <BR> [jp] 不正なパラメータを検出しました */
-  CAM_ERR_NO_MEMORY = -8,       /**< [en] No memory on the device.       <BR> [jp] メモリが足りません */
-  CAM_ERR_USR_INUSED = -9,      /**< [en] Buffer is using by user.       <BR> [jp] バッファがユーザ使用中です */
-  CAM_ERR_NOT_PERMITTED = -10,  /**< [en] Operation is not permitted.    <BR> [jp] 許容されていない操作です */
+  CAM_ERR_SUCCESS               = 0,   /**< [en] Operation succeeded.                      <BR> [jp] 正常終了しました */
+  CAM_ERR_NO_DEVICE             = -1,  /**< [en] No Video Device on this board.            <BR> [jp] Videoデバイスがありません */
+  CAM_ERR_ILLIGAL_DEVERR        = -2,  /**< [en] Video Device detected error.              <BR> [jp] Videoデバイスがエラーを検出しました */
+  CAM_ERR_ALREADY_INITIALIZED   = -3,  /**< [en] Library is already initialized            <BR> [jp] 既に初期化されています */
+  CAM_ERR_NOT_INITIALIZED       = -4,  /**< [en] Library is not initialized                <BR> [jp] 初期化されていません */
+  CAM_ERR_NOT_STILL_INITIALIZED = -5,  /**< [en] Still picture function is not initialized <BR> [jp] 静止画機能が初期化されていません */
+  CAM_ERR_CANT_CREATE_THREAD    = -6,  /**< [en] Failed to create thread                   <BR> [jp] スレッド生成に失敗しました */
+  CAM_ERR_INVALID_PARAM         = -7,  /**< [en] Invalid parameter is detected.            <BR> [jp] 不正なパラメータを検出しました */
+  CAM_ERR_NO_MEMORY             = -8,  /**< [en] No memory on the device.                  <BR> [jp] メモリが足りません */
+  CAM_ERR_USR_INUSED            = -9,  /**< [en] Buffer is using by user.                  <BR> [jp] バッファがユーザ使用中です */
+  CAM_ERR_NOT_PERMITTED         = -10, /**< [en] Operation is not permitted.               <BR> [jp] 許容されていない操作です */
 };
 
 
