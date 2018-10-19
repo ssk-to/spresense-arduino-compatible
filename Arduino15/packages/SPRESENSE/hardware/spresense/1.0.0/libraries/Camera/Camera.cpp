@@ -371,8 +371,13 @@ CamErr CameraClass::create_videobuff(int w, int h, int buff_num, CAM_IMAGE_PIX_F
     {
       video_imgs[i]
        = new CamImage(V4L2_BUF_TYPE_VIDEO_CAPTURE, w, h, fmt, this);
-      if (!video_imgs[i]->is_valid())
+      if ((video_imgs[i] == NULL) || !video_imgs[i]->is_valid())
         {
+          if (video_imgs[i] != NULL)
+            {
+              delete video_imgs[i]; 
+            }
+
           while (i > 0)
             {
               i--;
@@ -409,8 +414,13 @@ CamErr CameraClass::create_stillbuff(int w, int h, CAM_IMAGE_PIX_FMT fmt)
 
   still_img = new CamImage(V4L2_BUF_TYPE_STILL_CAPTURE, w, h, fmt, this);
 
-  if (!still_img->is_valid())
+  if ((still_img == NULL) || !still_img->is_valid())
     {
+      if (still_img != NULL)
+        {
+          delete still_img;
+          still_img = NULL;
+        }
       return CAM_ERR_NO_MEMORY;
     }
 
