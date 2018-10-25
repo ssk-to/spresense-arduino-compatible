@@ -628,11 +628,6 @@ CamErr CameraClass::begin(int buff_num, CAM_VIDEO_FPS fps, int video_width, int 
       return CAM_ERR_INVALID_PARAM;
     }
 
-  if (buff_num <= 0)
-    {
-      return CAM_ERR_INVALID_PARAM;
-    }
-
   if (video_init_stat)
     {
       return CAM_ERR_NO_DEVICE;
@@ -649,52 +644,55 @@ CamErr CameraClass::begin(int buff_num, CAM_VIDEO_FPS fps, int video_width, int 
       return CAM_ERR_NO_DEVICE;
     }
 
-  // Start Dequeue Buff thread.
-  ret = create_dq_thread();
-  if (ret != CAM_ERR_SUCCESS)
+  if (buff_num > 0)
     {
-      goto label_err_no_memaligned;
-    }
+      // Start Dequeue Buff thread.
+      ret = create_dq_thread();
+      if (ret != CAM_ERR_SUCCESS)
+        {
+          goto label_err_no_memaligned;
+        }
 
-  // Set Video Frame parameters.
-  ret = set_frame_parameters(V4L2_BUF_TYPE_VIDEO_CAPTURE,
-                             video_width,
-                             video_height,
-                             buff_num,
-                             video_fmt);
-  if (ret != CAM_ERR_SUCCESS)
-    {
-      goto label_err_no_memaligned;
-    }
+      // Set Video Frame parameters.
+      ret = set_frame_parameters(V4L2_BUF_TYPE_VIDEO_CAPTURE,
+                                 video_width,
+                                 video_height,
+                                 buff_num,
+                                 video_fmt);
+      if (ret != CAM_ERR_SUCCESS)
+        {
+          goto label_err_no_memaligned;
+        }
 
-  // Set Video Frame Rate.
-  ret = set_video_frame_rate(fps);
-  if (ret != CAM_ERR_SUCCESS)
-    {
-      goto label_err_no_memaligned;
-    }
+      // Set Video Frame Rate.
+      ret = set_video_frame_rate(fps);
+      if (ret != CAM_ERR_SUCCESS)
+        {
+          goto label_err_no_memaligned;
+        }
 
-  // Create Buffer
-  ret = create_videobuff(video_width, video_height, buff_num, video_fmt);
-  if (ret != CAM_ERR_SUCCESS)
-    {
-      goto label_err_no_memaligned;
-    }
+      // Create Buffer
+      ret = create_videobuff(video_width, video_height, buff_num, video_fmt);
+      if (ret != CAM_ERR_SUCCESS)
+        {
+          goto label_err_no_memaligned;
+        }
 
-  // Set Buffer into V4S
-  ret = enqueue_video_buffs();
-  if (ret != CAM_ERR_SUCCESS)
-    {
-      goto label_err_with_memaligned;
-    }
-  
-  ret = set_video_frame_rate(fps);
-  if (ret != CAM_ERR_SUCCESS)
-    {
-      goto label_err_with_memaligned;
-    }
+      // Set Buffer into V4S
+      ret = enqueue_video_buffs();
+      if (ret != CAM_ERR_SUCCESS)
+        {
+          goto label_err_with_memaligned;
+        }
 
-  imageproc_initialize();
+      ret = set_video_frame_rate(fps);
+      if (ret != CAM_ERR_SUCCESS)
+        {
+          goto label_err_with_memaligned;
+        }
+
+      imageproc_initialize();
+    }
 
   return ret; // Success begin.
 
