@@ -628,7 +628,7 @@ CamErr CameraClass::begin(int buff_num, CAM_VIDEO_FPS fps, int video_width, int 
       return CAM_ERR_INVALID_PARAM;
     }
 
-  if (buff_num <= 0)
+  if (buff_num < 0)
     {
       return CAM_ERR_INVALID_PARAM;
     }
@@ -647,6 +647,11 @@ CamErr CameraClass::begin(int buff_num, CAM_VIDEO_FPS fps, int video_width, int 
   if (video_fd < 0)
     {
       return CAM_ERR_NO_DEVICE;
+    }
+
+  if (buff_num == 0)
+    {
+      return CAM_ERR_SUCCESS;
     }
 
   // Start Dequeue Buff thread.
