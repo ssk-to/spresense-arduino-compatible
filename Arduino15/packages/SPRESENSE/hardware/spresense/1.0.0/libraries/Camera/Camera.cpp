@@ -790,12 +790,18 @@ CamErr CameraClass::setAutoExposure(bool enable)
 }
 #endif
 // Public : Turn on/off Auto ISO Sensitivity.
-CamErr CameraClass::setAutoISOSensitive(bool enable)
+CamErr CameraClass::setAutoISOSensitivity(bool enable)
 {
   return set_ext_ctrls(V4L2_CTRL_CLASS_CAMERA,
                        V4L2_CID_ISO_SENSITIVITY_AUTO,
                        enable ? V4L2_ISO_SENSITIVITY_AUTO
                         : V4L2_ISO_SENSITIVITY_MANUAL );
+}
+
+/* Will obsolete after v1.2.0 */
+CamErr CameraClass::setAutoISOSensitive(bool enable)
+{
+  return setAutoISOSensitivity(enable);
 }
 
 // Public : Set ISO Sensitivity value in manual.
