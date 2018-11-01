@@ -673,6 +673,16 @@ public:
       AsClkMode mode /**< Mode of rendering clock. */
   );
 
+ /**
+   * @brief Get recording ES size.
+   *
+   * @details This function gets recording elementary stream size.
+   *
+   */
+   int getRecordingSize() {
+     return m_es_size;
+   }
+
 private:
 
   /**
@@ -697,7 +707,7 @@ private:
 
   AsRecorderOutputDeviceHdlr    m_output_device_handler;
   int                           m_es_size;
-  WavFormat_t                  m_wav_format;
+  WavFormat_t                   m_wav_format;
   int                           m_codec_type;
 
   File theFile; /* for  auto file read */

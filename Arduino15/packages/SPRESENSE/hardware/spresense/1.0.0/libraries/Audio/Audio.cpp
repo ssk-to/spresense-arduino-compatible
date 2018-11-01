@@ -1040,25 +1040,6 @@ err_t AudioClass::stopRecorder(void)
 }
 
 /*--------------------------------------------------------------------------*/
-#if 0
-err_t AudioClass::closeOutputFile(int fd)
-{
-  do
-    {
-    } while (read_frames(fd) == 0);
-
-  if (m_codec_type == AS_CODECTYPE_WAV)
-    {
-      writeWavHeader(fd);
-    }
-
-  fclose(fd);
-
-  return true;
-}
-#endif
-
-/*--------------------------------------------------------------------------*/
 err_t AudioClass::closeOutputFile(File& myFile)
 {
   do
@@ -1078,24 +1059,6 @@ err_t AudioClass::closeOutputFile(File& myFile)
 }
 
 /*--------------------------------------------------------------------------*/
-/*err_t AudioClass::writeWavHeader(int fd)
-{
-  ssize_t ret;
-
-  m_wav_format.total_size = m_es_size + sizeof(WavFormat_t) - 8;
-  m_wav_format.data_size = m_es_size;
-  fseek(fd, 0, SEEK_SET);
-
-  int ret = fwrite(&m_wav_format, 1, sizeof(WavFormat_t), fd);
-  if (ret < 0)
-    {
-      print_err("Fail to write file(wav header)\n");
-      return false;
-    }
-
-  return AUDIOLIB_ECODE_OK;
-}*/
-/*--------------------------------------------------------------------------*/
 err_t AudioClass::writeWavHeader(File& myFile)
 {
   myFile.seek(0);
@@ -1114,38 +1077,6 @@ err_t AudioClass::writeWavHeader(File& myFile)
 }
 
 /*--------------------------------------------------------------------------*/
-#if 0
-err_t AudioClass::readFrames(int fd)
-{
-  size_t data_size = CMN_SimpleFifoGetOccupiedSize(&m_recorder_simple_fifo_handle);
-
-  while (data_size > 0)
-    {
-      int size = (data_size > FIFO_FRAME_SIZE) ? FIFO_FRAME_SIZE : data_size;
-
-      /* TODO assert で良いよね…。*/
-      if (CMN_SimpleFifoPoll(&m_recorder_simple_fifo_handle, (void*)m_es_recorder_buf, size) == 0)
-        {
-          print_err("ERROR: Fail to get data from simple FIFO.\n");
-          return AUDIOLIB_ECODE_SIMPLEFIFO_ERROR;
-        }
-
-      int ret = fwrite(&m_es_recorder_buf, 1, size, fd);
-      m_es_size += ret;
-      deta_size -= size;
-
-      if (ret < 0)
-        {
-          print_err("ERROR: Cannot write recorded data to output file.\n");
-          fclose(fd);
-          return AUDIOLIB_ECODE_FILEACCESS_ERROR;
-        }
-    }
-
-  return 0;
-}
-#endif
-/*--------------------------------------------------------------------------*/
 err_t AudioClass::readFrames(File& myFile)
 {
   size_t data_size = CMN_SimpleFifoGetOccupiedSize(&m_recorder_simple_fifo_handle);
@@ -1155,7 +1086,6 @@ err_t AudioClass::readFrames(File& myFile)
     {
       int size = (data_size > FIFO_FRAME_SIZE) ? FIFO_FRAME_SIZE : data_size;
 
-      /* TODO: assert で良いよね…。*/
       if (CMN_SimpleFifoPoll(&m_recorder_simple_fifo_handle, (void*)m_es_recorder_buf, size) == 0)
         {
           print_err("ERROR: Fail to get data from simple FIFO.\n");

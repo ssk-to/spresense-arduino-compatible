@@ -32,6 +32,10 @@ File myFile;
  * Initialize filetype to stereo mp3 with 48 Kb/s sampling rate <br>
  * Open "Sound.mp3" file in write mode
  */
+
+static const int32_t recoding_frames = 400;
+static const int32_t recoding_size = recoding_frames*288; /* 96kbps, 1152sample */
+
 void setup()
 {
   theAudio = AudioClass::getInstance();
@@ -58,48 +62,53 @@ void setup()
       printf("File open error\n");
       exit(1);
     }
-  puts("Open!");
-
-  puts("Rec!");
 
   theAudio->startRecorder();
+  puts("Recording Start!");
 }
 
 /**
  * @brief Record given frame number
  */
-void loop() {
-
-  static int cnt = 0;
-
+void loop() 
+{
+  err_t err;
   /* recording end condition */
-  if (cnt > 400)
+  if (theAudio->getRecordingSize() > recoding_size)
     {
-      puts("End Recording");
       theAudio->stopRecorder();
-      theAudio->closeOutputFile(myFile);
-      myFile.close();
-      exit(1);
+      sleep(1);
+      err = theAudio->readFrames(myFile);
+
+      goto exitRecording;
     }
 
   /* Read frames to record in file */
-  err_t err = theAudio->readFrames(myFile);
+  err = theAudio->readFrames(myFile);
 
   if (err != AUDIOLIB_ECODE_OK)
     {
       printf("File End! =%d\n",err);
-      sleep(1);
       theAudio->stopRecorder();
-      theAudio->closeOutputFile(myFile);
-      myFile.close();
-      exit(1);
+      goto exitRecording;
     }
 
   /* This sleep is adjusted by the time to write the audio stream file.
      Please adjust in according with the processing contents
      being processed at the same time by Application.
   */
-  usleep(10000);
+//  usleep(10000);
 
-  cnt++;
+  return;
+
+exitRecording:
+
+  theAudio->closeOutputFile(myFile);
+  myFile.close();
+  
+  theAudio->setReadyMode();
+  theAudio->end();
+  
+  puts("End Recording");
+  exit(1);
 }
