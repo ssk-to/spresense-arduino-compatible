@@ -132,12 +132,15 @@ err_t OutputMixer::activateBaseband(void)
 
   CXD56_AUDIO_ECODE error_code;
 
-  error_code = cxd56_audio_poweron();
-
-  if (error_code != CXD56_AUDIO_ECODE_OK)
+  if (cxd56_audio_get_status() == CXD56_AUDIO_POWER_STATE_OFF)
     {
-      print_err("cxd56_audio_poweron() error!\n");
-      return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+      error_code = cxd56_audio_poweron();
+
+      if (error_code != CXD56_AUDIO_ECODE_OK)
+        {
+          print_err("cxd56_audio_poweron() error!\n");
+          return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+        }
     }
 
   error_code = cxd56_audio_set_spout(true);
@@ -155,14 +158,6 @@ err_t OutputMixer::activateBaseband(void)
       print_err("cxd56_audio_en_output() error!\n");
       return OUTPUTMIXER_ECODE_COMMAND_ERROR;
     }
-
-  //error_code = AS_SetOutputSelect(AS_OUT_DEV_SP);
-
-  // if (error_code != E_AS_OK)
-  //  {
-  //    print_err("AS_SetOutputSelect() error!\n");
-  //    return OUTPUTMIXER_ECODE_COMMAND_ERROR;
-  //  }
 
   return OUTPUTMIXER_ECODE_OK;
 }
@@ -184,12 +179,15 @@ err_t OutputMixer::deactivateBaseband(void)
 
   /* Power Off Baseband */
 
-  error_code = cxd56_audio_poweroff();
-
-  if (error_code != CXD56_AUDIO_ECODE_OK)
+  if (cxd56_audio_get_status() == CXD56_AUDIO_POWER_STATE_ON)
     {
-      print_err("cxd56_audio_poweroff() error!\n");
-      return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+      error_code = cxd56_audio_poweroff();
+
+      if (error_code != CXD56_AUDIO_ECODE_OK)
+        {
+          print_err("cxd56_audio_poweroff() error!\n");
+          return OUTPUTMIXER_ECODE_COMMAND_ERROR;
+        }
     }
 
   return OUTPUTMIXER_ECODE_OK;
