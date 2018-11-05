@@ -220,7 +220,7 @@ void loop()
 
 exitRecording:
 
-  myFile.close();
+  s_myFile.close();
 
   theRecorder->deactivate();
   theRecorder->end();

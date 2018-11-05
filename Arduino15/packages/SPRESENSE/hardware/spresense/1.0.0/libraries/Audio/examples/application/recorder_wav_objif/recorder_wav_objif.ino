@@ -217,10 +217,10 @@ void loop()
 
 exitRecording:
 
-  theRecorder->writeWavHeader(myFile);
+  theRecorder->writeWavHeader(s_myFile);
   puts("Update Header!");
 
-  myFile.close();
+  s_myFile.close();
 
   theRecorder->deactivate();
   theRecorder->end();
