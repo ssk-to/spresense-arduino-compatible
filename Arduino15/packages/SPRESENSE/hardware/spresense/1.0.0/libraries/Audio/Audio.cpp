@@ -114,7 +114,15 @@ const char* error_msg[] =
  ****************************************************************************/
 err_t AudioClass::begin(void)
 {
+  return begin(NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::begin(AudioAttentionCb attcb)
+{
   int ret;
+
+  m_attention_callback = attcb;
 
   ret = begin_manager();
   if (ret != AUDIOLIB_ECODE_OK)
@@ -330,7 +338,7 @@ err_t AudioClass::activateAudio(void)
   ids.effector    = 0xFF;
   ids.recognizer  = 0xFF;
 
-  AS_CreateAudioManager(ids, attentionCallback);
+  AS_CreateAudioManager(ids, (m_attention_callback) ? m_attention_callback : attentionCallback);
 
   ret = powerOn();
   if (ret != AUDIOLIB_ECODE_OK)

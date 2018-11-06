@@ -53,6 +53,12 @@ static void attentionCallback(const ErrorAttentionParam *attparam)
 
 err_t MediaRecorder::begin(void)
 {
+  return begin(NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t MediaRecorder::begin(AudioAttentionCb attcb)
+{
   /* Allocate ES buffer */
 
   m_recorder_simple_fifo_buf =
@@ -71,7 +77,7 @@ err_t MediaRecorder::begin(void)
   recorder_create_param.pool_id.output   = OUTPUT_BUF_POOL;
   recorder_create_param.pool_id.dsp      = ENC_APU_CMD_POOL;
 
-  result = AS_CreateMediaRecorder(&recorder_create_param, attentionCallback);
+  result = AS_CreateMediaRecorder(&recorder_create_param, (attcb) ? attcb : attentionCallback);
   if (!result)
     {
       print_err("Error: AS_CreateMediaRecorder() failure!\n");

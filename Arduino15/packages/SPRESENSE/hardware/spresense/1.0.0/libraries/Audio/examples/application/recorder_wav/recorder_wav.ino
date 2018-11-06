@@ -27,6 +27,24 @@ AudioClass *theAudio;
 
 File myFile;
 
+bool ErrEnd = false;
+
+/**
+ * @brief Audio attention callback
+ *
+ * When audio internal error occurc, this function will be called back.
+ */
+
+static void audio_attention_cb(const ErrorAttentionParam *atprm)
+{
+  puts("Attention!");
+  
+  if (atprm->error_code >= AS_ATTENTION_CODE_WARNING)
+    {
+      ErrEnd = true;
+   }
+}
+
 /**
  * @brief Setup recording of mp3 stream to file
  *
@@ -42,7 +60,7 @@ void setup()
 {
   theAudio = AudioClass::getInstance();
 
-  theAudio->begin();
+  theAudio->begin(audio_attention_cb);
 
   puts("initialization Audio Library");
 
@@ -93,6 +111,13 @@ void loop()
   if (err != AUDIOLIB_ECODE_OK)
     {
       printf("File End! =%d\n",err);
+      theAudio->stopRecorder();
+      goto exitRecording;
+    }
+
+  if (ErrEnd)
+    {
+      printf("Error End\n");
       theAudio->stopRecorder();
       goto exitRecording;
     }

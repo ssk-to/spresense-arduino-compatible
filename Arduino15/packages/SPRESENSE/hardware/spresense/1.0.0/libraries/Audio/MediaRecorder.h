@@ -113,6 +113,15 @@ public:
   err_t begin(void);
 
   /**
+   * @brief Initialize the MediaRecorder.
+   *
+   * @details This function can set callback funtion which receive attention notify.
+   *
+   */
+
+  err_t begin(AudioAttentionCb attcb);
+
+  /**
    * @brief Finalize the MediaRecorder.
    *
    * @details This function is called only once when finish the MediaRecorder.
