@@ -780,7 +780,7 @@ CamErr CameraClass::setAutoWhiteBalance(bool enable)
                        V4L2_CID_AUTO_WHITE_BALANCE,
                        enable ? 1 : 0 );
 }
-#if 0 /* To Be Supported */
+
 // Public : Turn on/off Auto Exposure.
 CamErr CameraClass::setAutoExposure(bool enable)
 {
@@ -788,7 +788,7 @@ CamErr CameraClass::setAutoExposure(bool enable)
                        V4L2_CID_EXPOSURE_AUTO,
                        enable ? V4L2_EXPOSURE_AUTO : V4L2_EXPOSURE_MANUAL);
 }
-#endif
+
 // Public : Turn on/off Auto ISO Sensitivity.
 CamErr CameraClass::setAutoISOSensitivity(bool enable)
 {

@@ -532,8 +532,7 @@ public:
    */
   CamErr setAutoWhiteBalance(bool enable /**< [en] Start or Stop Auto White Balance. (true : start, false : stop) <BR> [ja] 自動ホワイトバランス調整の開始/停止 (true : 開始、false : 停止) */);
 
-#if 0 /* To Be Supported */
-  /*
+  /**
    * @brief Control Auto Exposure
    * @details [en] Start / Stop Auto Exposure <BR>
    *          [ja] 自動露光調整の開始/停止の制御を行う
@@ -541,7 +540,7 @@ public:
    *         [ja] #CamErr で定義されているエラーコード
    */
   CamErr setAutoExposure(bool enable /**< [en] Start or Stop Auto Exposure. (true : start, false : stop) <BR> [ja] 自動露光調整の開始/停止 (true : 開始、false : 停止) */);
-#endif
+
   /**
    * @brief Control Auto ISO Sensitivity (WIll obsolete after v1.2.0)
    * @details [en] Start / Stop Auto ISO Sensitivity <BR>
