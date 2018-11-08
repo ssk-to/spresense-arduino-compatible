@@ -420,12 +420,18 @@ err_t AudioClass::setReadyMode(void)
  ****************************************************************************/
 err_t AudioClass::setPlayerMode(uint8_t device)
 {
+  return setPlayerMode(device, AS_SP_DRV_MODE_LINEOUT);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t AudioClass::setPlayerMode(uint8_t device, uint8_t sp_drv)
+{
   const NumLayout layout_no = MEM_LAYOUT_PLAYER;
 
   assert(layout_no < NUM_MEM_LAYOUTS);
   createStaticPools(layout_no);
 
-  AudioClass::set_output(device);
+  AudioClass::set_output(device, sp_drv);
 
   print_dbg("set output cmplt\n");
 
@@ -1197,9 +1203,11 @@ void  output_device_callback(uint32_t size)
 }
 
 /*--------------------------------------------------------------------------*/
-err_t AudioClass::set_output(int device)
+err_t AudioClass::set_output(uint8_t device, uint8_t sp_drv)
 {
   AudioCommand command;
+
+  /* Set output device. */
 
   command.header.packet_length = LENGTH_INITOUTPUTSELECT;
   command.header.command_code  = AUDCMD_INITOUTPUTSELECT;
@@ -1226,7 +1234,24 @@ err_t AudioClass::set_output(int device)
 
   if (result.header.result_code != AUDRLT_INITOUTPUTSELECTCMPLT)
     {
-      sleep(1);
+      print_err("ERROR: Command (%x) fails. Result code(%x), subcode = %x\n", command.header.command_code, result.header.result_code,result.error_response_param.error_code);
+      print_dbg("ERROR: %s\n", error_msg[result.error_response_param.error_code]);
+      return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;
+    }
+
+  /* Set speaker driver mode. */
+
+  command.header.packet_length = LENGTH_SETSPDRVMODE;
+  command.header.command_code  = AUDCMD_SETSPDRVMODE;
+  command.header.sub_code      = 0;
+  command.set_sp_drv_mode.mode = sp_drv;
+
+  AS_SendAudioCommand(&command);
+
+  AS_ReceiveAudioResult(&result);
+
+  if (result.header.result_code != AUDRLT_SETSPDRVMODECMPLT)
+    {
       print_err("ERROR: Command (%x) fails. Result code(%x), subcode = %x\n", command.header.command_code, result.header.result_code,result.error_response_param.error_code);
       print_dbg("ERROR: %s\n", error_msg[result.error_response_param.error_code]);
       return AUDIOLIB_ECODE_AUDIOCOMMAND_ERROR;

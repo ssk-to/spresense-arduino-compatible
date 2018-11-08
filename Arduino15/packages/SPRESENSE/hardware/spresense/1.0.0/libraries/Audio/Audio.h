@@ -172,6 +172,21 @@ public:
   );
 
   /**
+   * @brief Set Audio Library Mode to Music Player.
+   *
+   * @details This function works as same as "setPlayerMode(uint8_t)",
+   *          but you are able to set speaker drive mode by parameter "sp_drv".
+   *          If you would like to set speaker drive mode, use this API instead of setPlayerMode(uint8_t).
+   *
+   */
+  err_t setPlayerMode(
+      uint8_t device, /**< Select output device. AS_SETPLAYER_OUTPUTDEVICE_SPHP or 
+                           AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT. */
+      uint8_t sp_drv /**< Select audio speaker driver mode. AS_SP_DRV_MODE_LINEOUT or
+                          AS_SP_DRV_MODE_1DRIVER or AS_SP_DRV_MODE_2DRIVER or AS_SP_DRV_MODE_4DRIVER */
+  );
+
+  /**
    * @brief Set Audio Library Mode to Sound Recorder.
    *
    * @details This function switches the mode of the Audio library to Sound Recorder.
@@ -736,7 +751,7 @@ private:
   err_t init_recorder_pcm(AudioCommand* command, uint32_t sampling_rate, uint8_t bit_length, uint8_t channel_number);
 
   /* Functions for initialization on player mode. */
-  err_t set_output(int);
+  err_t set_output(uint8_t device, uint8_t sp_drv);
 
   err_t write_fifo(int, char*, uint32_t, CMN_SimpleFifoHandle*);
   err_t write_fifo(File&, char*, uint32_t, CMN_SimpleFifoHandle*);

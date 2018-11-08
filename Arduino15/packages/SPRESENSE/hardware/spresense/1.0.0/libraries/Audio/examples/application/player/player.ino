@@ -47,11 +47,15 @@ void setup()
   /* Set clock mode to normal */
   theAudio->setRenderingClockMode(AS_CLKMODE_NORMAL);
 
-  /* Set output device to speaker.
+  /* Set output device to speaker with first argument.
    * If you want to change the output device to I2S,
    * specify "AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT" as an argument.
+   * Set speaker driver mode to LineOut with second argument.
+   * If you want to change the speaker driver mode to other,
+   * specify "AS_SP_DRV_MODE_1DRIVER" or "AS_SP_DRV_MODE_2DRIVER" or "AS_SP_DRV_MODE_4DRIVER"
+   * as an argument.
    */
-  theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP);
+  theAudio->setPlayerMode(AS_SETPLAYER_OUTPUTDEVICE_SPHP, AS_SP_DRV_MODE_LINEOUT);
 
   /*
    * Set main player to decode stereo mp3. Stream sample rate is set to "auto detect"
