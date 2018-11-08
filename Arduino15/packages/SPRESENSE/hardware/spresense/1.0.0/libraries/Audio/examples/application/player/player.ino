@@ -80,7 +80,7 @@ void setup()
   /* Send first frames to be decoded */
   err = theAudio->writeFrames(AudioClass::Player0, myFile);
 
-  if (err != AUDIOLIB_ECODE_OK)
+  if ((err != AUDIOLIB_ECODE_OK) && (err != AUDIOLIB_ECODE_FILEEND))
     {
       printf("File Read Error! =%d\n",err);
       myFile.close();
