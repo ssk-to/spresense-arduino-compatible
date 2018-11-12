@@ -170,7 +170,7 @@ void loop() {
   if (ErrEnd)
     {
       printf("Error End\n");
-      theRecorder->stop();
+      theAudio->stopRecorder();
       goto exitRecording;
     }
 
