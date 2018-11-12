@@ -25,6 +25,24 @@ static const int32_t recoding_frames = 400;
 static const int32_t buffer_size = 6144; /*768sample,4ch,16bit*/
 static char          s_buffer[buffer_size];
 
+bool ErrEnd = false;
+
+/**
+ * @brief Audio attention callback
+ *
+ * When audio internal error occurc, this function will be called back.
+ */
+
+void audio_attention_cb(const ErrorAttentionParam *atprm)
+{
+  puts("Attention!");
+  
+  if (atprm->error_code >= AS_ATTENTION_CODE_WARNING)
+    {
+      ErrEnd = true;
+   }
+}
+
 /**
  *  @brief Setup audio device to capture PCM stream
  *
@@ -37,7 +55,7 @@ void setup()
 {
   theAudio = AudioClass::getInstance();
 
-  theAudio->begin();
+  theAudio->begin(audio_attention_cb);
 
   puts("initialization Audio Library");
 
@@ -146,6 +164,13 @@ void loop() {
       sleep(1); /* For data pipline stop */
       execute_frames();
       
+      goto exitRecording;
+    }
+
+  if (ErrEnd)
+    {
+      printf("Error End\n");
+      theRecorder->stop();
       goto exitRecording;
     }
 

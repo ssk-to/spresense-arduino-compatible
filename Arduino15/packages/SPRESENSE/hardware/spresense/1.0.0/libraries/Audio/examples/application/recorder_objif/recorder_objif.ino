@@ -27,6 +27,24 @@ MediaRecorder *theRecorder;
 
 File s_myFile;
 
+bool ErrEnd = false;
+
+/**
+ * @brief Audio attention callback
+ *
+ * When audio internal error occurc, this function will be called back.
+ */
+
+static void mediarecorder_attention_cb(const ErrorAttentionParam *atprm)
+{
+  puts("Attention!");
+  
+  if (atprm->error_code >= AS_ATTENTION_CODE_WARNING)
+    {
+      ErrEnd = true;
+   }
+}
+
 static const int32_t recoding_frames = 400;
 static const int32_t buffer_size = 512;  /*Now MP3 is 96kbps,48kHz. so, One frame is 288 bytes */
 static uint8_t       s_buffer[buffer_size];
@@ -68,7 +86,7 @@ void setup()
 
   theRecorder = MediaRecorder::getInstance();
 
-  theRecorder->begin();
+  theRecorder->begin(mediarecorder_attention_cb);
 
   puts("initialization MediaRecorder");
 
@@ -167,7 +185,7 @@ err_t execute_aframe(uint32_t* size)
   if (ret < 0)
     {
       puts("File write error.");
-      err == MEDIARECORDER_ECODE_FILEACCESS_ERROR;
+      err = MEDIARECORDER_ECODE_FILEACCESS_ERROR;
     }
 
   return err;
@@ -213,6 +231,13 @@ void loop()
       sleep(1); /* For data pipline stop */
       execute_frames();
       
+      goto exitRecording;
+    }
+
+  if (ErrEnd)
+    {
+      printf("Error End\n");
+      theRecorder->stop();
       goto exitRecording;
     }
 

@@ -130,14 +130,23 @@ public:
    *
    * @details This function is called only once when using the Audio library.
    *          In this function, initialization of required shared memory management library,
-   *          initialization of inter-task communication library, Initialize Audio MW, 
+   *          initialization of inter-task communication library, Initialize Audio MW,
    *          initialize FIFO for ES supply, set callback at error occurrence, etc.
    *
-   *          If you call it more than once, an error occurs, 
+   *          If you call it more than once, an error occurs,
    *          but if you call "end ()" you need to call this function again.
    *
    */
   err_t begin(void);
+
+  /**
+   * @brief Initialize the audio library and HW modules.
+   *
+   * @details This function can set callback funtion which receive attention notify.
+   *
+   */
+
+  err_t begin(AudioAttentionCb attcb);
 
   /**
    * @brief Finalization the audio library and HW modules.
@@ -159,7 +168,7 @@ public:
    *
    * @details This function switches the mode of the Audio library to Music Player.
    *          For mode details, follow the state transition chart on the developer guide.
-   * 
+   *
    *          This function cannot be called after transition to "Music Player mode".
    *          To return to the original state, please call setReadyMode ().
    *
@@ -167,7 +176,7 @@ public:
    *
    */
   err_t setPlayerMode(
-      uint8_t device  /**< Select output device. AS_SETPLAYER_OUTPUTDEVICE_SPHP or 
+      uint8_t device  /**< Select output device. AS_SETPLAYER_OUTPUTDEVICE_SPHP or
                            AS_SETPLAYER_OUTPUTDEVICE_I2SOUTPUT. */
   );
 
@@ -191,7 +200,7 @@ public:
    *
    * @details This function switches the mode of the Audio library to Sound Recorder.
    *          For mode details, follow the state transition chart on the developer guide.
-   * 
+   *
    *          This function cannot be called after transition to "Sound Recorder mode".
    *          To return to the original state, please call setReadyMode ().
    *
@@ -206,7 +215,7 @@ public:
    *          If you change the settings, import sdk again.
    *
    *          Recording Mic-gain is 0dB fixed.
-   * 
+   *
    */
   err_t setRecorderMode(
       uint8_t input_device /**< Select input device. AS_SETRECDR_STS_INPUTDEVICE_MIC or
@@ -255,7 +264,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -279,7 +288,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -304,7 +313,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -329,7 +338,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -355,7 +364,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -378,7 +387,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -402,7 +411,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -426,7 +435,7 @@ public:
    *            - Compression codec
    *            - Sampling rate
    *            - Number of channels
-   *          You need to set. 
+   *          You need to set.
    *
    *          If you would like to set codec binary path and bit length of audio data,
    *          You are able to set them by other type of this API.
@@ -575,9 +584,9 @@ public:
    *          to the Stream  data FIFO in the Audio library.
    *          It writes for several frames data (now five frames).
    *          It can be called on PlayerMode.
-   * 
+   *
    *          This FIFO is cleared when calling StopPlayer or setReadyMode.
-   * 
+   *
    *          During music playback, please call this function periodically.
    *          When an error occurs, you should error handling as properly
    *
@@ -594,9 +603,9 @@ public:
    *          to the Stream  data FIFO in the Audio library.
    *          It writes for several frames data (now five frames).
    *          It can be called on PlayerMode.
-   * 
+   *
    *          This FIFO is cleared when calling StopPlayer or setReadyMode.
-   * 
+   *
    *          During music playback, please call this function periodically.
    *          When an error occurs, you should error handling as properly
    *
@@ -653,9 +662,9 @@ public:
    *
    * @details This function reads the generated Stream data from the Stream FIFO
    *          into the specified buffer area.
-   * 
+   *
    *          This function is for you want to process sounds in applications.
-   * 
+   *
    *          It reads for several frames data (now five frames).
    *          It can be called on RecorderMode.
    *
@@ -673,7 +682,7 @@ public:
    *
    * @details This function sets the internal data rate mode of rendering to
    *          Normal or High Resolution.
-   * 
+   *
    *          The internal data rate Normal indicates "fs = 48 kHz" and
    *          High Resolution indicates "fs = 192 kHz".
    *
@@ -704,7 +713,9 @@ private:
    * To avoid create multiple instance
    */
 
-  AudioClass() {}
+  AudioClass()
+    : m_attention_callback(NULL)
+  {}
   AudioClass(const AudioClass&);
   AudioClass& operator=(const AudioClass&);
   ~AudioClass() {}
@@ -724,6 +735,8 @@ private:
   int                           m_es_size;
   WavFormat_t                   m_wav_format;
   int                           m_codec_type;
+
+  AudioAttentionCb m_attention_callback;
 
   File theFile; /* for  auto file read */
 

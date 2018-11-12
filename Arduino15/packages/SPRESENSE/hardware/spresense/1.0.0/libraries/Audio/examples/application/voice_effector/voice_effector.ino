@@ -32,6 +32,24 @@ OutputMixer *theMixer;
 const int32_t sc_buffer_size = 6144;
 uint8_t s_buffer[sc_buffer_size];
 
+bool ErrEnd = false;
+
+/**
+ * @brief Audio attention callback
+ *
+ * When audio internal error occurc, this function will be called back.
+ */
+
+static void attention_cb(const ErrorAttentionParam *atprm)
+{
+  puts("Attention!");
+  
+  if (atprm->error_code >= AS_ATTENTION_CODE_WARNING)
+    {
+      ErrEnd = true;
+   }
+}
+
 /**
  * @brief Recorder done callback procedure
  *
@@ -249,8 +267,8 @@ void setup()
 
   /* Create Objects */
 
-  thePlayer->create(MediaPlayer::Player0);
-  theMixer->create();
+  thePlayer->create(MediaPlayer::Player0, attention_cb);
+  theMixer->create(attention_cb);
 
   /* Activate Objects. Set output device to Speakers/Headphones */
 
@@ -349,6 +367,12 @@ void loop()
     }
   else
     {
+    }
+
+  if (ErrEnd)
+    {
+      printf("Error End\n");
+      goto exitRecording;
     }
 
   usleep(1);

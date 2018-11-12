@@ -26,6 +26,24 @@ SDClass theSD;
 
 File s_myFile;
 
+bool ErrEnd = false;
+
+/**
+ * @brief Audio attention callback
+ *
+ * When audio internal error occurc, this function will be called back.
+ */
+
+static void mediarecorder_attention_cb(const ErrorAttentionParam *atprm)
+{
+  puts("Attention!");
+  
+  if (atprm->error_code >= AS_ATTENTION_CODE_WARNING)
+    {
+      ErrEnd = true;
+   }
+}
+
 static const int32_t recoding_frames = 400;
 static const int32_t buffer_size = 3072;  /*Now WAV is 768sample,16bit,stereo. so, One frame is 3072 bytes */
 static uint8_t       s_buffer[buffer_size];
@@ -67,7 +85,7 @@ void setup()
 
   theRecorder = MediaRecorder::getInstance();
 
-  theRecorder->begin();
+  theRecorder->begin(mediarecorder_attention_cb);
 
   puts("initialization MediaRecorder");
 
@@ -210,6 +228,13 @@ void loop()
       sleep(1); /* For data pipline stop */
       execute_frames();
       
+      goto exitRecording;
+    }
+
+  if (ErrEnd)
+    {
+      printf("Error End\n");
+      theRecorder->stop();
       goto exitRecording;
     }
 

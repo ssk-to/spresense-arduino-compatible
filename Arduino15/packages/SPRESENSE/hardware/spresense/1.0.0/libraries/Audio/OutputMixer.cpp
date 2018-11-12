@@ -47,6 +47,12 @@ static void attentionCallback(const ErrorAttentionParam *attparam)
 
 err_t OutputMixer::create(void)
 {
+  return create(NULL);
+}
+
+/*--------------------------------------------------------------------------*/
+err_t OutputMixer::create(AudioAttentionCb attcb)
+{
   /* Activate mixer feature. */
 
   AsCreateOutputMixParam_t output_mix_create_param;
@@ -58,7 +64,7 @@ err_t OutputMixer::create(void)
   output_mix_create_param.pool_id.render_path0_filter_dsp = PF0_APU_CMD_POOL;
   output_mix_create_param.pool_id.render_path1_filter_dsp = PF1_APU_CMD_POOL;
 
-  bool result = AS_CreateOutputMixer(&output_mix_create_param, attentionCallback);
+  bool result = AS_CreateOutputMixer(&output_mix_create_param, (attcb) ? attcb : attentionCallback);
 
   if (!result)
     {

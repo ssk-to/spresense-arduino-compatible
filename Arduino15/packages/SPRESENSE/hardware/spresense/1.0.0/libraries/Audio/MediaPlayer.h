@@ -114,6 +114,18 @@ public:
   );
 
   /**
+   * @brief Creation of the MediaPlayer.
+   *
+   * @details This function can set callback funtion which receive attention notify.
+   *
+   */
+
+  err_t create(
+      PlayerId id,           /**< Select Player ID. */
+      AudioAttentionCb attcb /**< Attention callback */
+  );
+
+  /**
    * @brief Activate the MediaPlayer
    *
    * @details This function activates media player system.
