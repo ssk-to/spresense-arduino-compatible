@@ -160,7 +160,7 @@ err_t execute_aframe(uint32_t* size)
 {
   err_t err = theRecorder->readFrames(s_buffer, buffer_size, size);
 
-  if(((err == MEDIARECORDER_ECODE_OK) || (err == MEDIARECORDER_ECODE_INSUFFICIENT_BUFFER_AREA)) && (*size > 0)) 
+  if(((err == MEDIARECORDER_ECODE_OK) || (err == MEDIARECORDER_ECODE_INSUFFICIENT_BUFFER_AREA)) && (*size > 0))
     {
       signal_process(*size);
     }
@@ -168,7 +168,7 @@ err_t execute_aframe(uint32_t* size)
   if (ret < 0)
     {
       puts("File write error.");
-      err == MEDIARECORDER_ECODE_FILEACCESS_ERROR;
+      err = MEDIARECORDER_ECODE_FILEACCESS_ERROR;
     }
 
   return err;
@@ -207,7 +207,7 @@ void loop()
     {
       puts("Recording Error!");
       theRecorder->stop();
-      goto exitRecording;      
+      goto exitRecording;
     }
   else if (read_size>0)
     {
