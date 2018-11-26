@@ -855,9 +855,9 @@ err_t AudioClass::init_recorder_wav(AudioCommand* command, uint32_t sampling_rat
   m_wav_format.format   = AUDIO_FORMAT_PCM;
   m_wav_format.channel  = channel_number;
   m_wav_format.rate     = sampling_rate;
-  m_wav_format.avgbyte  = sampling_rate * channel_number * 2;
-  m_wav_format.block    = channel_number * 2;
-  m_wav_format.bit      = 2 * 8;
+  m_wav_format.avgbyte  = sampling_rate * channel_number * (bit_length / 8);
+  m_wav_format.block    = channel_number * (bit_length / 8);
+  m_wav_format.bit      = bit_length;
   memcpy(m_wav_format.data, SUBCHUNKID_DATA, strlen(SUBCHUNKID_DATA));
 
   return AUDIOLIB_ECODE_OK;
