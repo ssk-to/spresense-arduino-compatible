@@ -96,6 +96,12 @@ DNNRT::begin(File& nnbfile)
   _input = (void **)malloc(sizeof(void *) * _nr_inputs);
   _output = (DNNVariable *)malloc(sizeof(DNNVariable) * _nr_outputs);
 
+  int i;
+  for (i = 0; i < _nr_outputs; i++)
+    {
+      _output[i] = DNNVariable();
+    }
+
   return 0;
 }
 
@@ -126,7 +132,7 @@ DNNRT::end()
 }
 
 int
-DNNRT::inputVariable(DNNVariable var, unsigned int index)
+DNNRT::inputVariable(DNNVariable &var, unsigned int index)
 {
   if (index >= (unsigned int)_nr_inputs)
     {
