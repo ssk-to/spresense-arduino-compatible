@@ -80,7 +80,7 @@ public:
    * @return 0 on success, otherwise error.
    * @note Number of input data is depends on the network model.
    */
-  int inputVariable(DNNVariable var, unsigned int index);
+  int inputVariable(DNNVariable &var, unsigned int index);
 
   /**
    * Get output data at index
