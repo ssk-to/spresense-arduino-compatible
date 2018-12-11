@@ -176,7 +176,6 @@ class DNNVariable {
   friend class DNNRT;
 
 public:
-  DNNVariable();
   DNNVariable(unsigned int size);
   ~DNNVariable();
 
@@ -213,6 +212,7 @@ public:
   int maxIndex();
 
 private:
+  DNNVariable();
   float *_data;
   unsigned int _size;
   bool _allocated;
