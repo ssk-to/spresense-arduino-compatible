@@ -80,11 +80,13 @@ rm -rf build libs
 FW_LOADER="${SDK_DIR}/proprietary/spresense/bin/loader.espk"
 FW_GNSSFW="${SDK_DIR}/proprietary/spresense/bin/gnssfw.espk"
 FW_DNNRTMP="${SDK_DIR}/proprietary/spresense/bin/dnnrt-mp.espk"
+FW_AESM="${SDK_DIR}/proprietary/spresense/bin/AESM.espk"
 FW_DIR="../firmware"
 mkdir -p ${FW_DIR}
 cp ${FW_LOADER} ${FW_DIR}
 cp ${FW_GNSSFW} ${FW_DIR}
 cp ${FW_DNNRTMP} ${FW_DIR}
+cp ${FW_AESM} ${FW_DIR}
 
 cp ${SDK_DIR}/LICENSE ./
 
