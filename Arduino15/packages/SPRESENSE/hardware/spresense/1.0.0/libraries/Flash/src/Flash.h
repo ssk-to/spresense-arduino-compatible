@@ -51,6 +51,22 @@ class FlashClass : public StorageClass {
 public:
   FlashClass();
 
+  /**
+   * @brief  Initialize the Flash library
+   *
+   * @details This is a dummy function provided to match other storages as
+   *          SDHCI and eMMC.
+   * @return true
+   */
+  boolean begin() { return true; };
+
+  /**
+   * @brief  Format the Flash device
+   *
+   * @details This will format the Flash device to SmartFS file system.
+   * @return 0 if the Flash format is successful, error code if not
+   */
+  int format();
 };
 
 extern FlashClass Flash;
