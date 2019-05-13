@@ -30,8 +30,12 @@
 
 class File;
 #include <audio/audio_high_level_api.h>
+#include <audio/audio_message_types.h>
+#include <audio/utilities/frame_samples.h>
 #include <audio/utilities/wav_containerformat.h>
 #include <memutils/simple_fifo/CMN_SimpleFifo.h>
+
+#include "FrontEnd.h"
 
 /*--------------------------------------------------------------------------*/
 
@@ -120,6 +124,7 @@ public:
    */
 
   err_t begin(AudioAttentionCb attcb);
+  err_t begin(AudioAttentionCb attcb, bool use_frontend);
 
   /**
    * @brief Finalize the MediaRecorder.
@@ -158,6 +163,22 @@ public:
       AsSetRecorderStsInputDevice input_device, /**< Select input device. AS_SETRECDR_STS_INPUTDEVICE_MIC or AS_SETRECDR_STS_INPUTDEVICE_I2S*/
       MediaRecorderCallback mrcb,               /**< Sepcify callback function which is called to notify API results. */
       uint32_t recorder_bufsize
+  );
+
+
+  /**
+   * @brief Activate the MediaRecorder.
+   *
+   * @details This function works as same as above activate(input_device, mrcb, bufsize).
+   *          But is able to set PreProcessing type. If ommit it, fix to Through.
+   *
+   */
+
+  err_t activate(
+      AsSetRecorderStsInputDevice input_device, /**< Select input device. AS_SETRECDR_STS_INPUTDEVICE_MIC or AS_SETRECDR_STS_INPUTDEVICE_I2S*/
+      MediaRecorderCallback mrcb,               /**< Sepcify callback function which is called to notify API results. */
+      uint32_t recorder_bufsize,
+      AsFrontendPreProcType proc_type
   );
 
   /**
@@ -313,6 +334,8 @@ private:
 
   MediaRecorder()
     : m_recorder_simple_fifo_buf(NULL)
+    , m_mr_callback(NULL)
+    , m_p_fed_ins(NULL)
   {}
   MediaRecorder(const MediaRecorder&);
   MediaRecorder& operator=(const MediaRecorder&);
@@ -329,6 +352,9 @@ private:
   AsRecorderOutputDeviceHdlr m_output_device_handler;
   int                        m_es_size;
   WAVHEADER                  m_wav_format;
+  MediaRecorderCallback      m_mr_callback;
+
+  FrontEnd *m_p_fed_ins;
 
   bool check_encode_dsp(uint8_t codec_type, const char *path, uint32_t sampling_rate);
 
@@ -340,13 +366,6 @@ private:
   void init_mp3(AsInitRecorderParam *param);
   void init_opus(AsInitRecorderParam *param);
   void init_pcm(AsInitRecorderParam *param);
-
-  /**
-   * Baseband setting
-   */
-
-  bool activateBaseband(void);
-  bool deactivateBaseband(void);
 };
 
 #endif // MediaRecorder_h
