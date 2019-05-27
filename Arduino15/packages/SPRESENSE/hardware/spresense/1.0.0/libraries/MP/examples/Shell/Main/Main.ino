@@ -1,5 +1,5 @@
 /*
- *  Sub2.ino - MP Example for MP Mutex
+ *  Main.ino - MP Example for NuttShell on SubCore
  *  Copyright 2019 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -18,36 +18,22 @@
  */
 
 #include <MP.h>
-#include <MPMutex.h>
 
-/* Create a MPMutex object */
-MPMutex mutex(MP_MUTEX_ID0);
+int subcore = 1;
 
 void setup()
 {
-  MP.begin();
+  Serial.begin(115200);
+  while (!Serial);
+
+  /* Boot SubCore */
+  MP.begin(subcore);
+
+  /* Disable console for SubCore to use it */
+  MP.DisableConsole();
 }
 
 void loop()
 {
-  int cnt = 3;
-  int ret;
-
-  /* Busy wait until lock the mutex */
-  do {
-    ret = mutex.Trylock();
-  } while (ret != 0);
-
-  /* If the mutex is acquired, blink LED */
-  MPLog("Lock\n");
-  while (cnt--) {
-    ledOn(LED2);
-    delay(500);
-    ledOff(LED2);
-    delay(500);
-  }
-
-  /* Unlock the mutex */
-  mutex.Unlock();
 }
 

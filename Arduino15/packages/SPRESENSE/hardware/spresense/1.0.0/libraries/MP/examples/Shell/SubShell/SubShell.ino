@@ -1,5 +1,5 @@
 /*
- *  Sub2.ino - MP Example for MP Mutex
+ *  SubShell.ino - MP Example for NuttShell on SubCore
  *  Copyright 2019 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -18,36 +18,25 @@
  */
 
 #include <MP.h>
-#include <MPMutex.h>
+#include <sched.h>
+#include "nshlib.h"
 
-/* Create a MPMutex object */
-MPMutex mutex(MP_MUTEX_ID0);
+#define STACKSIZE 8192
+#define PRIORITY  100
 
-void setup()
+static int nsh_main(int argc, char *argv[])
 {
+  (void)argc;
+  (void)argv;
+  return nsh_consolemain(0, NULL);
+}
+
+void setup() {
   MP.begin();
+  MP.EnableConsole();
+  task_create("nsh", PRIORITY, STACKSIZE, nsh_main, NULL);
 }
 
-void loop()
-{
-  int cnt = 3;
-  int ret;
-
-  /* Busy wait until lock the mutex */
-  do {
-    ret = mutex.Trylock();
-  } while (ret != 0);
-
-  /* If the mutex is acquired, blink LED */
-  MPLog("Lock\n");
-  while (cnt--) {
-    ledOn(LED2);
-    delay(500);
-    ledOff(LED2);
-    delay(500);
-  }
-
-  /* Unlock the mutex */
-  mutex.Unlock();
+void loop() {
+  exit(0);
 }
-

@@ -1,5 +1,5 @@
 /*
- *  Sub2.ino - MP Example for MP Mutex
+ *  multi_print.h - Spresense MultiCore printlog functions
  *  Copyright 2019 Sony Semiconductor Solutions Corporation
  *
  *  This library is free software; you can redistribute it and/or
@@ -17,37 +17,23 @@
  *  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <MP.h>
-#include <MPMutex.h>
+#ifndef __MULTI_PRINT_H__
+#define __MULTI_PRINT_H__
 
-/* Create a MPMutex object */
-MPMutex mutex(MP_MUTEX_ID0);
+#include <sdk/config.h>
 
-void setup()
-{
-  MP.begin();
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+void init_multi_print(void);
+void printlock(void);
+void printunlock(void);
+ssize_t uart_syncwrite(const char *buffer, size_t buflen);
+int sync_printf(const char *fmt, ...);
+
+#ifdef __cplusplus
 }
+#endif // __cplusplus
 
-void loop()
-{
-  int cnt = 3;
-  int ret;
-
-  /* Busy wait until lock the mutex */
-  do {
-    ret = mutex.Trylock();
-  } while (ret != 0);
-
-  /* If the mutex is acquired, blink LED */
-  MPLog("Lock\n");
-  while (cnt--) {
-    ledOn(LED2);
-    delay(500);
-    ledOff(LED2);
-    delay(500);
-  }
-
-  /* Unlock the mutex */
-  mutex.Unlock();
-}
-
+#endif  /* __MULTI_PRINT_H__ */
