@@ -75,8 +75,7 @@ class CheckBox(wx.Panel):
 
 		# Keep the size of checkbox
 		def size(evt):
-			pos = self.fore.GetPosition()
-			self.fore.SetPosition((pos[0], pos[1] + 1))
+			self.fore.SetPosition(self.fore.GetPosition())
 			self.fore.SetSize((BOX_SIZE, BOX_SIZE))
 		self.fore.Bind(wx.EVT_SIZE, size)
 
@@ -110,6 +109,8 @@ class CheckBox(wx.Panel):
 			self.check.SetBackgroundColour(self.BOX_COLOR[id]["background"])
 		self.back.SetBackgroundColour(self.BOX_COLOR[id]["background"])
 
+		self.Refresh()
+
 	def UpdateCheckBoxStatus(self):
 		if self.isPressed and self.isEntered:
 			self.UpdateCheckBoxColor(self.STATUS_PRESS_ID)
@@ -140,7 +141,6 @@ class CheckBox(wx.Panel):
 		else:
 			wx.Panel.Bind(self, evtid, func)
 			self.text.Bind(evtid, func)
-			self.fore.Bind(evtid, func)
 			self.back.Bind(evtid, func)
 			self.check.Bind(evtid, func)
 
