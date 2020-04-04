@@ -3,7 +3,7 @@
 Clone this repository and update submodules.
 
 ```
-$ git clone --recursive git@code.sonymobile.net:spritzer-sdk/spresense-arduino-compatible.git
+$ git clone --recursive git@github.com:SonySemiconductorSolutions/spresense-arduino-compatible.git
 ```
 
 After repositories cloned, each submodules are in 'Detached HEAD'.
