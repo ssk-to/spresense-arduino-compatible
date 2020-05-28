@@ -32,7 +32,6 @@ OutputMixer *theMixer;
 /* Select mic channel number */
 const int mic_channel_num = 1;
 //const int mic_channel_num = 2;
-//const int mic_channel_num = 4;
 
 const int32_t s_buffer_size = 768 * mic_channel_num * sizeof(uint16_t);
 uint8_t s_buffer[s_buffer_size];
@@ -201,7 +200,7 @@ void setup()
   theRecorder->init(AS_CODECTYPE_LPCM, channel, AS_SAMPLINGRATE_48000, AS_BITLENGTH_16, 0);
   theRecorder->setMicGain(180);
   puts("recorder init");
-  thePlayer->init(MediaPlayer::Player0, AS_CODECTYPE_WAV,"/mnt/spif/BIN", AS_SAMPLINGRATE_48000, channel);
+  thePlayer->init(MediaPlayer::Player0, AS_CODECTYPE_WAV,"/mnt/sd0/BIN", AS_SAMPLINGRATE_48000, channel);
   puts("player init");
 
   /* Start Recorder */
@@ -219,7 +218,8 @@ typedef enum e_appState {
 void loop()
 {
   static appState_t state = StateReady;
-
+  static int pitch_shift = 10;
+	
   int8_t   sndid = 100; /* user-defined msgid */
   int8_t   rcvid = 0;
   int      read_size;
@@ -248,6 +248,7 @@ void loop()
       {
         request.buffer  = s_buffer;
         request.sample = read_size/ sizeof(uint16_t) / mic_channel_num;
+        request.pitch_shift = pitch_shift;
         MP.Send(sndid, &request, subcore);
 
         if (pre_cnt < 2) {
@@ -287,6 +288,7 @@ void loop()
       {
         request.buffer  = s_buffer;
         request.sample = read_size/ sizeof(uint16_t) / mic_channel_num;
+        request.pitch_shift = pitch_shift;
         MP.Send(sndid, &request, subcore);
 
         /* Receive sound from SubCore */
