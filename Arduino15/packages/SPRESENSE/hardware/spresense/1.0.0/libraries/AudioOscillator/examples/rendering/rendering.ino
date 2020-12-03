@@ -32,11 +32,11 @@ bool ErrEnd = false;
 static void menu()
 {
   printf("=== MENU (input key ?) ==============\n");
-  printf("c: Sound "Do"\n");
-  printf("d: Sound "Ro"\n");
-  printf("e: Sound "Mi"\n");
-  printf("f: Sound "Fa"\n");
-  printf("g: Sound "So"\n");
+  printf("c: Sound \"Do\"\n");
+  printf("d: Sound \"Ro\"\n");
+  printf("e: Sound \"Mi\"\n");
+  printf("f: Sound \"Fa\"\n");
+  printf("g: Sound \"So\"\n");
   printf("s: Stop sound\n");
   printf("=====================================\n");
 }
@@ -49,9 +49,6 @@ static bool getFrame(AsPcmDataParam *pcm)
     return false;
   }
   theOscillator->exec((q15_t*)pcm->mh.getPa(), sample);
-
-//  q15_t* ad = (q15_t*) pcm->mh.getPa();
-//  printf("p0=%x.p1=%x.p2=%x.p3=%x\n",*ad,*(ad+1),*(ad+2),*(ad+3));
 
   /* Set PCM parameters */
   pcm->identifier = 0;
