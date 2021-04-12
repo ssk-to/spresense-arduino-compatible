@@ -337,6 +337,15 @@ public:
   size_t getImgSize() { return (img_buff != NULL) ? img_buff->actual_size : 0; }
 
   /**
+   * @brief Get image buffer size.
+   * @details [en] Get image buffer size (bytes). <BR>
+   *          [ja] 画像バッファサイズを返す。(byte単位)
+   * @return [en] Image buffer size. (bytes). <BR>
+   *         [jp] 画像バッファサイズ。(byte単位)
+   */
+  size_t getImgBuffSize() { return (img_buff != NULL) ? img_buff->buf_size : 0; }
+
+  /**
    * @brief Get Image Pixcel format.
    * @details [en] Get Pixcel format of this Image. <BR>
    *          [ja] イメージデータのピクセルフォーマットを返す。
