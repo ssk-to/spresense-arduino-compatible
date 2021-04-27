@@ -39,8 +39,8 @@ char freq_convert_table[] =
   25, 26, 28, 29, 31, 32, 34, 35, 37, 38, 40, 41, 43, 44, 46, 48
 };
 
-const int step_counter_rate       = 32; /* 32 Hz */
-const int step_counter_sample_num = 32; /* 32sample/1process */
+int step_counter_rate       = 32; /* 32 Hz */
+int step_counter_sample_num = 32; /* 32sample/1process */
 
 
 unsigned char step_counter_cb(sensor_command_data_mh_t &dat)
