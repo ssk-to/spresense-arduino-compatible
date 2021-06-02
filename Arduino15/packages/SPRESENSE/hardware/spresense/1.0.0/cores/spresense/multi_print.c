@@ -19,18 +19,18 @@
 
 #include <sdk/config.h>
 #include <nuttx/streams.h>
-#include <common/up_internal.h>
+#include <common/arm_internal.h>
 #include <stdio.h>
 #include <string.h>
 #include <cxd56_sph.h>
 #include <nuttx/irq.h>
 #include <nuttx/arch.h>
-#include <common/up_arch.h>
+#include <common/arm_arch.h>
 #include <armv7-m/nvic.h>
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <assert.h>
-#include <arch/chip/hardware/cxd56_sph.h>
+#include <hardware/cxd56_sph.h>
 #include "multi_print.h"
 
 #define PRINT_HSEMID 3
